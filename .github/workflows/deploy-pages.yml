@@ -32,4 +32,5 @@ jobs:
         with:
           path: "."
       - name: Deploy to GitHub Pages
-        id: deployme
+        id: deployment
+        uses: actions/deploy-pages@v4
