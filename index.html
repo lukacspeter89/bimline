@@ -897,7 +897,7 @@ filterBar.addEventListener('click', e => {
    A küldés application/x-www-form-urlencoded + mode:'no-cors' —
    így nincs CORS-preflight; a válasz átlátszatlan, sikeresnek vesszük.
    ============================================================ */
-const FORM_ENDPOINT = ''; // <<< ide jön a GAS webalkalmazás /exec URL-je (üresen: mailto)
+const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
 const contactForm = document.getElementById('contactForm');
 
 function setFieldError(el, msg) {
