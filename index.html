@@ -47,55 +47,21 @@
 </script>
 
 <!-- ============================================================
-     KÜLSŐ FORRÁSOK: Tailwind (CDN), Google Fonts
-     Megjegyzés: a Tailwind CDN futásidőben olvassa a configot.
+     KÜLSŐ FORRÁSOK: statikusra fordított Tailwind CSS, Google Fonts
+     Megjegyzés: korábban a Tailwind CDN futásidejű JIT-verzióját
+     használtuk, de ez mobil böngészőkben (pl. iPhone Safari) komoly
+     memória- és CPU-terhelést okozott, ami a referenciatérkép
+     betöltésekor összeomláshoz/újratöltéshez vezetett. A CSS most
+     build-időben előre le van fordítva (lásd tailwind.css), így a
+     böngészőnek nem kell futás közben stílust generálnia.
      ============================================================ -->
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="tailwind.css" />
 <!-- Leaflet (referenciatérkép) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<!-- ============================================================
-     DESIGN TOKENS (Tailwind config)
-     A FÁZIS 1-ben jóváhagyott színpaletta és tipográfia.
-     ============================================================ -->
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          base:       '#15151F',   /* fő háttér – lágyabb antracit */
-          surface:    '#1B1B27',   /* kártyák, sávok */
-          surface2:   '#232332',   /* hover / kiemelt panel */
-          line:       '#2E2E42',   /* finom elválasztó vonalak */
-          accent:     '#2B6FFF',   /* elsődleges kék */
-          accentDeep: '#1E1EF0',   /* brand-kék, gradiens vég */
-          belimo:     '#8FD14F',   /* másodlagos zöld hangsúly */
-          ink:        '#EDEFF4',   /* főszöveg */
-          muted:      '#9FA7B8',   /* másodlagos szöveg */
-        },
-        fontFamily: {
-          display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-          sans:    ['Inter', 'system-ui', 'sans-serif'],
-        },
-        /* Szűkített betűméret-skála: a legkisebb (13px) és legnagyobb
-           (44px, hero) közti szélsőségeket közelítjük egymáshoz — a
-           köztes fokozatok (kártyacím, kiemelt szám) megmaradnak. */
-        fontSize: {
-          xs:  ['0.8125rem', { lineHeight: '1.4' }],   /* 13px – címkék, feliratok */
-          sm:  ['0.9375rem', { lineHeight: '1.55' }],  /* 15px – törzsszöveg, navigáció */
-          base:['0.9375rem', { lineHeight: '1.55' }],  /* 15px – gombfeliratok */
-          lg:  ['1.1875rem', { lineHeight: '1.35' }],  /* 19px – kártyacímek */
-          '3xl':['1.75rem',  { lineHeight: '1.15' }],  /* 28px – kiemelt statisztika-számok */
-        },
-        maxWidth: { '8xl': '88rem' },
-      }
-    }
-  }
-</script>
 
 <!-- ============================================================
      EGYEDI CSS: amit a Tailwind CDN nehezen ad ki
@@ -743,11 +709,15 @@ function initMap() {
     subdomains: 'abcd', maxZoom: 19
   }).addTo(map);
 
+  // Egyetlen megosztott SVG-renderer az összes markerhez (nem 244 külön példány —
+  // ez korábban komoly memóriaterhelést és összeomlást okozott mobil böngészőkben).
+  const sharedRenderer = L.svg({ padding: 0.5 });
+
   const bounds = [];
   mapPoints.forEach(([city, lat, lng]) => {
     const cat = cityCategories[city] || DEFAULT_CAT;
     L.circleMarker([lat, lng], {
-      renderer: L.svg(), className: 'map-dot',
+      renderer: sharedRenderer, className: 'map-dot',
       radius: 6, color: '#2B6FFF', weight: 1.5,
       fillColor: '#2B6FFF', fillOpacity: 0.7
     }).addTo(map)
