@@ -586,9 +586,15 @@
         </div>
       </div>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Elérhetőség (e-mail / telefon)</label>
-        <input type="text" name="elerhetoseg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium mb-2">E-mail cím</label>
+          <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Telefonszám <span class="text-muted font-normal">(opcionális)</span></label>
+          <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+        </div>
       </div>
 
       <div>
@@ -891,7 +897,9 @@ filterBar.addEventListener('click', e => {
 
    GOOGLE APPS SCRIPT BEKÖTÉSE:
    1) A GAS-ban: function doPost(e) { ... e.parameter.nev, .ceg,
-      .elerhetoseg, .leiras, .alapok, .linkek ... MailApp.sendEmail(...) }
+      .email, .telefon, .leiras, .alapok, .linkek ... MailApp.sendEmail(...) }
+      A szkript a hello@bimline.hu címre küld, és a feladónak (e.parameter.email)
+      automatikus visszaigazoló e-mailt is küld.
    2) Telepítés webalkalmazásként: "Futtatás mint: én",
       "Hozzáférés: bárki". A kapott /exec URL-t illeszd be alább.
    A küldés application/x-www-form-urlencoded + mode:'no-cors' —
@@ -921,16 +929,22 @@ function validateContact() {
   const f = contactForm;
   const required = [
     [f.nev, 'Kérjük, adja meg a nevét.'],
-    [f.elerhetoseg, 'Adjon meg egy elérhetőséget (e-mail vagy telefon).'],
+    [f.email, 'Adja meg az e-mail címét.'],
     [f.leiras, 'Írja le röviden a projektet.'],
   ];
   required.forEach(([el, msg]) => {
     if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
     else clearFieldError(el);
   });
-  // e-mail formátum, ha @ jellel adták meg
-  if (f.elerhetoseg.value.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.elerhetoseg.value.trim())) {
-    setFieldError(f.elerhetoseg, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+  // e-mail formátum ellenőrzése (kötelező mező)
+  if (f.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) {
+    setFieldError(f.email, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+  }
+  // telefonszám opcionális — csak akkor validáljuk, ha ki lett töltve
+  if (f.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(f.telefon.value.trim())) {
+    setFieldError(f.telefon, 'A telefonszám formátuma nem megfelelő.'); ok = false;
+  } else {
+    clearFieldError(f.telefon);
   }
   // GDPR
   if (!f.gdpr.checked) {
@@ -954,7 +968,8 @@ function buildMailBody(f) {
   return [
     'Név: ' + f.nev.value.trim(),
     'Cég: ' + (f.ceg.value.trim() || '—'),
-    'Elérhetőség: ' + f.elerhetoseg.value.trim(),
+    'E-mail: ' + f.email.value.trim(),
+    'Telefon: ' + (f.telefon.value.trim() || '—'),
     '',
     'Projekt leírása:',
     f.leiras.value.trim(),
@@ -970,7 +985,8 @@ function fieldData(f) {
   return {
     nev: f.nev.value.trim(),
     ceg: f.ceg.value.trim(),
-    elerhetoseg: f.elerhetoseg.value.trim(),
+    email: f.email.value.trim(),
+    telefon: f.telefon.value.trim(),
     leiras: f.leiras.value.trim(),
     alapok: Array.from(f.querySelectorAll('input[name="alap"]:checked')).map(c => c.value).join(', '),
     linkek: f.linkek.value.trim(),

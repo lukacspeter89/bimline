@@ -2,7 +2,8 @@
  * BIMLine Gépész Kft. — kapcsolati űrlap Google Apps Script backend
  *
  * Ez a szkript fogadja a weboldal (index.html) kapcsolati űrlapjának
- * beküldését, és e-mailt küld a hello@bimline.hu címre.
+ * beküldését: e-mailt küld a hello@bimline.hu címre, majd automatikus
+ * visszaigazolást is küld a feladó (érdeklődő) e-mail címére.
  *
  * TELEPÍTÉS:
  * 1. Nyisd meg: https://script.google.com/ → Új projekt
@@ -28,13 +29,15 @@ function doPost(e) {
   try {
     var p = (e && e.parameter) ? e.parameter : {};
 
-    var nev         = (p.nev || '').toString().trim();
-    var ceg         = (p.ceg || '').toString().trim();
-    var elerhetoseg = (p.elerhetoseg || '').toString().trim();
-    var leiras      = (p.leiras || '').toString().trim();
-    var alapok      = (p.alapok || '').toString().trim();
-    var linkek      = (p.linkek || '').toString().trim();
+    var nev     = (p.nev || '').toString().trim();
+    var ceg     = (p.ceg || '').toString().trim();
+    var email   = (p.email || '').toString().trim();
+    var telefon = (p.telefon || '').toString().trim();
+    var leiras  = (p.leiras || '').toString().trim();
+    var alapok  = (p.alapok || '').toString().trim();
+    var linkek  = (p.linkek || '').toString().trim();
 
+    // --- 1) Belső értesítő e-mail a hello@bimline.hu címre ---
     var subject = 'Ajánlatkérés – ' + (ceg || nev || 'bimline.hu');
 
     var bodyLines = [
@@ -42,7 +45,8 @@ function doPost(e) {
       '',
       'Név: ' + (nev || '—'),
       'Cég: ' + (ceg || '—'),
-      'Elérhetőség: ' + (elerhetoseg || '—'),
+      'E-mail: ' + (email || '—'),
+      'Telefon: ' + (telefon || '—'),
       '',
       'Projekt leírása:',
       (leiras || '—'),
@@ -62,27 +66,21 @@ function doPost(e) {
       body: bodyLines.join('\n')
     };
 
-    // Ha az elérhetőség mezőben valódi e-mail cím van, "válasz címzettként"
-    // beállítjuk — így egy kattintással lehet válaszolni az érdeklődőnek.
-    if (elerhetoseg.indexOf('@') > -1) {
-      mailOptions.replyTo = elerhetoseg;
+    // Válasz-címzettként a feladó e-mail címét állítjuk be — így egy
+    // kattintással lehet válaszolni az érdeklődőnek.
+    if (email.indexOf('@') > -1) {
+      mailOptions.replyTo = email;
     }
 
     MailApp.sendEmail(mailOptions);
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ result: 'success' }))
-      .setMimeType(ContentService.MimeType.JSON);
-
-  } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ result: 'error', message: err.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// Böngészőből közvetlenül megnyitva (GET) csak egy állapot-üzenetet ad vissza —
-// ez teszteléshez hasznos, a weboldal maga POST-ot küld, ezt nem használja.
-function doGet(e) {
-  return ContentService.createTextOutput('BIMLine kapcsolati űrlap – a végpont működik, POST kérést vár.');
-}
+    // --- 2) Automatikus visszaigazolás a feladónak ---
+    if (email.indexOf('@') > -1) {
+      var confirmSubject = 'Köszönjük megkeresését – BIMLine Gépész Kft.';
+      var confirmBodyLines = [
+        'Kedves ' + (nev || 'Érdeklődő') + '!',
+        '',
+        'Köszönjük, hogy felvette velünk a kapcsolatot. Üzenetét megkaptuk,',
+        'kollégáink hamarosan, jellemzően 1 munkanapon belül jelentkeznek.',
+        '',
+        'Az Ön által meg
