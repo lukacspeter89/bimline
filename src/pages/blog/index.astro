@@ -1,0 +1,160 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { estimateReadingTime } from '../../lib/reading-time';
+
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const categories = [...new Set(allPosts.map((p) => p.data.category))];
+const tags = [...new Set(allPosts.flatMap((p) => p.data.tags))];
+
+const posts = allPosts.map((p) => ({
+  id: p.id,
+  title: p.data.title,
+  description: p.data.description,
+  publishDate: p.data.publishDate,
+  category: p.data.category,
+  tags: p.data.tags,
+  cover: p.data.cover?.src,
+  readingTime: estimateReadingTime(p.body || ''),
+}));
+---
+
+<BaseLayout
+  title="Tudásbázis / Blog"
+  description="Szakmai cikkek épületgépészetről, BIM-tervezésről, energetikai felülvizsgálatról és épületdiagnosztikáról a BIMLine Gépész Kft-től."
+  path="/blog/"
+>
+  <section class="py-16 lg:py-24">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8">
+        <p class="eyebrow mb-3">Tudásbázis</p>
+        <h1 class="font-display font-bold text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.15]">Blog & szakmai cikkek</h1>
+        <p class="mt-4 text-muted leading-relaxed">Épületgépészeti, BIM- és energetikai témák — gyakorlati szemmel.</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-4 mb-8">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Keresés a cikkek között…"
+          class="w-full lg:max-w-xs bg-surface border border-line rounded-lg px-4 py-2.5 text-sm focus:border-accent"
+        />
+        <div class="flex flex-wrap gap-2">
+          <button class="chip px-3 py-1.5 rounded-full border border-line text-xs" data-cat="all" aria-pressed="true">Minden kategória</button>
+          {categories.map((c) => (
+            <button class="chip px-3 py-1.5 rounded-full border border-line text-xs" data-cat={c} aria-pressed="false">{c}</button>
+          ))}
+        </div>
+      </div>
+
+      {tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mb-10">
+          <button class="tag-chip px-3 py-1 rounded-full border border-line text-xs text-muted" data-tag="all" aria-pressed="true">#mind</button>
+          {tags.map((t) => (
+            <button class="tag-chip px-3 py-1 rounded-full border border-line text-xs text-muted" data-tag={t} aria-pressed="false">#{t}</button>
+          ))}
+        </div>
+      )}
+
+      <div id="postGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <a
+            href={`/blog/${post.id}/`}
+            class="post-card card rounded-xl overflow-hidden flex flex-col"
+            data-cat={post.category}
+            data-tags={post.tags.join(',')}
+            data-search={(post.title + ' ' + post.description).toLowerCase()}
+          >
+            {post.cover && (
+              <div class="aspect-[16/9] overflow-hidden">
+                <img src={post.cover} alt="" class="w-full h-full object-cover" loading="lazy" />
+              </div>
+            )}
+            <div class="p-5 flex flex-col flex-1">
+              <div class="flex items-center gap-2 text-xs text-muted font-display tracking-wide mb-2">
+                <span class="text-accent">{post.category}</span>
+                <span>·</span>
+                <span>{post.publishDate.toLocaleDateString('hu-HU')}</span>
+                <span>·</span>
+                <span>{post.readingTime} perc olvasás</span>
+              </div>
+              <h2 class="font-display font-semibold text-lg leading-snug">{post.title}</h2>
+              <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{post.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <div id="pagination" class="flex justify-center gap-2 mt-12"></div>
+      <p id="noResults" class="hidden text-center text-muted py-12">Nincs a keresésnek megfelelő cikk.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const PAGE_SIZE = 9;
+  const grid = document.getElementById('postGrid')!;
+  const allCards = Array.from(grid.querySelectorAll<HTMLElement>('.post-card'));
+  const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+  const catBar = document.querySelector('[data-cat]')?.parentElement?.parentElement as HTMLElement;
+  const catButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.chip'));
+  const tagButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.tag-chip'));
+  const pagination = document.getElementById('pagination')!;
+  const noResults = document.getElementById('noResults')!;
+
+  let activeCat = 'all';
+  let activeTag = 'all';
+  let currentPage = 1;
+
+  function applyFilters() {
+    const q = searchInput.value.trim().toLowerCase();
+    const filtered = allCards.filter((card) => {
+      const matchesCat = activeCat === 'all' || card.dataset.cat === activeCat;
+      const matchesTag = activeTag === 'all' || (card.dataset.tags || '').split(',').includes(activeTag);
+      const matchesSearch = !q || (card.dataset.search || '').includes(q);
+      return matchesCat && matchesTag && matchesSearch;
+    });
+
+    allCards.forEach((c) => (c.style.display = 'none'));
+    noResults.classList.toggle('hidden', filtered.length > 0);
+
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    currentPage = Math.min(currentPage, totalPages);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    filtered.slice(start, start + PAGE_SIZE).forEach((c) => (c.style.display = ''));
+
+    pagination.innerHTML = '';
+    if (totalPages > 1) {
+      for (let i = 1; i <= totalPages; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = String(i);
+        btn.className = 'w-9 h-9 rounded-lg border border-line text-sm ' + (i === currentPage ? 'bg-accent text-base border-accent font-semibold' : 'text-muted hover:border-accent/60');
+        btn.addEventListener('click', () => { currentPage = i; applyFilters(); window.scrollTo({ top: grid.offsetTop - 100, behavior: 'smooth' }); });
+        pagination.appendChild(btn);
+      }
+    }
+  }
+
+  searchInput?.addEventListener('input', () => { currentPage = 1; applyFilters(); });
+  catButtons.forEach((btn) => btn.addEventListener('click', () => {
+    activeCat = btn.dataset.cat || 'all';
+    currentPage = 1;
+    catButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    applyFilters();
+  }));
+  tagButtons.forEach((btn) => btn.addEventListener('click', () => {
+    activeTag = btn.dataset.tag || 'all';
+    currentPage = 1;
+    tagButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    applyFilters();
+  }));
+
+  applyFilters();
+</script>
+
+<style>
+  .chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-base); border-color: var(--color-accent); font-weight: 600; }
+  .tag-chip[aria-pressed="true"] { background: var(--color-surface2); color: var(--color-ink); border-color: var(--color-accent); }
+</style>

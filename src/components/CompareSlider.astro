@@ -1,0 +1,69 @@
+---
+---
+<div class="mt-14 lg:mt-20 card rounded-2xl p-4 sm:p-6 glow-soft max-w-8xl mx-auto px-5 lg:px-8">
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <span class="eyebrow">BIM-koordináció</span>
+      <span class="block text-xs text-muted mt-1">Opcionális szolgáltatás — komplex gépészeti csomópontok esetén, igény szerint</span>
+    </div>
+    <span class="font-display tracking-wide text-sm text-belimo">Építészet ↔ Gépészet</span>
+  </div>
+
+  <div id="compareStage"
+       class="relative aspect-[1720/1135] rounded-xl overflow-hidden border border-line select-none cursor-ew-resize touch-none"
+       role="slider" tabindex="0" aria-label="Építészet–gépészet összehasonlító csúszka"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+    <img src="/images/ifc-gepesz.jpg" alt="Gépészeti (MEP) IFC-modell"
+         class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false" />
+    <img id="cmpTop" src="/images/ifc-epitesz.jpg" alt="Építészeti IFC-modell"
+         class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false"
+         style="clip-path: inset(0 50% 0 0)" />
+
+    <span class="absolute top-3 left-3 font-display tracking-wide text-xs text-accent bg-base/70 px-2 py-1 rounded pointer-events-none">Építészet</span>
+    <span class="absolute top-3 right-3 font-display tracking-wide text-xs text-belimo bg-base/70 px-2 py-1 rounded pointer-events-none">Gépészet</span>
+
+    <div id="cmpDivider" class="absolute top-0 bottom-0 w-0.5 bg-accent pointer-events-none" style="left:50%">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-accent grid place-items-center glow-accent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#15151F" stroke-width="2.5"><path d="M8 7l-4 5 4 5M16 7l4 5-4 5"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-3 text-xs text-muted text-center font-display tracking-wide">Húzd a vonalat — balra az építészeti, jobbra a gépészeti modell</p>
+</div>
+
+<script>
+  function initCompare() {
+    const stage = document.getElementById('compareStage');
+    if (!stage) return;
+    const top = document.getElementById('cmpTop') as HTMLElement;
+    const divider = document.getElementById('cmpDivider') as HTMLElement;
+    let dragging = false;
+
+    function setPos(pct: number) {
+      pct = Math.max(0, Math.min(100, pct));
+      top.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+      divider.style.left = pct + '%';
+      stage!.setAttribute('aria-valuenow', String(Math.round(pct)));
+    }
+    function posFromEvent(e: PointerEvent) {
+      const rect = stage!.getBoundingClientRect();
+      return ((e.clientX - rect.left) / rect.width) * 100;
+    }
+    stage.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      try { (stage as Element).setPointerCapture((e as PointerEvent).pointerId); } catch (_) {}
+      setPos(posFromEvent(e as PointerEvent));
+    });
+    stage.addEventListener('pointermove', (e) => { if (dragging) setPos(posFromEvent(e as PointerEvent)); });
+    stage.addEventListener('pointerup', () => { dragging = false; });
+    stage.addEventListener('pointercancel', () => { dragging = false; });
+    stage.addEventListener('keydown', (e) => {
+      const cur = parseFloat(stage!.getAttribute('aria-valuenow') || '50');
+      if ((e as KeyboardEvent).key === 'ArrowLeft') { setPos(cur - 4); e.preventDefault(); }
+      if ((e as KeyboardEvent).key === 'ArrowRight') { setPos(cur + 4); e.preventDefault(); }
+    });
+    setPos(50);
+  }
+  initCompare();
+</script>

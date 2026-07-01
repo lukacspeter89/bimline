@@ -1,0 +1,46 @@
+---
+interface Props {
+  value: number;
+  label: string;
+  prefix?: string;
+  suffix?: string;
+}
+const { value, label, prefix = '', suffix = '' } = Astro.props;
+---
+<div class="card rounded-xl p-5" data-reveal>
+  <div class="font-display tracking-wide text-3xl font-bold text-accent">{prefix}<span data-count-to={value}>0</span>{suffix}</div>
+  <div class="text-sm text-muted mt-1">{label}</div>
+</div>
+
+<script>
+  function initCounters() {
+    const counters = document.querySelectorAll<HTMLElement>('[data-count-to]');
+    if (!counters.length) return;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const animate = (el: HTMLElement) => {
+      const target = parseInt(el.getAttribute('data-count-to') || '0', 10) || 0;
+      if (reduceMotion || !('IntersectionObserver' in window)) { el.textContent = String(target); return; }
+      const dur = 900;
+      const start = performance.now();
+      function step(now: number) {
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = String(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    };
+    if (!('IntersectionObserver' in window)) { counters.forEach(animate); return; }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { animate(entry.target as HTMLElement); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.4 });
+    counters.forEach((el) => io.observe(el));
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCounters);
+  } else {
+    initCounters();
+  }
+</script>

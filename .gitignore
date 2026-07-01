@@ -1,4 +1,13 @@
-.DS_Store
-Thumbs.db
+# Astro build output és cache
+dist/
+.astro/
+
+# Dependencies
 node_modules/
-*.log
+
+# Környezeti változók
+.env
+.env.production
+
+# Editor/OS
+.DS_Store

@@ -1,0 +1,459 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CompareSlider from '../components/CompareSlider.astro';
+import StatCounter from '../components/StatCounter.astro';
+import BrandMarquee from '../components/BrandMarquee.astro';
+import ReferenceMap from '../components/ReferenceMap.astro';
+import LatestArticles from '../components/LatestArticles.astro';
+import CTASection from '../components/CTASection.astro';
+import { projects, categoryMeta, type ProjectCategory } from '../data/projects';
+
+const categories: { key: ProjectCategory | 'all'; label: string }[] = [
+  { key: 'all', label: 'Mind' },
+  { key: 'ipar', label: 'Ipar & gyógyszertechnológia' },
+  { key: 'strategiai', label: 'Stratégiai & egészségügy' },
+  { key: 'kozulet', label: 'Kereskedelmi & középület' },
+  { key: 'lako', label: 'Lakóingatlan' },
+];
+---
+
+<BaseLayout
+  title="BIMLine Gépész Kft. — Ütközésmentes épületgépészeti tervezés"
+  description="A budapesti BIMLine Gépész Kft. teljes körű épületgépészeti (MEP) tervezést, épületdiagnosztikát és beruházási tanácsadást nyújt, BIM LOD 300 szintig, kivitelezésre optimalizálva."
+  path="/"
+>
+  <!-- ============ HERO ============ -->
+  <section id="hero" class="relative pt-16 pb-20 lg:pb-28 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">MEP · BIM · LOD 300</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Ütközésmentes gépészeti tervezés.
+          <span class="block text-accent">Kivitelezésre optimalizálva.</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          A budapesti BIMLine Gépész Kft. teljes körű épületgépészeti tervezést, épületdiagnosztikát
+          és beruházási tanácsadást nyújt bármilyen léptékben. Alapvetően 2D-s tervezési módszerrel
+          dolgozunk, komplex gépészeti csomópontok esetén pedig — igény szerint — 3D BIM-koordinációt
+          is biztosítunk.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/#kapcsolat" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
+          <a href="/#referenciak" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Projektportfólió</a>
+        </div>
+      </div>
+
+      <CompareSlider />
+    </div>
+  </section>
+
+  <!-- ============ MIÉRT MINKET (bemutatkozás + statisztikák + munkamódszer) ============ -->
+  <section id="miert-minket" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-center">
+      <div data-reveal>
+        <p class="eyebrow mb-3">Miért minket</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Mérnöki precizitás, BIM-alapú gondolkodás.
+        </h2>
+        <p class="mt-5 text-muted leading-relaxed">
+          Innovatív mérnökirodaként teljes körű MEP-tervezést, épületdiagnosztikát és beruházási
+          tanácsadást nyújtunk. A 3 fős, magasan képzett állandó csapatunk és megbízható alvállalkozói
+          hálózatunk rugalmas, precíz és energiahatékony megoldásokat ad — lakóépülettől a kritikus
+          ipari infrastruktúráig.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <StatCounter value={3} label="fős állandó mérnökcsapat" />
+        <StatCounter value={300} prefix="LOD " label="BIM-koordinációs szint" />
+        <StatCounter value={244} label="projekt-helyszín országszerte" />
+        <StatCounter value={2} suffix=" MW" label="legnagyobb tervezett rendszer" />
+      </div>
+    </div>
+
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 mt-16">
+      <div class="max-w-2xl mb-12" data-reveal>
+        <p class="eyebrow mb-3">Munkamódszer</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Négy lépés a skicctől az ütközésmentes kivitelezésig.
+        </h2>
+        <p class="mt-3 text-muted">A klasszikus mérnöki tervezést BIM-alapú koordinációval ötvözzük — így a hiba a képernyőn derül ki, nem a helyszínen.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">01</div>
+          <h3 class="font-display font-semibold text-lg">Egyeztetés &amp; bejárás</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Igényfelmérés, helyszíni bejárás, meglévő tervezési alapok (skicc, DWG, BIM) átvétele és állapotfelmérés.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">02</div>
+          <h3 class="font-display font-semibold text-lg">Tervezés <span class="text-xs text-muted font-sans font-normal">(BIM opcionálisan)</span></h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Alapesetben 2D-s kiviteli tervezés; komplex gépészeti csomópontoknál, igény szerint, BIM-modellezés és ütközésvizsgálat is beépül a folyamatba, akár LOD 300 szintig.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">03</div>
+          <h3 class="font-display font-semibold text-lg">Kiviteli dokumentáció</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Kivitelezésre kész tervdokumentáció, méretezés, energetikai és beruházás-megtérülési (ROI) számítások.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">04</div>
+          <h3 class="font-display font-semibold text-lg">Kivitelezés-támogatás</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Tervezői művezetés, helyszíni egyeztetés a kivitelezővel, üzembe helyezés és a megvalósulási dokumentáció lezárása.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SZOLGÁLTATÁSOK ============ -->
+  <section id="szolgaltatasok" class="py-16 lg:py-24">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Szolgáltatások</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Amiben a legmagasabb mérnöki színvonalon dolgozunk.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/><path d="M7 3v18M17 3v18"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">Épületgépészeti tervezés</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Egyedi rendszerek lakóépületektől a komplex ipari technológiákig.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">BIM integráció <span class="text-xs text-muted font-sans font-normal">(opcionális)</span></h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Alapvetően 2D-s tervezéssel dolgozunk; komplex gépészeti csomópontok esetén, igény szerint, magas szintű 3D modellezést és koordinációt is biztosítunk akár LOD 300 szintig.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">Beruházási döntéstámogatás és megtérülés-számítás</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Rendszeroptimalizálás, beruházási döntéstámogatás és megtérülés-számítás (ROI) meglévő épületekhez.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5z"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">Kritikus infrastruktúrák</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Speciális hűtés és szellőztetés adatközpontok, honvédségi és egészségügyi létesítmények számára.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 card rounded-xl p-6 lg:p-8" data-reveal>
+        <p class="eyebrow mb-4">Mit csinálunk pontosan?</p>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
+          {[
+            'Energetikai felülvizsgálat',
+            'Épületdiagnosztika',
+            'Bejelentési / engedélyezési terv',
+            'Kiviteli terv',
+            'Megvalósulási terv',
+            'Fedvényterv',
+            'Épületgépészeti szakértés',
+          ].map((item) => (
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0"><path d="M20 6L9 17l-5-5"/></svg>
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <BrandMarquee />
+
+  <CTASection variant="konzultacio" />
+
+  <!-- ============ REFERENCIÁK ============ -->
+  <section id="referenciak" class="py-16 lg:py-24">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">Referenciák</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Projektportfólió</h2>
+        <p class="mt-3 text-muted">Lakóingatlantól az adatközpontig — méret, teljesítmény és komplexitás szerint.</p>
+      </div>
+
+      <div id="projectFilters" class="flex flex-wrap gap-2 mb-8">
+        {categories.map((c, i) => (
+          <button class="chip px-4 py-2 rounded-full border border-line text-sm" data-filter={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.label}</button>
+        ))}
+      </div>
+
+      <div id="projectGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {projects.map((p) => (
+          <article class="project-card card rounded-xl p-6 flex flex-col" data-cat={p.cat}>
+            <div class="flex items-center justify-between mb-4">
+              <span class:list={["eyebrow", categoryMeta[p.cat].color]}>{categoryMeta[p.cat].label}</span>
+              <span class:list={["font-display tracking-wide text-sm font-bold", categoryMeta[p.cat].color]}>{p.metric}</span>
+            </div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{p.title}</h3>
+            <div class="text-xs text-muted font-display tracking-wide mt-1">{p.loc}</div>
+            <p class="text-sm text-muted mt-3 leading-relaxed flex-1">{p.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ReferenceMap />
+
+  <!-- ============ ENERGETIKAI ELEMZÉS CTA ============ -->
+  <section id="energetika" class="py-16 lg:py-24 bg-surface/40 border-y border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 text-center" data-reveal>
+      <p class="eyebrow mb-3">Energetikai elemzés</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Kérjen egyedi energetikai elemzést</h2>
+      <p class="mt-4 text-muted leading-relaxed">
+        A fűtési, hűtési és szellőzési rendszerek megtakarítási potenciálja és megtérülése épületenként
+        eltérő, ezért nem dolgozunk általános, online becslőkkel. Minden esetben helyszíni felméréssel
+        alátámasztott, részletes egyedi számítást készítünk.
+      </p>
+      <a href="/#kapcsolat" class="mt-8 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Energetikai elemzés kérése</a>
+    </div>
+  </section>
+
+  <!-- ============ RÓLUNK ============ -->
+  <section id="rolunk" class="py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Rólunk</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">A BIMLine Gépész Kft.</h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        A BIMLine Gépész Kft. budapesti székhelyű mérnökirodaként épületgépészeti tervezéssel,
+        épületdiagnosztikával és beruházási tanácsadással foglalkozik. Célunk, hogy a tervezőasztalon
+        derüljön ki minden ütközés és tervezési hiba — ne a kivitelezés közben, drágán és időveszteséggel.
+      </p>
+      <p class="mt-4 text-muted leading-relaxed">
+        Szűk, állandó mérnökcsapatunk és megbízható alvállalkozói hálózatunk révén rugalmasan
+        alkalmazkodunk a projekt méretéhez és összetettségéhez — legyen szó egy társasházi
+        felújításról vagy egy kritikus infrastruktúra teljes gépészeti rendszeréről.
+      </p>
+    </div>
+  </section>
+
+  <LatestArticles />
+
+  <!-- ============ KAPCSOLAT ============ -->
+  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Kapcsolat</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Építsük együtt a jövőt!</h2>
+        <p class="mt-3 text-muted">Írja le röviden a projektet — 1 munkanapon belül válaszolunk.</p>
+      </div>
+
+      <form id="contactForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Név</label>
+            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Cég</label>
+            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">E-mail cím</label>
+            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Telefonszám <span class="text-muted font-normal">(opcionális)</span></label>
+            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Projekt leírása</label>
+          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <fieldset>
+          <legend class="block text-sm font-medium mb-3">Rendelkezésre álló tervezési alapok</legend>
+          <div class="grid sm:grid-cols-2 gap-2.5 text-sm">
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="skicc" class="accent-accent w-4 h-4"> Építész skicc
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="dwg" class="accent-accent w-4 h-4"> 2D DWG
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="bim" class="accent-accent w-4 h-4"> 3D BIM modell (IFC / Revit)
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="energetika" class="accent-accent w-4 h-4"> Energetikai leírás
+            </label>
+          </div>
+        </fieldset>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Tervrajzok megosztása</label>
+          <textarea name="linkek" rows="3" placeholder="Ha a fájlok (DWG, IFC, RVT) már rendelkezésre állnak, illessze be ide a letöltő linket (WeTransfer, Google Drive, OneDrive), vagy jelezze, ha e-mailben küldené." class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+          <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez.</span>
+        </label>
+
+        <button type="submit" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Ajánlatkérés küldése
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-base); border-color: var(--color-accent); font-weight: 600; }
+</style>
+
+<script>
+  const filterBar = document.getElementById('projectFilters');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.project-card'));
+  filterBar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-filter]') as HTMLButtonElement | null;
+    if (!btn) return;
+    filterBar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const filter = btn.dataset.filter;
+    cards.forEach((card) => {
+      card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
+    });
+  });
+</script>
+
+<script>
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const contactForm = document.getElementById('contactForm') as HTMLFormElement;
+
+  function setFieldError(el: HTMLElement, msg: string) {
+    el.classList.add('border-red-500');
+    let err = el.parentElement!.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      el.parentElement!.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el: HTMLElement) {
+    el.classList.remove('border-red-500');
+    const err = el.parentElement!.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function validateContact() {
+    let ok = true;
+    const f = contactForm;
+    const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [f.nev, 'Kérjük, adja meg a nevét.'],
+      [f.email, 'Adja meg az e-mail címét.'],
+      [f.leiras, 'Írja le röviden a projektet.'],
+    ];
+    required.forEach(([el, msg]) => {
+      if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+      else clearFieldError(el);
+    });
+    if (f.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) {
+      setFieldError(f.email, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+    }
+    if (f.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(f.telefon.value.trim())) {
+      setFieldError(f.telefon, 'A telefonszám formátuma nem megfelelő.'); ok = false;
+    } else {
+      clearFieldError(f.telefon);
+    }
+    if (!f.gdpr.checked) {
+      const box = f.gdpr.closest('label')!;
+      if (!box.querySelector('.field-error')) {
+        const err = document.createElement('p');
+        err.className = 'field-error text-xs text-red-400 mt-1';
+        err.textContent = 'A kapcsolatfelvételhez a hozzájárulás szükséges.';
+        box.appendChild(err);
+      }
+      ok = false;
+    } else {
+      const e = f.gdpr.closest('label')!.querySelector('.field-error');
+      if (e) e.remove();
+    }
+    return ok;
+  }
+
+  function buildMailBody(f: HTMLFormElement) {
+    const alapok = Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', ') || '—';
+    return [
+      'Név: ' + f.nev.value.trim(),
+      'Cég: ' + (f.ceg.value.trim() || '—'),
+      'E-mail: ' + f.email.value.trim(),
+      'Telefon: ' + (f.telefon.value.trim() || '—'),
+      '',
+      'Projekt leírása:',
+      f.leiras.value.trim(),
+      '',
+      'Rendelkezésre álló tervezési alapok: ' + alapok,
+      '',
+      'Tervrajz-linkek:',
+      (f.linkek.value.trim() || '—'),
+    ].join('\n');
+  }
+
+  function fieldData(f: HTMLFormElement) {
+    return {
+      nev: f.nev.value.trim(),
+      ceg: f.ceg.value.trim(),
+      email: f.email.value.trim(),
+      telefon: f.telefon.value.trim(),
+      leiras: f.leiras.value.trim(),
+      alapok: Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', '),
+      linkek: f.linkek.value.trim(),
+    };
+  }
+
+  function sendMailto(f: HTMLFormElement) {
+    const subject = encodeURIComponent('Ajánlatkérés – ' + (f.ceg.value.trim() || f.nev.value.trim()));
+    const body = encodeURIComponent(buildMailBody(f));
+    window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+  }
+
+  contactForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateContact()) return;
+
+    const btn = contactForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true;
+      btn.textContent = 'Küldés…';
+      try {
+        const params = new URLSearchParams(fieldData(contactForm) as Record<string, string>);
+        await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+        btn.textContent = 'Köszönjük! Hamarosan jelentkezünk.';
+        btn.classList.add('bg-belimo');
+        contactForm.reset();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        sendMailto(contactForm);
+      }
+      return;
+    }
+    sendMailto(contactForm);
+    btn.textContent = 'Levelezőprogram megnyitva — köszönjük!';
+    btn.classList.add('bg-belimo');
+  });
+
+  contactForm?.querySelectorAll('input, textarea').forEach((el) => {
+    el.addEventListener('input', () => clearFieldError(el as HTMLElement));
+  });
+</script>

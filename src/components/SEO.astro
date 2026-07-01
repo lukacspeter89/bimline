@@ -1,0 +1,43 @@
+---
+import { SITE } from '../lib/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path?: string; // pl. "/szolgaltatasok/bim-tervezes/"
+  image?: string; // abszolút vagy /-rel kezdődő OG kép útvonal
+  type?: 'website' | 'article';
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  path = Astro.url.pathname,
+  image = '/og-image.png',
+  type = 'website',
+  noindex = false,
+} = Astro.props;
+
+const canonicalURL = new URL(path, SITE.url).toString();
+const ogImageURL = image.startsWith('http') ? image : new URL(image, SITE.url).toString();
+const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImageURL} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:locale" content="hu_HU" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />

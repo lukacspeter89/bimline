@@ -1,0 +1,40 @@
+---
+interface Props {
+  variant?: 'ajanlat' | 'konzultacio' | 'kapcsolat';
+  title?: string;
+  description?: string;
+}
+const {
+  variant = 'ajanlat',
+  title,
+  description,
+} = Astro.props;
+
+const presets = {
+  ajanlat: {
+    title: 'Kérjen ajánlatot projektjére',
+    description: 'Írja le röviden a feladatot — 1 munkanapon belül válaszolunk, és megmondjuk, hogyan tudunk segíteni.',
+    cta: 'Ajánlatkérés',
+  },
+  konzultacio: {
+    title: 'Bizonytalan, hogy mire van szüksége?',
+    description: 'Kérjen ingyenes, kötelezettségmentes konzultációt — átbeszéljük a projekt kereteit, és javaslatot teszünk a megfelelő megoldásra.',
+    cta: 'Ingyenes konzultáció kérése',
+  },
+  kapcsolat: {
+    title: 'Vegye fel velünk a kapcsolatot',
+    description: 'Kérdése van a szolgáltatásainkkal kapcsolatban? Írjon nekünk, örömmel válaszolunk.',
+    cta: 'Kapcsolatfelvétel',
+  },
+};
+
+const preset = presets[variant];
+---
+
+<section class="py-14 lg:py-20 bg-surface/40 border-y border-line/60">
+  <div class="max-w-3xl mx-auto px-5 lg:px-8 text-center" data-reveal>
+    <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">{title || preset.title}</h2>
+    <p class="mt-4 text-muted leading-relaxed">{description || preset.description}</p>
+    <a href="/#kapcsolat" class="mt-8 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">{preset.cta}</a>
+  </div>
+</section>

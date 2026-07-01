@@ -1,0 +1,47 @@
+---
+import { SITE, getSocialLinks } from '../lib/site';
+
+const sameAs = getSocialLinks().map((s) => s.url);
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: SITE.name,
+  url: SITE.url,
+  email: SITE.email,
+  image: `${SITE.url}/og-image.png`,
+  description: SITE.description,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: SITE.address.streetAddress,
+    addressLocality: SITE.address.addressLocality,
+    postalCode: SITE.address.postalCode,
+    addressCountry: SITE.address.addressCountry,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: SITE.geo.latitude,
+    longitude: SITE.geo.longitude,
+  },
+  areaServed: 'HU',
+  priceRange: 'Egyedi ajánlat alapján',
+  founder: {
+    '@type': 'Organization',
+    name: SITE.founder,
+  },
+  serviceType: SITE.serviceTypes,
+  ...(SITE.telephone ? { telephone: SITE.telephone } : {}),
+  ...(SITE.openingHours?.length ? { openingHoursSpecification: SITE.openingHours.map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h })) } : {}),
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Épületgépészeti szolgáltatások',
+    itemListElement: SITE.serviceTypes.map((s) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: s },
+    })),
+  },
+  ...(sameAs.length ? { sameAs } : {}),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

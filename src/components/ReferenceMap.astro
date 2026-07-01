@@ -1,0 +1,68 @@
+---
+// Referenciatérkép — Leaflet, 244 projekt-helyszín. Csak a főoldalon jelenik meg.
+import { mapPoints, cityCategories, DEFAULT_CAT } from '../data/map-points';
+---
+
+<section id="terkep" class="py-16 lg:py-20 border-t border-line/60">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 mb-6" data-reveal>
+    <p class="eyebrow mb-3">Lefedettség</p>
+    <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Ahol már dolgoztunk</h2>
+    <p class="mt-3 text-muted max-w-2xl">244 projekt-helyszín országszerte. A markerekre kattintva csak a település és a gépészeti kategória jelenik meg.</p>
+  </div>
+  <div class="px-5 lg:px-8">
+    <div id="map" class="mx-auto h-[480px] w-full lg:w-3/5 rounded-2xl border border-line overflow-hidden z-0"></div>
+    <p class="mx-auto mt-3 w-full lg:w-3/5 text-xs text-muted font-display tracking-wide">Adatvédelem: a markerek csak települést és gépészeti kategóriát jelenítenek meg, konkrét partnernév nélkül.</p>
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" is:inline></script>
+
+<style is:global>
+  .leaflet-container { background: #15151F; }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #1B1B27; color: #EDEFF4; border: 1px solid #2E2E42; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+  .leaflet-popup-content { margin: 12px 14px; font-family: 'Inter', sans-serif; }
+  .leaflet-popup-content b { font-family: "Space Grotesk", sans-serif; }
+  .leaflet-popup-content .cat { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 13px; color: #2B6FFF; display:block; margin-top:4px; }
+  .leaflet-popup-close-button { color: #9FA7B8 !important; }
+  .leaflet-control-attribution { background: rgba(21,21,31,.7) !important; color: #9FA7B8 !important; }
+  .leaflet-control-attribution a { color: #2B6FFF !important; }
+  .map-dot { filter: drop-shadow(0 0 5px rgba(43,111,255,.8)); }
+</style>
+
+<script define:vars={{ mapPoints, cityCategories, DEFAULT_CAT }}>
+  function initMap() {
+    if (typeof L === 'undefined' || !document.getElementById('map')) return;
+    const map = L.map('map', {
+      scrollWheelZoom: true,
+      zoomControl: false,
+      attributionControl: true,
+      minZoom: 6,
+    }).setView([47.1625, 19.5033], 7);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(map);
+
+    const sharedRenderer = L.svg({ padding: 0.5 });
+    const bounds = [];
+    mapPoints.forEach(([city, lat, lng]) => {
+      const cat = cityCategories[city] || DEFAULT_CAT;
+      L.circleMarker([lat, lng], {
+        renderer: sharedRenderer, className: 'map-dot',
+        radius: 6, color: '#2B6FFF', weight: 1.5,
+        fillColor: '#2B6FFF', fillOpacity: 0.7
+      }).addTo(map)
+        .bindPopup('<b>' + city + '</b><span class="cat">' + cat + '</span>');
+      bounds.push([lat, lng]);
+    });
+    if (bounds.length) map.fitBounds(bounds, { padding: [8, 8] });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMap);
+  } else {
+    initMap();
+  }
+</script>
