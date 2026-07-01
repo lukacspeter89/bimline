@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.bimline.hu/sitemap.xml
+# sync-test-marker

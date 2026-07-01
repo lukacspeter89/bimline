@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BIMLine Gépész Kft. — Ütközésmentes épületgépészeti tervezés</title>
+<meta name="description" content="A budapesti BIMLine Gépész Kft. teljes körű épületgépészeti (MEP) tervezést, épületdiagnosztikát és beruházási tanácsadást nyújt, BIM LOD 300 szintig, kivitelezésre optimalizálva." />
+<link rel="canonical" href="https://www.bimline.hu/" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.svg" />
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="BIMLine Gépész Kft." />
+<meta property="og:title" content="BIMLine Gépész Kft. — Ütközésmentes épületgépészeti tervezés" />
+<meta property="og:description" content="Teljes körű épületgépészeti (MEP) tervezés, BIM-koordináció LOD 300 szintig, épületdiagnosztika és beruházási tanácsadás — Budapest." />
+<meta property="og:image" content="https://www.bimline.hu/og-image.png" />
+<meta property="og:url" content="https://www.bimline.hu/" />
+<meta property="og:locale" content="hu_HU" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="BIMLine Gépész Kft. — Ütközésmentes épületgépészeti tervezés" />
+<meta name="twitter:description" content="Teljes körű épületgépészeti (MEP) tervezés, BIM-koordináció, épületdiagnosztika és beruházási tanácsadás." />
+
+<!-- Strukturált adat (JSON-LD) — Google/kereső riches results -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "BIMLine Gépész Kft.",
+  "url": "https://www.bimline.hu/",
+  "email": "hello@bimline.hu",
+  "image": "https://www.bimline.hu/og-image.png",
+  "description": "Teljes körű épületgépészeti (MEP) tervezés, BIM-koordináció (LOD 300), épületdiagnosztika és beruházási tanácsadás.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Ferenczy István utca 28.",
+    "addressLocality": "Budapest",
+    "postalCode": "1053",
+    "addressCountry": "HU"
+  },
+  "areaServed": "HU",
+  "priceRange": "Egyedi ajánlat alapján",
+  "sameAs": []
+}
+</script>
+
+<!-- ============================================================
+     KÜLSŐ FORRÁSOK: Tailwind (CDN), Google Fonts
+     Megjegyzés: a Tailwind CDN futásidőben olvassa a configot.
+     A Leaflet + Chart.js a FÁZIS 3 / FÁZIS 4 során kerül be ide.
+     ============================================================ -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Leaflet (FÁZIS 3 – referenciatérkép) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Chart.js (FÁZIS 4 – ROI-görbe) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- ============================================================
+     DESIGN TOKENS (Tailwind config)
+     A FÁZIS 1-ben jóváhagyott színpaletta és tipográfia.
+     ============================================================ -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          base:       '#0D0D1A',   /* fő háttér – deep antracit */
+          surface:    '#14141F',   /* kártyák, sávok */
+          surface2:   '#1C1C2B',   /* hover / kiemelt panel */
+          line:       '#262638',   /* finom elválasztó vonalak */
+          accent:     '#2B6FFF',   /* elsődleges neon-kék */
+          accentDeep: '#1E1EF0',   /* brand-kék, gradiens vég */
+          belimo:     '#8FD14F',   /* másodlagos neon-zöld hangsúly */
+          ink:        '#F5F7FA',   /* főszöveg */
+          muted:      '#9AA3B5',   /* másodlagos szöveg */
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+          sans:    ['Inter', 'system-ui', 'sans-serif'],
+          mono:    ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        },
+        maxWidth: { '8xl': '88rem' },
+      }
+    }
+  }
+</script>
+
+<!-- ============================================================
+     EGYEDI CSS: amit a Tailwind CDN nehezen ad ki
+     (blueprint-rács textúra, glow, marquee, scrollbar, range)
+     ============================================================ -->
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #0D0D1A; color: #F5F7FA; }
+
+  /* Blueprint / CAD rács textúra a hero háttérhez (mérnöki utalás) */
+  .blueprint-grid {
+    background-image:
+      linear-gradient(rgba(43,111,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43,111,255,0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 35%, transparent 75%);
+            mask-image: radial-gradient(ellipse 80% 70% at 50% 0%, #000 35%, transparent 75%);
+  }
+
+  /* Neon-glow segédosztályok (nem fényes szín, hanem finom ragyogás) */
+  .glow-accent { box-shadow: 0 0 24px rgba(43,111,255,0.25); }
+  .glow-soft   { box-shadow: 0 0 40px rgba(43,111,255,0.12); }
+
+  /* Kártya alap-viselkedés */
+  .card {
+    background: #14141F;
+    border: 1px solid #262638;
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(43,111,255,0.5);
+    box-shadow: 0 0 32px rgba(43,111,255,0.18);
+  }
+
+  /* Eyebrow / mérnöki címke (mono) */
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-size: .72rem;
+    color: #2B6FFF;
+  }
+
+  /* Márka-futószalag (marquee) – tisztán CSS animáció */
+  .marquee { overflow: hidden; }
+  .marquee__track {
+    display: flex; width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+  .marquee:hover .marquee__track { animation-play-state: paused; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* Szűrő-csip aktív állapot */
+  .chip { transition: all .2s ease; }
+  .chip[aria-pressed="true"] {
+    background: #2B6FFF; color: #0D0D1A; border-color: #2B6FFF; font-weight: 600;
+  }
+
+  /* LOD range-csúszka stílusa (a húzás-logika a FÁZIS 3-ban jön) */
+  input[type="range"].lod-range { -webkit-appearance: none; appearance: none; height: 4px; background: #262638; border-radius: 999px; outline: none; }
+  input[type="range"].lod-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
+    background: #2B6FFF; border: 3px solid #0D0D1A; cursor: ew-resize; box-shadow: 0 0 16px rgba(43,111,255,0.6);
+  }
+  input[type="range"].lod-range::-moz-range-thumb {
+    width: 22px; height: 22px; border-radius: 50%; background: #2B6FFF; border: 3px solid #0D0D1A; cursor: ew-resize;
+  }
+
+  /* Egyedi görgetősáv */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #0D0D1A; }
+  ::-webkit-scrollbar-thumb { background: #262638; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #2B6FFF; }
+
+  /* Leaflet sötét téma: popup + zoom-vezérlők + marker-glow */
+  .leaflet-container { background: #0D0D1A; }
+  .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #14141F; color: #F5F7FA; border: 1px solid #262638; box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+  .leaflet-popup-content { margin: 12px 14px; font-family: 'Inter', sans-serif; }
+  .leaflet-popup-content b { font-family: "Space Grotesk", sans-serif; }
+  .leaflet-popup-content .cat { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #2B6FFF; display:block; margin-top:4px; }
+  .leaflet-popup-close-button { color: #9AA3B5 !important; }
+  .leaflet-bar a { background: #14141F; color: #F5F7FA; border-color: #262638; }
+  .leaflet-bar a:hover { background: #1C1C2B; }
+  .leaflet-control-attribution { background: rgba(13,13,26,.7) !important; color: #9AA3B5 !important; }
+  .leaflet-control-attribution a { color: #2B6FFF !important; }
+  .map-dot { filter: drop-shadow(0 0 5px rgba(43,111,255,.8)); }
+
+  /* Akadálymentesség: látható fókusz + mozgáscsökkentés tisztelete */
+  :focus-visible { outline: 2px solid #2B6FFF; outline-offset: 2px; }
+
+  /* Görgetésre megjelenő (reveal) elemek */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  [data-reveal].is-visible { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .marquee__track { animation: none; }
+    .card { transition: none; }
+    [data-reveal] { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+
+<body class="antialiased selection:bg-accent/30">
+
+<!-- ============================================================
+     SZEKCIÓ: NAVIGÁCIÓ (sticky)
+     Áttetsző + blur, alul vékony neon vonal. Horgony-linkek.
+     ============================================================ -->
+<header id="nav" class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-base/70 border-b border-line/70">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+    <a href="#hero" class="flex items-center gap-3">
+      <img src="bimline-logo.png" alt="BIMLine Gépész Kft." class="h-6 w-auto" />
+      <span class="hidden sm:inline text-muted font-sans text-xs border-l border-line pl-3">Gépész Kft.</span>
+    </a>
+
+    <!-- Desktop menü -->
+    <nav class="hidden lg:flex items-center gap-8 text-sm text-muted font-medium">
+      <a href="#kompetenciak" class="hover:text-ink transition">Kompetenciák</a>
+      <a href="#folyamat" class="hover:text-ink transition">Munkamódszer</a>
+      <a href="#projektek" class="hover:text-ink transition">Projektek</a>
+      <a href="#roi" class="hover:text-ink transition">ROI-kalkulátor</a>
+      <a href="#terkep" class="hover:text-ink transition">Hol dolgoztunk</a>
+      <a href="#kapcsolat" class="px-4 py-2 rounded-lg bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
+    </nav>
+
+    <!-- Mobil menü-gomb -->
+    <button id="menuBtn" class="lg:hidden p-2 -mr-2 text-ink" aria-label="Menü megnyitása" aria-expanded="false">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobil legördülő -->
+  <div id="mobileMenu" class="lg:hidden hidden border-t border-line bg-base/95 backdrop-blur-md">
+    <nav class="px-5 py-4 flex flex-col gap-1 text-sm">
+      <a href="#kompetenciak" class="py-2.5 text-muted hover:text-ink">Kompetenciák</a>
+      <a href="#folyamat" class="py-2.5 text-muted hover:text-ink">Munkamódszer</a>
+      <a href="#projektek" class="py-2.5 text-muted hover:text-ink">Projektek</a>
+      <a href="#roi" class="py-2.5 text-muted hover:text-ink">ROI-kalkulátor</a>
+      <a href="#terkep" class="py-2.5 text-muted hover:text-ink">Hol dolgoztunk</a>
+      <a href="#kapcsolat" class="mt-2 py-2.5 text-center rounded-lg bg-accent text-base font-semibold">Ajánlatkérés</a>
+    </nav>
+  </div>
+</header>
+
+
+<!-- ============================================================
+     SZEKCIÓ: HERO + INTERAKTÍV LOD-CSÚSZKA
+     H1 + alcím + 2 CTA. A LOD-réteg crossfade húzás-logikája
+     a FÁZIS 3-ban épül meg (most statikus váz + range-csúszka).
+     ============================================================ -->
+<section id="hero" class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden">
+  <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+  <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+  <div class="relative max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="max-w-3xl">
+      <p class="eyebrow mb-4">MEP · BIM · LOD 300</p>
+      <h1 class="font-display font-bold leading-[1.05] tracking-tight text-[clamp(2.5rem,6vw,4.5rem)]">
+        Ütközésmentes gépészeti tervezés.
+        <span class="block text-accent">Kivitelezésre optimalizálva.</span>
+      </h1>
+      <p class="mt-6 text-lg text-muted max-w-2xl">
+        A budapesti BIMLine Gépész Kft. a klasszikus mérnöki tapasztalatot a legmodernebb
+        BIM-technológiákkal ötvözi — teljes körű épületgépészeti tervezés, épületdiagnosztika
+        és beruházási tanácsadás bármilyen léptékben.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#kapcsolat" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
+        <a href="#projektek" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Projektportfólió</a>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         Építészet ↔ Gépészet kép-összehasonlító csúszka
+         Bal oldal: építészeti IFC-nézet | Jobb oldal: gépészeti IFC-nézet
+         A függőleges vonal húzásával az egyik kép a másikba megy át.
+         (Mindkét kép azonos méretű: 1720×1135)
+         ============================================================ -->
+    <div class="mt-14 lg:mt-20 card rounded-2xl p-4 sm:p-6 glow-soft">
+      <div class="flex items-center justify-between mb-4">
+        <span class="eyebrow">BIM-koordináció</span>
+        <span class="font-mono text-sm text-belimo">Építészet ↔ Gépészet</span>
+      </div>
+
+      <div id="compareStage"
+           class="relative aspect-[1720/1135] rounded-xl overflow-hidden border border-line select-none cursor-ew-resize touch-none"
+           role="slider" tabindex="0" aria-label="Építészet–gépészet összehasonlító csúszka"
+           aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+        <!-- Alsó réteg: gépészet (a vonaltól jobbra látszik) -->
+        <img src="ifc-gepesz.jpg" alt="Gépészeti (MEP) IFC-modell"
+             class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false" />
+        <!-- Felső réteg: építészet, balról a vonalig (clip-path) -->
+        <img id="cmpTop" src="ifc-epitesz.jpg" alt="Építészeti IFC-modell"
+             class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false"
+             style="clip-path: inset(0 50% 0 0)" />
+
+        <!-- oldalcímkék -->
+        <span class="absolute top-3 left-3 font-mono text-[11px] text-accent bg-base/70 px-2 py-1 rounded pointer-events-none">Építészet</span>
+        <span class="absolute top-3 right-3 font-mono text-[11px] text-belimo bg-base/70 px-2 py-1 rounded pointer-events-none">Gépészet</span>
+
+        <!-- függőleges osztóvonal + fogantyú -->
+        <div id="cmpDivider" class="absolute top-0 bottom-0 w-0.5 bg-accent pointer-events-none" style="left:50%">
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-accent grid place-items-center glow-accent">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D0D1A" stroke-width="2.5"><path d="M8 7l-4 5 4 5M16 7l4 5-4 5"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-3 text-xs text-muted text-center font-mono">Húzd a vonalat — balra az építészeti, jobbra a gépészeti modell</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: BEMUTATKOZÁS + CSAPAT-STATISZTIKÁK
+     ============================================================ -->
+<section id="rolunk" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-center">
+    <div data-reveal>
+      <p class="eyebrow mb-3">Rólunk</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">
+        Mérnöki precizitás, BIM-alapú gondolkodás.
+      </h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        Innovatív mérnökirodaként teljes körű MEP-tervezést, épületdiagnosztikát és beruházási
+        tanácsadást nyújtunk. A 3 fős, magasan képzett állandó csapatunk és megbízható alvállalkozói
+        hálózatunk rugalmas, precíz és energiahatékony megoldásokat ad — lakóépülettől a kritikus
+        ipari infrastruktúráig.
+      </p>
+    </div>
+
+    <!-- Mini-statisztika rács (számok mono fontban) -->
+    <div class="grid grid-cols-2 gap-4">
+      <div class="card rounded-xl p-5" data-reveal>
+        <div class="font-mono text-3xl font-bold text-accent"><span data-count-to="3">0</span></div>
+        <div class="text-sm text-muted mt-1">fős állandó mérnökcsapat</div>
+      </div>
+      <div class="card rounded-xl p-5" data-reveal>
+        <div class="font-mono text-3xl font-bold text-accent">LOD&nbsp;<span data-count-to="300">0</span></div>
+        <div class="text-sm text-muted mt-1">BIM-koordinációs szint</div>
+      </div>
+      <div class="card rounded-xl p-5" data-reveal>
+        <div class="font-mono text-3xl font-bold text-accent"><span data-count-to="244">0</span></div>
+        <div class="text-sm text-muted mt-1">projekt-helyszín országszerte</div>
+      </div>
+      <div class="card rounded-xl p-5" data-reveal>
+        <div class="font-mono text-3xl font-bold text-accent"><span data-count-to="2">0</span>&nbsp;MW</div>
+        <div class="text-sm text-muted mt-1">legnagyobb tervezett rendszer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: KOMPETENCIÁK & SZOLGÁLTATÁSOK (4 interaktív kártya)
+     ============================================================ -->
+<section id="kompetenciak" class="py-16 lg:py-24">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="max-w-2xl mb-10">
+      <p class="eyebrow mb-3">Kompetenciák</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">
+        Amiben a legmagasabb mérnöki színvonalon dolgozunk.
+      </h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- Kártya 1 -->
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/><path d="M7 3v18M17 3v18"/></svg>
+        </div>
+        <h3 class="font-display font-semibold text-lg">Épületgépészeti tervezés</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed">Egyedi rendszerek lakóépületektől a komplex ipari technológiákig.</p>
+      </article>
+      <!-- Kártya 2 -->
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+        </div>
+        <h3 class="font-display font-semibold text-lg">BIM integráció</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed">Magas szintű 3D modellezés és koordináció akár LOD 300 szintig — ütközésmentes kivitelezésért.</p>
+      </article>
+      <!-- Kártya 3 -->
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+        </div>
+        <h3 class="font-display font-semibold text-lg">Beruházási döntéstámogatás és megtérülés-számítás</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed">Rendszeroptimalizálás, beruházási döntéstámogatás és megtérülés-számítás (ROI) meglévő épületekhez.</p>
+      </article>
+      <!-- Kártya 4 -->
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5z"/></svg>
+        </div>
+        <h3 class="font-display font-semibold text-lg">Kritikus infrastruktúrák</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed">Speciális hűtés és szellőztetés adatközpontok, honvédségi és egészségügyi létesítmények számára.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: MÁRKA-FAL (GDPR-biztos B2B transzparencia)
+     Belimo Retrofit+ partner badge + monokróm márka-futószalag.
+     A logók helyén jelenleg szöveges placeholderek vannak.
+     ============================================================ -->
+<section id="markak" class="py-14 lg:py-16 border-y border-line/60 bg-surface/40">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-8" data-reveal>
+      <!-- Belimo partner kiemelés + RetroFIT+ jelentés leírása -->
+      <div class="shrink-0 lg:max-w-xs lg:pr-8 lg:border-r border-line">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-lg bg-belimo/15 grid place-items-center shrink-0">
+            <span class="inline-block w-4 h-4 rounded-full bg-belimo glow-soft"></span>
+          </div>
+          <div>
+            <div class="font-display font-semibold">Belimo RetroFIT+ Partner</div>
+            <div class="text-xs text-muted font-mono">Hivatalos gyári partnerstátusz</div>
+          </div>
+        </div>
+        <p class="text-xs text-muted leading-relaxed mt-4">
+          Hivatalos RetroFIT+ partnerként szabványos (EN ISO 52120-1) BACS-teljesítményértékelést
+          készítünk meglévő épületekhez. Az ügyfél egy részletes audit-jelentést kap, amely funkciónként
+          (fűtés, hűtés, szellőzés) értékeli a jelenlegi és az elérhető hatékonysági osztályt, és becslést
+          ad az energia-, CO₂- és költségmegtakarításra, valamint a megtérülésre. A jelentés konkrét
+          modernizációs javaslatokat sorol fel — nyomásfüggetlen szelepek, igényvezérelt szabályozás,
+          szivattyú-optimalizálás —, és ezekre épül a beágyazott ROI-becslő.
+        </p>
+      </div>
+
+      <!-- Alkalmazott technológiák – futószalag (JS tölti fel a 42 márkával) -->
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-muted mb-3">Rendszerek, melyekkel a legmagasabb mérnöki színvonalon tervezünk.</p>
+        <div class="marquee relative">
+          <div id="brandTrack" class="marquee__track gap-10 pr-10 text-muted/70 font-display font-semibold text-lg"></div>
+          <!-- Szélek elhalványítása -->
+          <div class="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-base to-transparent pointer-events-none"></div>
+          <div class="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-base to-transparent pointer-events-none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: MUNKAMÓDSZER (4 lépéses BIM-folyamat)
+     ============================================================ -->
+<section id="folyamat" class="py-16 lg:py-24 border-t border-line/60">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="max-w-2xl mb-12">
+      <p class="eyebrow mb-3">Munkamódszer</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">
+        Négy lépés a skicctől az ütközésmentes kivitelezésig.
+      </h2>
+      <p class="mt-3 text-muted">A klasszikus mérnöki tervezést BIM-alapú koordinációval ötvözzük — így a hiba a képernyőn derül ki, nem a helyszínen.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="font-mono text-sm text-accent mb-3">01</div>
+        <h3 class="font-display font-semibold text-lg">Egyeztetés &amp; bejárás</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Igényfelmérés, helyszíni bejárás, meglévő tervezési alapok (skicc, DWG, BIM) átvétele és állapotfelmérés.</p>
+      </article>
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="font-mono text-sm text-accent mb-3">02</div>
+        <h3 class="font-display font-semibold text-lg">BIM-modellezés &amp; koordináció</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Épületgépészeti rendszerek 3D modellezése akár LOD 300 szintig, ütközésvizsgálattal az építészeti és tartószerkezeti modellek ellenében.</p>
+      </article>
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="font-mono text-sm text-accent mb-3">03</div>
+        <h3 class="font-display font-semibold text-lg">Kiviteli dokumentáció</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Kivitelezésre kész tervdokumentáció, méretezés, energetikai és beruházás-megtérülési (ROI) számítások.</p>
+      </article>
+      <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+        <div class="font-mono text-sm text-accent mb-3">04</div>
+        <h3 class="font-display font-semibold text-lg">Kivitelezés-támogatás</h3>
+        <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Tervezői művezetés, helyszíni egyeztetés a kivitelezővel, üzembe helyezés és a megvalósulási dokumentáció lezárása.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: PROJEKTPORTFÓLIÓ (szűrhető rács) — FÁZIS 2 fő funkció
+     Szűrő-csipek + JS-ből renderelt kártyák (adatvezérelt).
+     Évszámok nélkül, méret/teljesítmény/komplexitás fókusszal.
+     ============================================================ -->
+<section id="projektek" class="py-16 lg:py-24">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="max-w-2xl mb-8">
+      <p class="eyebrow mb-3">Referenciák</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">Projektportfólió</h2>
+      <p class="mt-3 text-muted">Lakóingatlantól az adatközpontig — méret, teljesítmény és komplexitás szerint.</p>
+    </div>
+
+    <!-- Szűrő-csipek -->
+    <div id="projectFilters" class="flex flex-wrap gap-2 mb-8">
+      <button class="chip px-4 py-2 rounded-full border border-line text-sm" data-filter="all" aria-pressed="true">Mind</button>
+      <button class="chip px-4 py-2 rounded-full border border-line text-sm text-muted" data-filter="ipar" aria-pressed="false">Ipar &amp; gyógyszertechnológia</button>
+      <button class="chip px-4 py-2 rounded-full border border-line text-sm text-muted" data-filter="strategiai" aria-pressed="false">Stratégiai &amp; egészségügy</button>
+      <button class="chip px-4 py-2 rounded-full border border-line text-sm text-muted" data-filter="kozulet" aria-pressed="false">Kereskedelmi &amp; középület</button>
+      <button class="chip px-4 py-2 rounded-full border border-line text-sm text-muted" data-filter="lako" aria-pressed="false">Lakóingatlan</button>
+    </div>
+
+    <!-- Kártya-rács (JS tölti fel) -->
+    <div id="projectGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: REFERENCIATÉRKÉP (Leaflet) — FÁZIS 3
+     Teljes szélességű konténer. GDPR: marker-popup csak
+     "város + kategória", partnernév nélkül. A 244 helyszín
+     adata (map_points.json) készen áll a FÁZIS 3-hoz.
+     ============================================================ -->
+<section id="terkep" class="py-16 lg:py-20 border-t border-line/60">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 mb-6" data-reveal>
+    <p class="eyebrow mb-3">Lefedettség</p>
+    <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">Ahol már dolgoztunk</h2>
+    <p class="mt-3 text-muted max-w-2xl">244 projekt-helyszín országszerte. A markerekre kattintva csak a település és a gépészeti kategória jelenik meg.</p>
+  </div>
+  <div class="px-5 lg:px-8">
+    <div id="map" class="max-w-8xl mx-auto h-[480px] rounded-2xl border border-line overflow-hidden z-0"></div>
+    <p class="max-w-8xl mx-auto mt-3 text-xs text-muted font-mono">Adatvédelem: a markerek csak települést és gépészeti kategóriát jelenítenek meg, konkrét partnernév nélkül.</p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: BELIMO RETROFIT+ ROI-KALKULÁTOR — FÁZIS 4
+     2 oszlop: bemenet (form) | kimenet (Chart.js ROI-görbe).
+     A számítási logika és a grafikon a FÁZIS 4-ben épül meg.
+     ============================================================ -->
+<section id="roi" class="py-16 lg:py-24 bg-surface/40 border-y border-line/60">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8">
+    <div class="max-w-2xl mb-10">
+      <p class="eyebrow mb-3">Belimo Retrofit+</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">Modernizációs ROI-becslő</h2>
+      <p class="mt-3 text-muted">Becsülje meg meglévő rendszere szivattyú-energia megtakarítását és a megtérülési időt.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Bemenet -->
+      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
+        <div class="space-y-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Meglévő gépészeti rendszer jellege</label>
+            <select id="roiSystem" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+              <option value="old">Régi, nem modulációs szelepek</option>
+              <option value="constant">Konstans tömegáramú rendszer</option>
+              <option value="partial">Részben szabályozott rendszer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Épület hozzávetőleges alapterülete (m²)</label>
+            <input id="roiArea" type="number" min="0" placeholder="pl. 3000" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent font-mono" />
+          </div>
+          <p class="text-xs text-muted">A becslés tájékoztató jellegű — a pontos értékeket a hivatalos audit adja.</p>
+        </div>
+      </div>
+
+      <!-- Kimenet -->
+      <div class="card rounded-2xl p-6 lg:p-8 flex flex-col" data-reveal>
+        <div class="grid grid-cols-2 gap-4 mb-3">
+          <div>
+            <div class="eyebrow mb-1">Szivattyú-energia megtakarítás</div>
+            <div id="roiSaving" class="font-mono text-3xl font-bold text-belimo">— %</div>
+          </div>
+          <div>
+            <div class="eyebrow mb-1">Becsült megtérülés</div>
+            <div id="roiPayback" class="font-mono text-3xl font-bold text-accent">— év</div>
+          </div>
+        </div>
+        <div class="mb-5 text-sm text-muted">
+          Becsült éves energiamegtakarítás:
+          <span id="roiEnergy" class="font-mono text-belimo font-semibold">— MWh</span>
+        </div>
+        <div class="flex-1 min-h-[200px] rounded-xl bg-base border border-line p-3">
+          <canvas id="roiChart"></canvas>
+        </div>
+        <a href="#kapcsolat" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Kéri a részletes Belimo Retrofit+ auditot?
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: KAPCSOLAT (adatvédelmi-biztos, link-alapú űrlap)
+     A weboldal NEM fájlszerver — a tervrajzok csak linkként.
+     A küldés/validáció logikája a FÁZIS 4-ben jön.
+     ============================================================ -->
+<section id="kapcsolat" class="py-16 lg:py-24">
+  <div class="max-w-3xl mx-auto px-5 lg:px-8">
+    <div class="mb-8">
+      <p class="eyebrow mb-3">Kapcsolat</p>
+      <h2 class="font-display font-bold text-[clamp(1.8rem,3vw,2.4rem)] leading-tight">Építsük együtt a jövőt!</h2>
+      <p class="mt-3 text-muted">Írja le röviden a projektet — 1 munkanapon belül válaszolunk.</p>
+    </div>
+
+    <form id="contactForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div>
+          <label class="block text-sm font-medium mb-2">Név</label>
+          <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2">Cég</label>
+          <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-2">Elérhetőség (e-mail / telefon)</label>
+        <input type="text" name="elerhetoseg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-2">Projekt leírása</label>
+        <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+      </div>
+
+      <!-- Rendelkezésre álló tervezési alapok -->
+      <fieldset>
+        <legend class="block text-sm font-medium mb-3">Rendelkezésre álló tervezési alapok</legend>
+        <div class="grid sm:grid-cols-2 gap-2.5 text-sm">
+          <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+            <input type="checkbox" name="alap" value="skicc" class="accent-accent w-4 h-4"> Építész skicc
+          </label>
+          <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+            <input type="checkbox" name="alap" value="dwg" class="accent-accent w-4 h-4"> 2D DWG
+          </label>
+          <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+            <input type="checkbox" name="alap" value="bim" class="accent-accent w-4 h-4"> 3D BIM modell (IFC / Revit)
+          </label>
+          <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+            <input type="checkbox" name="alap" value="energetika" class="accent-accent w-4 h-4"> Energetikai leírás
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Link-alapú fájlmegosztás (NEM fájlfeltöltés) -->
+      <div>
+        <label class="block text-sm font-medium mb-2">Tervrajzok megosztása</label>
+        <textarea name="linkek" rows="3" placeholder="Ha a fájlok (DWG, IFC, RVT) már rendelkezésre állnak, illessze be ide a letöltő linket (WeTransfer, Google Drive, OneDrive), vagy jelezze, ha e-mailben küldené." class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+      </div>
+
+      <!-- GDPR hozzájárulás -->
+      <label class="flex items-start gap-3 text-sm text-muted">
+        <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+        <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez.</span>
+      </label>
+
+      <!-- FÁZIS 4: küldés-logika (validáció + backend) ide kerül -->
+      <button type="submit" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+        Ajánlatkérés küldése
+      </button>
+    </form>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SZEKCIÓ: LÁBLÉC
+     ============================================================ -->
+<footer class="border-t border-line bg-surface/60">
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+    <div class="flex items-center gap-3">
+      <img src="bimline-logo.png" alt="BIMLine Gépész Kft." class="h-6 w-auto" />
+      <span class="text-muted font-sans text-sm border-l border-line pl-3">Gépész Kft.</span>
+    </div>
+    <div class="text-sm text-muted font-mono flex flex-col sm:flex-row gap-2 sm:gap-6">
+      <a href="mailto:hello@bimline.hu" class="hover:text-ink">hello@bimline.hu</a>
+      <span>1053 Budapest, Ferenczy István utca 28.</span>
+      <a href="https://www.bimline.hu" class="hover:text-ink">www.bimline.hu</a>
+    </div>
+  </div>
+  <div class="max-w-8xl mx-auto px-5 lg:px-8 pb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted/70">
+    <p>© <span id="year"></span> BIMLine Gépész Kft. Minden jog fenntartva.</p>
+    <p>A kapcsolatfelvételi űrlapon megadott adatokat kizárólag ajánlatadás céljából kezeljük. Részletes adatkezelési tájékoztató kiadás előtt véglegesítendő.</p>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+     FÁZIS 2 hatókör: mobil menü, nav-aktivitás, LOD-csúszka
+     alap crossfade (statikus rétegek), és a működő projekt-szűrő.
+     A térkép (3), kalkulátor-számítás (4), form-küldés (4)
+     a megfelelő fázisokban kerül ide.
+     ============================================================ -->
+<script>
+/* ============================================================
+   REFERENCIATÉRKÉP (Leaflet) — 244 projekt-helyszín
+   GDPR: a popup csak "település + kategória", partnernév nélkül.
+   A kategóriákat a cityCategories objektum adja; az itt nem
+   szereplő települések a semleges alapcímkét kapják.
+   >> A teljes város→kategória listát ide kell bevezetni. <<
+   ============================================================ */
+
+// [város, lat, lng]
+const mapPoints = [["Budapest",47.497879,19.040238],["Esztergom",47.785694,18.740338],["Győr",47.683503,17.634283],["Miskolc",48.103064,20.790043],["Székesfehérvár",47.191017,18.410811],["Szeged",46.254631,20.148602],["Kazincbarcika",48.254441,20.622325],["Cegléd",47.171645,19.797752],["Tata",47.651621,18.328208],["Karcag",47.314646,20.924094],["Jászárokszállás",47.644542,19.978652],["Törökbálint",47.434958,18.913031],["Balatonlelle",46.786762,17.696521],["Sóskút",47.404719,18.830562],["Monor",47.352743,19.44684],["Gödöllő",47.601529,19.347698],["Kecskemét",46.907476,19.692085],["Nagytarcsa",47.526779,19.283516],["Balatonszárszó",46.826292,17.834194],["Lábatlan",47.745085,18.501573],["Kisköre",47.499457,20.492504],["Dunakeszi",47.63167,19.129406],["Nagykőrös",47.037426,19.786314],["Érd",47.377249,18.921383],["Tiszaújváros",47.928034,21.046706],["Biatorbágy",47.473944,18.823286],["Szerencs",48.163385,21.201088],["Tengelic",46.531947,18.710847],["Gibárt",48.315941,21.160076],["Debrecen",47.531399,21.625978],["Oroszlány",47.487135,18.315208],["Vecsés",47.406897,19.264307],["Drégelypalánk",48.052099,19.044096],["Szilvásvárad",48.103339,20.38713],["Nagykáta",47.413819,19.750374],["Kesznyéten",47.969231,21.042032],["Tatabánya",47.583845,18.397986],["Balatonalmádi",47.030277,18.015576],["Velence",47.235318,18.660526],["Tát",47.739804,18.654371],["Bodrogkeresztúr",48.15876,21.360658],["Lőrinci",47.74005,19.67731],["Bölcske",46.74026,18.969519],["Üröm",47.5987,19.013426],["Budakalász",47.619279,19.046857],["Budaörs",47.461126,18.961184],["Alsóörs",46.988266,17.977072],["Siófok",46.907169,18.05416],["Gyermely",47.591068,18.6439],["Bugyi",47.22275,19.150933],["Remeteszőlős",47.559894,18.921676],["Pilisvörösvár",47.621082,18.911575],["Leányfalu",47.718888,19.088842],["Solymár",47.591333,18.928494],["Aka",47.404414,18.069701],["Veresegyház",47.655235,19.286881],["Sopron",47.680306,16.598346],["Tállya",48.235374,21.229904],["Tordas",47.344615,18.752725],["Várpalota",47.200618,18.139978],["Felcsút",47.454535,18.586239],["Pilisborosjenő",47.607277,18.992028],["Üllő",47.385061,19.345326],["Dunavarsány",47.278963,19.066105],["Nyíregyháza",47.95578,21.716798],["Vác",47.778287,19.127829],["Felsőpakony",47.34327,19.236216],["Csákberény",47.348862,18.328596],["Zamárdi",46.880099,17.945946],["Eger",47.898989,20.374367],["Kozármisleny",46.047823,18.285705],["Telki",47.551193,18.820657],["Balassagyarmat",48.076883,19.292604],["Süttő",47.757385,18.44347],["Balatonfüred",46.956725,17.888892],["Pilisszántó",47.669288,18.886298],["Délegyháza",47.247818,19.066912],["Csopak",46.979685,17.923141],["Pilisszentkereszt",47.693145,18.90243],["Tököl",47.322679,18.963243],["Kaposfő",46.361834,17.669839],["Görcsöny",45.969606,18.135428],["Pilis",47.28607,19.546741],["Karád",46.693453,17.838551],["Rigyác",46.464873,16.863462],["Gyúró",47.370846,18.739556],["Szigetszentmárton",47.228609,18.957605],["Kartal",47.66792,19.5311],["Dunaföldvár",46.810432,18.922292],["Orosháza",46.55828,20.672015],["Újcsanálos",48.137911,21.003781],["Cserszegtomaj",46.806195,17.226466],["Érsekvadkert",47.996071,19.198934],["Magyaralmás",47.295695,18.324179],["Ercsi",47.25197,18.898377],["Dunabogdány",47.793792,19.035204],["Gyál",47.384545,19.217307],["Dörgicse",46.915658,17.723647],["Dunaújváros",46.964905,18.940505],["Tinnye",47.620891,18.777888],["Mór",47.372027,18.209039],["Mogyoród",47.598664,19.238422],["Fonyód",46.746752,17.54946],["Aszód",47.653273,19.474743],["Szigetbecse",47.130556,18.949173],["Berkenye",47.887885,19.072611],["Paloznak",46.983346,17.940877],["Monorierdő",47.310261,19.502626],["Nyergesújfalu",47.760708,18.554368],["Csömör",47.548916,19.224214],["Aba",47.029218,18.521661],["Pusztavám",47.429346,18.227975],["Bakonysárkány",47.44796,18.101499],["Ják",47.141049,16.580723],["Sződ",47.719167,19.181951],["Göd",47.683434,19.134157],["Kismaros",47.826644,19.012907],["Tar",47.950539,19.744178],["Pásztó",47.921063,19.699773],["Pusztaszabolcs",47.138578,18.757609],["Szolnok",47.175383,20.194628],["Kistarcsa",47.544732,19.263638],["Zsámbék",47.548311,18.717434],["Kisapáti",46.842617,17.467186],["Csehi",47.036812,16.94357],["Kétbodony",47.935437,19.284937],["Pákozd",47.217071,18.543711],["Csabdi",47.518843,18.612702],["Istenmezeje",48.082974,20.051812],["Nagykovácsi",47.576236,18.882064],["Nádudvar",47.428557,21.159309],["Hatvan",47.668397,19.674387],["Csemő",47.118378,19.697672],["Domony",47.653515,19.438442],["Egyházasfalu",47.465068,16.765443],["Kemendollár",46.902991,16.949418],["Barcs",45.960513,17.463412],["Tura",47.60935,19.594944],["Herend",47.132846,17.752336],["Felsőörs",47.014466,17.953245],["Mátészalka",47.953911,22.320848],["Szentendre",47.667761,19.076047],["Gyód",46.001692,18.178178],["Szár",47.478796,18.5185],["Dusnok",46.390022,18.958962],["Szigetszentmiklós",47.348706,19.045241],["Diósd",47.406256,18.94486],["Kulcs",47.052938,18.916317],["Maglód",47.444962,19.359314],["Demjén",47.829457,20.333592],["Balatonboglár",46.778537,17.655333],["Balatonberény",46.710836,17.31932],["Budajenő",47.555474,18.803881],["Pócsmegyer",47.715838,19.09562],["Kiskunfélegyháza",46.711438,19.850165],["Martonvásár",47.329905,18.768729],["Püspökhatvan",47.77594,19.366072],["Kápolnásnyék",47.237503,18.672276],["Halásztelek",47.363105,18.981144],["Abony",47.18874,20.004782],["Révfülöp",46.828315,17.630351],["Gárdony",47.202806,18.626198],["Inárcs",47.260939,19.329142],["Szendehely",47.855389,19.104975],["Pomáz",47.646821,19.02363],["Ácsteszér",47.406014,18.005688],["Öskü",47.160117,18.073092],["Edelény",48.293662,20.733437],["Vácrátót",47.709437,19.236304],["Márkháza",48.013502,19.71659],["Györköny",46.634517,18.694574],["Zalaszentlászló",46.875769,17.112185],["Szurdokpüspöki",47.852478,19.695582],["Görcsönydoboka",46.070802,18.627387],["Fót",47.612587,19.19801],["Győrszemere",47.552827,17.562254],["Tokaj",48.123553,21.411389],["Vérteskethely",47.486942,18.081759],["Kiskorpád",46.364027,17.610644],["Martfű",47.018615,20.281393],["Répcelak",47.419509,17.015429],["Harka",47.634234,16.602306],["Jászberény",47.503051,19.911789],["Bodajk",47.322704,18.233096],["Tagyon",46.902353,17.680347],["Börcs",47.685036,17.500715],["Lórév",47.115742,18.896604],["Százhalombatta",47.317199,18.912095],["Kács",47.958613,20.608576],["Kiskunhalas",46.430445,19.481257],["Lesenceistvánd",46.870265,17.361009],["Harta",46.69472,19.027712],["Bánd",47.122037,17.779578],["Csévharaszt",47.297325,19.429192],["Kemenespálfa",47.136786,17.173756],["Szuha",47.978179,19.917666],["Szügy",48.035482,19.323937],["Váchartyán",47.727006,19.253734],["Jászfényszárú",47.569231,19.716815],["Veresegyháza",46.196521,18.255555],["Csákvár",47.391804,18.464064],["Nemesvámos",47.054864,17.871826],["Somogyjád",46.491492,17.715881],["Szálka",46.277367,18.637201],["Örkény",47.129759,19.430902],["Kóka",47.489159,19.580609],["Kesztölc",47.713136,18.797093],["Balatonfűzfő",47.062004,18.040968],["Földes",47.28816,21.364207],["Szigethalom",47.324507,19.000188],["Szántód",46.869383,17.904533],["Dunakiliti",47.966248,17.288232],["Körmend",47.016102,16.59809],["Dánszentmiklós",47.207731,19.556113],["Kerepes",47.561613,19.286907],["Szőkedencs",46.554672,17.249303],["Herceghalom",47.496236,18.744886],["Szombathely",47.229118,16.618762],["Tahitótfalu",47.75434,19.084457],["Túrkeve",47.100885,20.747582],["Csólyospálos",46.418613,19.838757],["Pécs",46.076509,18.228032],["Dunaharaszti",47.354155,19.09122],["Csengele",46.539581,19.867135],["Balatonederics",46.80914,17.381311],["Balatonakarattya",47.023966,18.14394],["Acsa",47.792534,19.386298],["Vonyarcvashegy",46.764193,17.30957],["Kutasó",47.947624,19.541439],["Bicske",47.490707,18.635805],["Miske",46.442365,19.032071],["Sajóörös",47.951183,21.022199],["Fehérvárcsurgó",47.29057,18.265841],["Vassurány",47.286399,16.705544],["Orfalu",46.881409,16.266531],["Badacsonytomaj",46.805799,17.514693],["Keszthely",46.767508,17.24628],["Budakeszi",47.509944,18.929382],["Arnót",48.130806,20.861086],["Tapolca",46.882097,17.438962],["Úri",47.415309,19.524493],["Balatonvilágos",46.964173,18.159314],["Szigetcsép",47.267148,18.967267],["Tarján",47.608807,18.506322]];
+
+const DEFAULT_CAT = 'Gépészeti tervezési projekt';
+
+// Előkitöltött példák a portfólióból (kérlek erősítsd meg / cseréld a listáddal)
+const cityCategories = {
+  'Székesfehérvár': 'Egészségügyi, stratégiai és ipari projektek',
+  'Törökbálint':    'Kereskedelmi és középület',
+  'Kecskemét':      'Ipari és gyártástechnológia',
+  'Jásztelek':      'Ipari technológiai hűtés',
+  'Üröm':           'Oktatási és középület',
+  'Gibárt':         'Technológiai hűtés (vízierőmű)',
+  'Kisköre':        'Szabadidős és középület',
+  'Szeged':         'Oktatási és középület',
+  'Hévíz':          'Lakóingatlan-fejlesztés',
+  'Lábatlan':       'Lakóingatlan-fejlesztés',
+  'Alsóörs':        'Lakóingatlan-fejlesztés',
+  'Budapest':       'Kereskedelmi, irodai és lakóprojektek',
+};
+
+function initMap() {
+  if (typeof L === 'undefined' || !document.getElementById('map')) return;
+  const map = L.map('map', { scrollWheelZoom: false, attributionControl: true })
+    .setView([47.1625, 19.5033], 7);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd', maxZoom: 19
+  }).addTo(map);
+
+  const bounds = [];
+  mapPoints.forEach(([city, lat, lng]) => {
+    const cat = cityCategories[city] || DEFAULT_CAT;
+    L.circleMarker([lat, lng], {
+      renderer: L.svg(), className: 'map-dot',
+      radius: 6, color: '#2B6FFF', weight: 1.5,
+      fillColor: '#2B6FFF', fillOpacity: 0.7
+    }).addTo(map)
+      .bindPopup('<b>' + city + '</b><span class="cat">' + cat + '</span>');
+    bounds.push([lat, lng]);
+  });
+
+  if (bounds.length) map.fitBounds(bounds, { padding: [30, 30] });
+}
+
+/* ============================================================
+   ALKALMAZOTT MÁRKÁK (márka-futószalag)
+   ============================================================ */
+const brands = ['Aereco','Ariston','Atrea','Belimo','Bosch','BWT','Cairox','Carrier','Clivet',
+  'Daikin','Eviron','Fiorini','Fisher','Flamco','Fujitsu','Geberit','Gree','Grundfos','Haier',
+  'Helios','Herz','Hexonic','Honeywell','Kamstrup','Lennox','LG','Lindab','Nuxon','Panasonic',
+  'Pipelife','Pureco','Redge','Resideo','Samsung','Toshiba','Uponor','Vaillant','Ventalp',
+  'Viessmann','Vogel&noot','Wavin','Zehnder'];
+
+function renderBrands() {
+  const track = document.getElementById('brandTrack');
+  const half = () => {
+    const span = document.createElement('span');
+    span.className = 'flex gap-10 pr-10 whitespace-nowrap';
+    span.innerHTML = brands.map(b => `<span>${b}</span>`).join('');
+    return span;
+  };
+  track.appendChild(half());
+  const dup = half(); dup.setAttribute('aria-hidden', 'true');
+  track.appendChild(dup);
+}
+
+/* ---- Mobil menü ---- */
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+menuBtn.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('hidden') === false;
+  menuBtn.setAttribute('aria-expanded', String(open));
+});
+mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+/* ---- Építészet ↔ Gépészet kép-összehasonlító csúszka ---- */
+function initCompare() {
+  const stage = document.getElementById('compareStage');
+  if (!stage) return;
+  const top = document.getElementById('cmpTop');
+  const divider = document.getElementById('cmpDivider');
+  let dragging = false;
+
+  function setPos(pct) {
+    pct = Math.max(0, Math.min(100, pct));
+    // a felső (építészet) kép balról a vonalig látszik
+    top.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
+    divider.style.left = pct + '%';
+    stage.setAttribute('aria-valuenow', Math.round(pct));
+  }
+  function posFromEvent(e) {
+    const rect = stage.getBoundingClientRect();
+    return ((e.clientX - rect.left) / rect.width) * 100;
+  }
+  stage.addEventListener('pointerdown', e => {
+    dragging = true;
+    try { stage.setPointerCapture(e.pointerId); } catch (_) {}
+    setPos(posFromEvent(e));
+  });
+  stage.addEventListener('pointermove', e => { if (dragging) setPos(posFromEvent(e)); });
+  stage.addEventListener('pointerup',   () => { dragging = false; });
+  stage.addEventListener('pointercancel', () => { dragging = false; });
+  // billentyűzet (akadálymentesség)
+  stage.addEventListener('keydown', e => {
+    const cur = parseFloat(stage.getAttribute('aria-valuenow')) || 50;
+    if (e.key === 'ArrowLeft')  { setPos(cur - 4); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { setPos(cur + 4); e.preventDefault(); }
+  });
+  setPos(50);
+}
+
+/* ============================================================
+   PROJEKT-ADATOK (évszámok nélkül; metrika = kW / m² / MW / lakás)
+   Kategóriák: ipar | strategiai | kozulet | lako
+   ============================================================ */
+const projects = [
+  // --- Ipar & gyógyszertechnológia ---
+  { cat:'ipar', title:'Geotermikus fűtési rendszer', loc:'Székesfehérvár', metric:'2 MW', desc:'Gyártósori technológiai integrációval tervezett geotermikus rendszer.' },
+  { cat:'ipar', title:'EGIS gyógyszergyár', loc:'Gyártástechnológia', metric:'3 000 m²', desc:'Gyártást kiszolgáló speciális légtechnikai hálózat.' },
+  { cat:'ipar', title:'Élelmiszeripari komplexumok', loc:'Több helyszín', metric:'Komplex MEP', desc:'Vágóhidak és húsfeldolgozó üzemek teljes épületgépészete.' },
+  { cat:'ipar', title:'Ipari technológiai hűtés', loc:'Jásztelek', metric:'90 kW', desc:'Meglévő fröccsöntő gépek ipari hűtési rendszere.' },
+  { cat:'ipar', title:'Gyártócsarnok', loc:'Sormás', metric:'1 600 m²', desc:'Komplett MEP-tervezés ipari csarnokhoz.' },
+  { cat:'ipar', title:'Hegesztőüzem füstmentesítése', loc:'Kecskemét', metric:'1 000 m²', desc:'Ipari szellőztetés és füstelszívás tervezése.' },
+  { cat:'ipar', title:'Ipari klímakamrák', loc:'Technológia', metric:'Kondenzátor-hűtés', desc:'Kondenzátor hűtési rendszerek tervezése klímakamrákhoz.' },
+  { cat:'ipar', title:'Vegyi fülkék gépészete', loc:'Labortechnológia', metric:'Speciális elszívás', desc:'Speciális elszívó- és kiszolgáló gépészeti rendszerek.' },
+
+  // --- Stratégiai & egészségügy ---
+  { cat:'strategiai', title:'Katonai szerverterem', loc:'Honvédségi adatközpont', metric:'270 kW', desc:'Redundáns hűtőteljesítményű szerverterem-infrastruktúra.' },
+  { cat:'strategiai', title:'Alba Régia Laktanya', loc:'Székesfehérvár', metric:'200 kW', desc:'Szerverhűtés precíziós klímaszekrényekkel.' },
+  { cat:'strategiai', title:'Honvédségi irodakomplexum', loc:'Vegyes rendszer', metric:'3 600 m²', desc:'Kazán + hőszivattyús fűtés-hűtés és szerverterem-gépészet.' },
+  { cat:'strategiai', title:'Kórházi műtőblokk', loc:'Székesfehérvár', metric:'1 500 m²', desc:'Steril műtők kialakítása meglévő épületben.' },
+  { cat:'strategiai', title:'Kórházi nővérszálló', loc:'Kaposvár', metric:'72 lakás', desc:'Szálláskomplexum kialakítása meglévő épületben.' },
+  { cat:'strategiai', title:'Honvédségi szervertermek', loc:'Több helyszín', metric:'Redundáns hűtés', desc:'Speciális biztonsági és redundáns hűtési rendszerek.' },
+
+  // --- Kereskedelmi & középület ---
+  { cat:'kozulet', title:'Kereskedelmi Centrum', loc:'Törökbálint', metric:'15 000 m²', desc:'Teljes energetikai felülvizsgálat és beruházási ROI-javaslatok.' },
+  { cat:'kozulet', title:'Szegedi Tudományegyetem', loc:'6 épület', metric:'Fűtéskorszerűsítés', desc:'Komplex fűtéskorszerűsítési tervezés egyetemi épületekhez.' },
+  { cat:'kozulet', title:'Egyetemi kampusz felújítás', loc:'Budapest', metric:'10 000 m²', desc:'Felsőoktatási épületek rekonstrukciós gépészete.' },
+  { cat:'kozulet', title:'Prémium Hotel', loc:'Budapest, V. ker.', metric:'60 szoba', desc:'Szálloda teljes épületgépészeti tervezése.' },
+  { cat:'kozulet', title:'Gasztronómiai komplexum', loc:'Budapest, V. ker.', metric:'Nagykonyha', desc:'Belvárosi étterem nagykonyhai légtechnikája és gépészete.' },
+  { cat:'kozulet', title:'Ipari főzőkonyha és üzem', loc:'Aszófő', metric:'1 500 m²', desc:'Hőszivattyús fűtés-hűtéssel ellátott technológiai konyha.' },
+  { cat:'kozulet', title:'Általános Iskola', loc:'Üröm', metric:'1 600 m²', desc:'Oktatási intézmény komplett gépészeti rendszere.' },
+  { cat:'kozulet', title:'Gibárti Vízierőmű', loc:'Gibárt', metric:'Turbinahűtés', desc:'Speciális technológiai hűtési rendszer a vízturbinákhoz.' },
+  { cat:'kozulet', title:'Regionális bankközpont', loc:'Bankfiók-hálózat', metric:'Áttervezés', desc:'Bankfiók központi épületének gépészeti áttervezése.' },
+  { cat:'kozulet', title:'Irodaház-modernizáció', loc:'Budapest', metric:'Megújuló energia', desc:'Meglévő irodaház átalakítása megújuló energiahasznosítással.' },
+  { cat:'kozulet', title:'Futsal sportcsarnokok', loc:'Több helyszín', metric:'Áttervezés', desc:'Csarnok gépészeti rendszereinek helyszíni adaptációja.' },
+  { cat:'kozulet', title:'Szabadidős központ', loc:'Kisköre', metric:'Raftingpálya', desc:'Kiszolgáló épületegyüttes gépészeti tervezése.' },
+
+  // --- Lakóingatlan ---
+  { cat:'lako', title:'Hévíz Prémium Társasház', loc:'Hévíz', metric:'73 lakás', desc:'Wellness részleggel, teljes körűen BIM LOD 300 szinten.' },
+  { cat:'lako', title:'Társasház', loc:'Alsóörs', metric:'38 lakás', desc:'Energiatakarékos társasház gépészeti tervezése.' },
+  { cat:'lako', title:'Társasház', loc:'Lábatlan', metric:'33 lakás', desc:'Kazán + hőszivattyú vegyes üzemű, környezettudatos rendszer.' },
+  { cat:'lako', title:'Budapesti társasház', loc:'Budapest', metric:'18 lakás', desc:'Modern társasház teljes MEP-tervezése.' },
+];
+
+const catMeta = {
+  ipar:       { label:'Ipar',         color:'text-accent' },
+  strategiai: { label:'Stratégiai',   color:'text-belimo' },
+  kozulet:    { label:'Középület',    color:'text-accent' },
+  lako:       { label:'Lakó',         color:'text-belimo' },
+};
+
+const grid = document.getElementById('projectGrid');
+function renderProjects(filter='all') {
+  grid.innerHTML = '';
+  projects
+    .filter(p => filter === 'all' || p.cat === filter)
+    .forEach(p => {
+      const m = catMeta[p.cat];
+      const el = document.createElement('article');
+      el.className = 'card rounded-xl p-6 flex flex-col';
+      el.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <span class="eyebrow ${m.color}">${m.label}</span>
+          <span class="font-mono text-sm font-bold ${m.color}">${p.metric}</span>
+        </div>
+        <h3 class="font-display font-semibold text-lg leading-snug">${p.title}</h3>
+        <div class="text-xs text-muted font-mono mt-1">${p.loc}</div>
+        <p class="text-sm text-muted mt-3 leading-relaxed flex-1">${p.desc}</p>`;
+      grid.appendChild(el);
+    });
+}
+
+/* ---- Szűrő-csip kezelés ---- */
+const filterBar = document.getElementById('projectFilters');
+filterBar.addEventListener('click', e => {
+  const btn = e.target.closest('button[data-filter]');
+  if (!btn) return;
+  filterBar.querySelectorAll('button').forEach(b => {
+    const active = b === btn;
+    b.setAttribute('aria-pressed', String(active));
+    b.classList.toggle('text-muted', !active);
+  });
+  renderProjects(btn.dataset.filter);
+});
+
+/* ============================================================
+   BELIMO RETROFIT+ ROI-BECSLŐ
+   Kalibráció a hivatalos RetroFIT+ minta-jelentés alapján
+   (példa-hotel: 3 000 m², ~33% megtakarítás, ~2 év megtérülés,
+   ROI: 2.év -11%, 3.év +34%, 5.év +123%, 20.év +793%).
+   Modell:
+     - savingPct, payback: rendszertípustól függ
+     - energiamegtakarítás (MWh/év) = alapterület × intenzitás × savingPct
+     - ROI(n) % = (n / payback − 1) × 100  (lineáris, valutafüggetlen)
+   A számok TÁJÉKOZTATÓ jellegűek; a pontos értékeket a hivatalos audit adja.
+   ============================================================ */
+const ROI_MODEL = {
+  // savingPct = szivattyú/rendszer energia-megtakarítás aránya
+  // payback   = becsült megtérülési idő (év)
+  old:      { savingPct: 0.33, payback: 2.2 },  // régi, nem modulációs szelepek
+  constant: { savingPct: 0.24, payback: 3.2 },  // konstans tömegáramú
+  partial:  { savingPct: 0.14, payback: 5.0 },  // részben szabályozott
+};
+const ENERGY_INTENSITY = 0.25; // MWh/m²/év (hő + villamos, minta-jelentés alapján)
+const ROI_YEARS = [1, 2, 3, 4, 5, 7, 10, 15, 20];
+
+let roiChart = null;
+
+function calcRoi() {
+  const sys = document.getElementById('roiSystem').value;
+  const area = parseFloat(document.getElementById('roiArea').value);
+  const m = ROI_MODEL[sys] || ROI_MODEL.old;
+
+  // % és megtérülés a rendszertípustól függ (alapterülettől független)
+  document.getElementById('roiSaving').textContent = Math.round(m.savingPct * 100) + ' %';
+  document.getElementById('roiPayback').textContent = m.payback.toFixed(1).replace('.', ',') + ' év';
+
+  // energia-megtakarítás csak érvényes alapterülettel
+  const energyEl = document.getElementById('roiEnergy');
+  if (Number.isFinite(area) && area > 0) {
+    const mwh = Math.round(area * ENERGY_INTENSITY * m.savingPct);
+    energyEl.textContent = mwh.toLocaleString('hu-HU') + ' MWh';
+  } else {
+    energyEl.textContent = '— MWh';
+  }
+
+  // ROI-görbe
+  const data = ROI_YEARS.map(n => Math.round((n / m.payback - 1) * 100));
+  drawRoiChart(data);
+}
+
+function drawRoiChart(data) {
+  const canvas = document.getElementById('roiChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  if (roiChart) {
+    roiChart.data.datasets[0].data = data;
+    roiChart.update();
+    return;
+  }
+  roiChart = new Chart(canvas.getContext('2d'), {
+    type: 'line',
+    data: {
+      labels: ROI_YEARS,
+      datasets: [{
+        label: 'ROI (%)',
+        data,
+        borderColor: '#2B6FFF',
+        backgroundColor: 'rgba(43,111,255,0.12)',
+        fill: true, tension: 0.3, pointRadius: 3,
+        pointBackgroundColor: '#8FD14F',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: items => items[0].label + '. év',
+            label: ctx => 'ROI: ' + ctx.parsed.y + '%'
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Évek', color: '#9AA3B5', font: { size: 10 } },
+          grid: { color: 'rgba(38,38,56,0.6)' },
+          ticks: { color: '#9AA3B5', font: { family: 'JetBrains Mono', size: 10 } }
+        },
+        y: {
+          title: { display: true, text: 'ROI %', color: '#9AA3B5', font: { size: 10 } },
+          grid: { color: 'rgba(38,38,56,0.6)' },
+          ticks: { color: '#9AA3B5', font: { family: 'JetBrains Mono', size: 10 } }
+        }
+      }
+    }
+  });
+}
+
+document.getElementById('roiSystem').addEventListener('change', calcRoi);
+document.getElementById('roiArea').addEventListener('input', calcRoi);
+
+/* ============================================================
+   KAPCSOLATI ŰRLAP — kliensoldali validáció + küldés
+   A weboldal NEM fájlszerver: csak letöltő linkeket fogadunk.
+
+   KÜLDÉS:
+   - Ha FORM_ENDPOINT meg van adva → POST a Google Apps Script
+     webalkalmazásra (a hello@bimline.hu mögötti szkript).
+   - Ha üres → mailto-előkészítés (statikus tartalék).
+
+   GOOGLE APPS SCRIPT BEKÖTÉSE:
+   1) A GAS-ban: function doPost(e) { ... e.parameter.nev, .ceg,
+      .elerhetoseg, .leiras, .alapok, .linkek ... MailApp.sendEmail(...) }
+   2) Telepítés webalkalmazásként: "Futtatás mint: én",
+      "Hozzáférés: bárki". A kapott /exec URL-t illeszd be alább.
+   A küldés application/x-www-form-urlencoded + mode:'no-cors' —
+   így nincs CORS-preflight; a válasz átlátszatlan, sikeresnek vesszük.
+   ============================================================ */
+const FORM_ENDPOINT = ''; // <<< ide jön a GAS webalkalmazás /exec URL-je (üresen: mailto)
+const contactForm = document.getElementById('contactForm');
+
+function setFieldError(el, msg) {
+  el.classList.add('border-red-500');
+  let err = el.parentElement.querySelector('.field-error');
+  if (!err) {
+    err = document.createElement('p');
+    err.className = 'field-error text-xs text-red-400 mt-1';
+    el.parentElement.appendChild(err);
+  }
+  err.textContent = msg;
+}
+function clearFieldError(el) {
+  el.classList.remove('border-red-500');
+  const err = el.parentElement.querySelector('.field-error');
+  if (err) err.remove();
+}
+
+function validateContact() {
+  let ok = true;
+  const f = contactForm;
+  const required = [
+    [f.nev, 'Kérjük, adja meg a nevét.'],
+    [f.elerhetoseg, 'Adjon meg egy elérhetőséget (e-mail vagy telefon).'],
+    [f.leiras, 'Írja le röviden a projektet.'],
+  ];
+  required.forEach(([el, msg]) => {
+    if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+    else clearFieldError(el);
+  });
+  // e-mail formátum, ha @ jellel adták meg
+  if (f.elerhetoseg.value.includes('@') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.elerhetoseg.value.trim())) {
+    setFieldError(f.elerhetoseg, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+  }
+  // GDPR
+  if (!f.gdpr.checked) {
+    const box = f.gdpr.closest('label');
+    if (!box.querySelector('.field-error')) {
+      const err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      err.textContent = 'A kapcsolatfelvételhez a hozzájárulás szükséges.';
+      box.appendChild(err);
+    }
+    ok = false;
+  } else {
+    const e = f.gdpr.closest('label').querySelector('.field-error');
+    if (e) e.remove();
+  }
+  return ok;
+}
+
+function buildMailBody(f) {
+  const alapok = Array.from(f.querySelectorAll('input[name="alap"]:checked')).map(c => c.value).join(', ') || '—';
+  return [
+    'Név: ' + f.nev.value.trim(),
+    'Cég: ' + (f.ceg.value.trim() || '—'),
+    'Elérhetőség: ' + f.elerhetoseg.value.trim(),
+    '',
+    'Projekt leírása:',
+    f.leiras.value.trim(),
+    '',
+    'Rendelkezésre álló tervezési alapok: ' + alapok,
+    '',
+    'Tervrajz-linkek:',
+    (f.linkek.value.trim() || '—'),
+  ].join('\n');
+}
+
+function fieldData(f) {
+  return {
+    nev: f.nev.value.trim(),
+    ceg: f.ceg.value.trim(),
+    elerhetoseg: f.elerhetoseg.value.trim(),
+    leiras: f.leiras.value.trim(),
+    alapok: Array.from(f.querySelectorAll('input[name="alap"]:checked')).map(c => c.value).join(', '),
+    linkek: f.linkek.value.trim(),
+  };
+}
+
+function sendMailto(f) {
+  const subject = encodeURIComponent('Ajánlatkérés – ' + (f.ceg.value.trim() || f.nev.value.trim()));
+  const body = encodeURIComponent(buildMailBody(f));
+  window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+}
+
+contactForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!validateContact()) return;
+
+  const btn = contactForm.querySelector('button[type="submit"]');
+  const orig = btn.textContent;
+
+  if (FORM_ENDPOINT) {
+    btn.disabled = true;
+    btn.textContent = 'Küldés…';
+    try {
+      const params = new URLSearchParams(fieldData(contactForm));
+      await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+      btn.textContent = 'Köszönjük! Hamarosan jelentkezünk.';
+      btn.classList.add('bg-belimo');
+      contactForm.reset();
+    } catch (err) {
+      // hálózati hiba → mailto tartalék
+      btn.disabled = false;
+      btn.textContent = orig;
+      sendMailto(contactForm);
+    }
+    return;
+  }
+
+  // backend nélkül: mailto
+  sendMailto(contactForm);
+  btn.textContent = 'Levelezőprogram megnyitva — köszönjük!';
+  btn.classList.add('bg-belimo');
+});
+
+// hibák törlése gépelés közben
+contactForm.querySelectorAll('input, textarea').forEach(el => {
+  el.addEventListener('input', () => clearFieldError(el));
+});
+
+/* ============================================================
+   GÖRGETÉSI MEGJELENÉS (reveal) + SZÁMLÁLÓ-ANIMÁCIÓ
+   Tiszteletben tartja a "prefers-reduced-motion"-t (lásd CSS).
+   ============================================================ */
+function initReveal() {
+  const items = document.querySelectorAll('[data-reveal]');
+  if (!items.length) return;
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(el => el.classList.add('is-visible'));
+    return;
+  }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+  items.forEach((el, i) => {
+    el.style.transitionDelay = Math.min(i % 4, 3) * 60 + 'ms';
+    io.observe(el);
+  });
+}
+
+function initCounters() {
+  const counters = document.querySelectorAll('[data-count-to]');
+  if (!counters.length) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const animate = (el) => {
+    const target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+    if (reduceMotion || !('IntersectionObserver' in window)) { el.textContent = target; return; }
+    const dur = 900;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  };
+  if (!('IntersectionObserver' in window)) { counters.forEach(animate); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { animate(entry.target); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(el => io.observe(el));
+}
+
+/* ---- Inicializálás ---- */
+renderBrands();
+renderProjects('all');
+initCompare();
+initMap();
+calcRoi();
+initReveal();
+initCounters();
+const yearEl = document.getElementById('year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
