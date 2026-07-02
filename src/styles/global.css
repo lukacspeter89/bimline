@@ -1,27 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-base: #15151F;
-  --color-surface: #1B1B27;
-  --color-surface2: #232332;
-  --color-line: #2E2E42;
+  --color-base: #1A1A26;
+  --color-surface: #22222F;
+  --color-surface2: #2A2A3A;
+  --color-line: #38384E;
   --color-accent: #2B6FFF;
   --color-accentDeep: #1E1EF0;
   --color-belimo: #8FD14F;
   --color-ink: #EDEFF4;
-  --color-muted: #9FA7B8;
-
-  /* "BIMLine kék" — mély, telített mérnöki navy a sakktábla-elrendezés sötét blokkjaihoz */
-  --color-navy: #0F2C54;
-  --color-navyDeep: #081A33;
-  --color-navyLine: rgba(255,255,255,0.14);
-
-  /* Világos szekciók (sűrűn szöveges tartalom: Szolgáltatások, Munkamódszer, Tudásbázis) */
-  --color-paper: #FFFFFF;
-  --color-paperMuted: #F3F5F9;
-  --color-inkDark: #12151C;
-  --color-bodyDark: #3D4455;
-  --color-mutedOnLight: #5B6478;
+  --color-muted: #A5ACBD;
 
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
@@ -40,7 +28,7 @@
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: #15151F; color: #EDEFF4; }
+body { font-family: 'Inter', sans-serif; background: #1A1A26; color: #EDEFF4; }
 
 .blueprint-grid {
   background-image:
@@ -55,75 +43,14 @@ body { font-family: 'Inter', sans-serif; background: #15151F; color: #EDEFF4; }
 .glow-soft   { box-shadow: 0 0 40px rgba(43,111,255,0.12); }
 
 .card {
-  background: #1B1B27;
-  border: 1px solid #2E2E42;
+  background: #22222F;
+  border: 1px solid #38384E;
   transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 .card:hover {
   transform: translateY(-4px);
   border-color: rgba(43,111,255,0.5);
   box-shadow: 0 0 32px rgba(43,111,255,0.18);
-}
-
-/* ============ Sakktábla szekcióváltás — világos blokkok ============ */
-.section-light { background: #FFFFFF; color: #12151C; }
-.section-light-muted { background: #F3F5F9; color: #12151C; }
-.section-light h1, .section-light h2, .section-light h3,
-.section-light-muted h1, .section-light-muted h2, .section-light-muted h3 { color: #12151C; }
-.section-light p, .section-light li,
-.section-light-muted p, .section-light-muted li { color: #3D4455; }
-.section-light .eyebrow, .section-light-muted .eyebrow { color: #0F2C54; }
-.section-light .text-muted, .section-light-muted .text-muted { color: #5B6478 !important; }
-
-.card-light {
-  background: #FFFFFF;
-  border: 1px solid #E3E7F0;
-  box-shadow: 0 1px 2px rgba(15,44,84,0.05);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-.card-light:hover {
-  transform: translateY(-4px);
-  border-color: rgba(15,44,84,0.35);
-  box-shadow: 0 14px 32px rgba(15,44,84,0.12);
-}
-.card-light h3, .card-light h2 { color: #12151C; }
-.card-light p, .card-light li { color: #3D4455; }
-
-/* ============ Sakktábla szekcióváltás — "BIMLine kék" (mély navy) blokkok ============ */
-.section-navy {
-  background: linear-gradient(175deg, #0F2C54 0%, #081A33 100%);
-  color: #F2F5FC;
-}
-.section-navy h1, .section-navy h2, .section-navy h3 { color: #FFFFFF; }
-.section-navy p, .section-navy li { color: #E7ECF9; font-weight: 450; }
-.section-navy .eyebrow { color: #8FB4FF; }
-.section-navy .text-muted { color: #C4CEE6 !important; }
-
-.card-navy {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.16);
-  backdrop-filter: blur(6px);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-.card-navy:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255,255,255,0.32);
-  box-shadow: 0 14px 32px rgba(0,0,0,0.25);
-}
-
-/* Kategória-jelölő színek kontraszt-korrekciója világos hátteren (AA-olvashatóság) */
-.section-light .text-belimo, .section-light-muted .text-belimo { color: #3E7A19; }
-.section-light .text-accent, .section-light-muted .text-accent { color: #1D54D6; }
-
-.chip-light {
-  border-color: #D8DEE9 !important;
-  color: #3D4455;
-}
-.chip-light[aria-pressed="true"] {
-  background: #0F2C54;
-  color: #FFFFFF;
-  border-color: #0F2C54;
-  font-weight: 600;
 }
 
 .eyebrow {
@@ -154,23 +81,23 @@ body { font-family: 'Inter', sans-serif; background: #15151F; color: #EDEFF4; }
   margin-top: 1.8em;
   margin-bottom: 0.5em;
 }
-.prose-bimline p { line-height: 1.7; margin-bottom: 1.1em; color: #9FA7B8; }
-.prose-bimline ul, .prose-bimline ol { margin: 1em 0 1.4em 1.4em; color: #9FA7B8; }
+.prose-bimline p { line-height: 1.7; margin-bottom: 1.1em; color: #A5ACBD; }
+.prose-bimline ul, .prose-bimline ol { margin: 1em 0 1.4em 1.4em; color: #A5ACBD; }
 .prose-bimline li { margin-bottom: 0.4em; line-height: 1.6; }
 .prose-bimline a { color: #2B6FFF; text-decoration: underline; text-underline-offset: 2px; }
 .prose-bimline a:hover { color: #8FD14F; }
 .prose-bimline code {
-  background: #232332; border: 1px solid #2E2E42; border-radius: 4px;
+  background: #2A2A3A; border: 1px solid #38384E; border-radius: 4px;
   padding: 0.15em 0.4em; font-size: 0.85em;
 }
 .prose-bimline pre {
-  background: #1B1B27; border: 1px solid #2E2E42; border-radius: 10px;
+  background: #22222F; border: 1px solid #38384E; border-radius: 10px;
   padding: 1em; overflow-x: auto; margin: 1.4em 0;
 }
 .prose-bimline pre code { background: none; border: none; padding: 0; }
 .prose-bimline blockquote {
   border-left: 3px solid #2B6FFF; padding-left: 1em; margin: 1.4em 0;
-  color: #9FA7B8; font-style: italic;
+  color: #A5ACBD; font-style: italic;
 }
 .prose-bimline img { border-radius: 12px; margin: 1.6em 0; }
 
