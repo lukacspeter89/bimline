@@ -15,6 +15,7 @@ const categories: { key: ProjectCategory | 'all'; label: string }[] = [
   { key: 'kozulet', label: 'Kereskedelmi & középület' },
   { key: 'lako', label: 'Lakóingatlan' },
 ];
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -41,8 +42,8 @@ const categories: { key: ProjectCategory | 'all'; label: string }[] = [
           is biztosítunk.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="/#kapcsolat" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
-          <a href="/#referenciak" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Projektportfólió</a>
+          <a href={`${base}#kapcsolat`} class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
+          <a href={`${base}#referenciak`} class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Projektportfólió</a>
         </div>
       </div>
 
@@ -218,7 +219,7 @@ const categories: { key: ProjectCategory | 'all'; label: string }[] = [
         eltérő, ezért nem dolgozunk általános, online becslőkkel. Minden esetben helyszíni felméréssel
         alátámasztott, részletes egyedi számítást készítünk.
       </p>
-      <a href="/#kapcsolat" class="mt-8 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Energetikai elemzés kérése</a>
+      <a href={`${base}#kapcsolat`} class="mt-8 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Energetikai elemzés kérése</a>
     </div>
   </section>
 

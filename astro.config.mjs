@@ -4,7 +4,8 @@ import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  site: 'https://www.bimline.hu',
+  site: 'https://lukacspeter89.github.io',
+  base: '/bimline/',
   integrations: [mdx(), sitemap()],
   vite: {
     plugins: [tailwindcss()],

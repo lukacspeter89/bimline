@@ -19,6 +19,7 @@ const posts = allPosts.map((p) => ({
   cover: p.data.cover?.src,
   readingTime: estimateReadingTime(p.body || ''),
 }));
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout
@@ -61,7 +62,7 @@ const posts = allPosts.map((p) => ({
       <div id="postGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
           <a
-            href={`/blog/${post.id}/`}
+            href={`${base}blog/${post.id}/`}
             class="post-card card rounded-xl overflow-hidden flex flex-col"
             data-cat={post.category}
             data-tags={post.tags.join(',')}

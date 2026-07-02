@@ -1,4 +1,5 @@
 ---
+const base = import.meta.env.BASE_URL;
 ---
 <div class="mt-14 lg:mt-20 card rounded-2xl p-4 sm:p-6 glow-soft max-w-8xl mx-auto px-5 lg:px-8">
   <div class="flex items-center justify-between mb-4">
@@ -13,9 +14,9 @@
        class="relative aspect-[1720/1135] rounded-xl overflow-hidden border border-line select-none cursor-ew-resize touch-none"
        role="slider" tabindex="0" aria-label="Építészet–gépészet összehasonlító csúszka"
        aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
-    <img src="/images/ifc-gepesz.jpg" alt="Gépészeti (MEP) IFC-modell"
+    <img src={`${base}images/ifc-gepesz.jpg`} alt="Gépészeti (MEP) IFC-modell"
          class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false" />
-    <img id="cmpTop" src="/images/ifc-epitesz.jpg" alt="Építészeti IFC-modell"
+    <img id="cmpTop" src={`${base}images/ifc-epitesz.jpg`} alt="Építészeti IFC-modell"
          class="absolute inset-0 w-full h-full object-cover pointer-events-none" draggable="false"
          style="clip-path: inset(0 50% 0 0)" />
 

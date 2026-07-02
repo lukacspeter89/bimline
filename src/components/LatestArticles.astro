@@ -5,6 +5,7 @@ import { estimateReadingTime } from '../lib/reading-time';
 const posts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
   .slice(0, 3);
+const base = import.meta.env.BASE_URL;
 ---
 
 {posts.length > 0 && (
@@ -16,12 +17,12 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
           <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Legfrissebb cikkeink</h2>
           <p class="mt-3 text-muted">Szakmai írások épületgépészetről, BIM-tervezésről és energetikai felülvizsgálatról.</p>
         </div>
-        <a href="/blog/" class="text-sm text-accent hover:text-belimo font-medium whitespace-nowrap">Összes cikk →</a>
+        <a href={`${base}blog/`} class="text-sm text-accent hover:text-belimo font-medium whitespace-nowrap">Összes cikk →</a>
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map((post) => (
-          <a href={`/blog/${post.id}/`} class="card rounded-xl overflow-hidden flex flex-col" data-reveal>
+          <a href={`${base}blog/${post.id}/`} class="card rounded-xl overflow-hidden flex flex-col" data-reveal>
             {post.data.coverImage && (
               <div class="aspect-[16/9] overflow-hidden">
                 <img src={post.data.coverImage.src} alt="" class="w-full h-full object-cover" loading="lazy" />

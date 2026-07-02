@@ -29,6 +29,7 @@ const related = allPosts
 
 const ogImage = post.data.cover?.src || '/og-image.png';
 const canonicalPath = `/blog/${post.id}/`;
+const base = import.meta.env.BASE_URL;
 
 const articleSchema = {
   '@context': 'https://schema.org',
@@ -60,7 +61,7 @@ const articleSchema = {
   <article class="py-16 lg:py-24">
     <div class="max-w-3xl mx-auto px-5 lg:px-8">
       <nav class="text-xs text-muted mb-6 font-display tracking-wide" aria-label="Breadcrumb">
-        <a href="/" class="hover:text-ink">Főoldal</a> / <a href="/blog/" class="hover:text-ink">Tudásbázis</a> / <span class="text-ink">{post.data.title}</span>
+        <a href={base} class="hover:text-ink">Főoldal</a> / <a href={`${base}blog/`} class="hover:text-ink">Tudásbázis</a> / <span class="text-ink">{post.data.title}</span>
       </nav>
 
       <p class="eyebrow mb-3">{post.data.category}</p>
@@ -106,10 +107,10 @@ const articleSchema = {
 
       <div class="flex flex-col sm:flex-row justify-between gap-4 mt-12 pt-8 border-t border-line">
         {prev ? (
-          <a href={`/blog/${prev.id}/`} class="text-sm text-muted hover:text-accent">← {prev.data.title}</a>
+          <a href={`${base}blog/${prev.id}/`} class="text-sm text-muted hover:text-accent">← {prev.data.title}</a>
         ) : <span />}
         {next ? (
-          <a href={`/blog/${next.id}/`} class="text-sm text-muted hover:text-accent text-right sm:text-right">{next.data.title} →</a>
+          <a href={`${base}blog/${next.id}/`} class="text-sm text-muted hover:text-accent text-right sm:text-right">{next.data.title} →</a>
         ) : <span />}
       </div>
 
@@ -118,7 +119,7 @@ const articleSchema = {
           <p class="eyebrow mb-4">Kapcsolódó cikkek</p>
           <div class="grid sm:grid-cols-3 gap-4">
             {related.map((r) => (
-              <a href={`/blog/${r.id}/`} class="card rounded-lg p-4">
+              <a href={`${base}blog/${r.id}/`} class="card rounded-lg p-4">
                 <h3 class="font-display font-semibold text-sm leading-snug">{r.data.title}</h3>
                 <p class="text-xs text-muted mt-2">{r.data.publishDate.toLocaleDateString('hu-HU')}</p>
               </a>
