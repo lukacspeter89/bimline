@@ -1,17 +1,32 @@
 ---
 // Referenciatérkép — Leaflet, 244 projekt-helyszín. Csak a főoldalon jelenik meg.
 import { mapPoints, cityCategories, DEFAULT_CAT } from '../data/map-points';
+
+interface Props {
+  lang?: 'hu' | 'en';
+}
+const { lang = 'hu' } = Astro.props;
+
+const t = lang === 'en'
+  ? {
+      eyebrow: 'Coverage', heading: 'Where we\'ve worked', intro: '244 project locations across the country. Clicking a marker shows only the town and the MEP category.',
+      privacy: 'Privacy: markers only display the town and MEP category, without any specific partner name.',
+    }
+  : {
+      eyebrow: 'Lefedettség', heading: 'Ahol már dolgoztunk', intro: '244 projekt-helyszín országszerte. A markerekre kattintva csak a település és a gépészeti kategória jelenik meg.',
+      privacy: 'Adatvédelem: a markerek csak települést és gépészeti kategóriát jelenítenek meg, konkrét partnernév nélkül.',
+    };
 ---
 
 <section id="terkep" class="py-16 lg:py-20 border-t border-line/60">
   <div class="max-w-8xl mx-auto px-5 lg:px-8 mb-6" data-reveal>
-    <p class="eyebrow mb-3">Lefedettség</p>
-    <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Ahol már dolgoztunk</h2>
-    <p class="mt-3 text-muted max-w-2xl">244 projekt-helyszín országszerte. A markerekre kattintva csak a település és a gépészeti kategória jelenik meg.</p>
+    <p class="eyebrow mb-3">{t.eyebrow}</p>
+    <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">{t.heading}</h2>
+    <p class="mt-3 text-muted max-w-2xl">{t.intro}</p>
   </div>
   <div class="px-5 lg:px-8">
     <div id="map" class="mx-auto h-[480px] w-full lg:w-3/5 rounded-2xl border border-line overflow-hidden z-0"></div>
-    <p class="mx-auto mt-3 w-full lg:w-3/5 text-xs text-muted font-display tracking-wide">Adatvédelem: a markerek csak települést és gépészeti kategóriát jelenítenek meg, konkrét partnernév nélkül.</p>
+    <p class="mx-auto mt-3 w-full lg:w-3/5 text-xs text-muted font-display tracking-wide">{t.privacy}</p>
   </div>
 </section>
 

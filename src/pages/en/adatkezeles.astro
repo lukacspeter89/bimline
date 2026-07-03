@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+const lastUpdated = 'July 3, 2026';
+---
+
+<BaseLayout
+  title="Privacy Policy"
+  description="BIMLine Gépész Kft.'s privacy policy: what data we process on our website, our use of cookies, Google Analytics measurement, and your rights as a data subject."
+  path="/en/adatkezeles/"
+  lang="en"
+>
+  <section class="py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Legal Notice</p>
+      <h1 class="font-display font-bold text-[clamp(1.5rem,3vw,2.1rem)] leading-tight">Privacy Policy</h1>
+      <p class="mt-3 text-sm text-muted">Effective: {lastUpdated}</p>
+
+      <div class="prose-bimline mt-10">
+        <p>
+          This notice explains, transparently and in detail, what personal data BIMLine Gépész
+          Kft. (the <strong>"Data Controller"</strong>) processes while operating the
+          <code>bimline.hu</code> website (the <strong>"Website"</strong>), for what purpose, on
+          what legal basis, and for how long — and what rights this gives you as a data subject.
+          This notice is based on Regulation (EU) 2016/679 of the European Parliament and of the
+          Council (the <strong>"GDPR"</strong>) and Hungarian Act CXII of 2011 on the Right of
+          Informational Self-Determination and Freedom of Information.
+        </p>
+
+        <h2>1. Data controller details</h2>
+        <ul>
+          <li><strong>Name:</strong> BIMLine Gépész Kft.</li>
+          <li><strong>Registered seat:</strong> 1053 Budapest, Ferenczy István utca 28., Hungary</li>
+          <li><strong>Company registration number:</strong> [TO BE COMPLETED: company registration number]</li>
+          <li><strong>Tax number:</strong> [TO BE COMPLETED: tax number]</li>
+          <li><strong>Email:</strong> <a href="mailto:hello@bimline.hu">hello@bimline.hu</a></li>
+          <li><strong>Data protection contact:</strong> [TO BE COMPLETED: name and contact details, if a dedicated contact has been appointed; if not, this line can be removed and the email address above serves as the point of contact]</li>
+        </ul>
+
+        <h2>2. What data we process, and why</h2>
+
+        <h3>2.1 Contact / quote request form</h3>
+        <p>
+          Through the Website's contact form, we request the following data: name, company name
+          (optional), email address, phone number (optional), a project description, the design
+          baselines you have available, and — if provided — links to drawings.
+        </p>
+        <ul>
+          <li><strong>Purpose:</strong> responding to your inquiry, providing a quote or consultation.</li>
+          <li><strong>Legal basis:</strong> your consent under GDPR Article 6(1)(a), given by ticking the checkbox when you submit the form.</li>
+          <li><strong>Recipients of the data:</strong> form submissions arrive to us by email (via Google Workspace), and — if you provided an email address — you also receive an automatic confirmation.</li>
+          <li><strong>Retention period:</strong> [TO BE COMPLETED: e.g. "2 years from the date of contact, or until consent is withdrawn"] — until this is finalized, we retain the data for a maximum of 2 years after the inquiry is closed.</li>
+          <li><strong>Withdrawing consent:</strong> at any time, without justification, by emailing <a href="mailto:hello@bimline.hu">hello@bimline.hu</a>.</li>
+        </ul>
+
+        <h3>2.2 Cookies and website analytics</h3>
+        <p>
+          The Website uses cookies. Cookies are small text files that your browser stores on your
+          device while you visit. Some are essential for the Website to function; others — only
+          with your consent — serve statistical purposes.
+        </p>
+        <p>
+          The first time you visit the Website, a cookie settings banner appears, where you can
+          decide, category by category, which cookies to allow. Cookies outside the "Necessary"
+          category (currently: Statistics) only activate after you accept them — before that, no
+          non-essential cookie is placed on your device.
+        </p>
+
+        <div class="not-prose overflow-x-auto mt-6 rounded-xl border border-line">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-surface2/60 text-left">
+                <th class="p-3 font-display font-semibold">Category</th>
+                <th class="p-3 font-display font-semibold">Cookie / provider</th>
+                <th class="p-3 font-display font-semibold">Purpose</th>
+                <th class="p-3 font-display font-semibold">Lifetime</th>
+              </tr>
+            </thead>
+            <tbody class="text-muted">
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Necessary</td>
+                <td class="p-3 align-top"><code>bimline_cookie_consent</code> (first-party, on the Website's own domain)</td>
+                <td class="p-3 align-top">Remembers your cookie preferences, so you don't need to set them again on every visit.</td>
+                <td class="p-3 align-top">180 days</td>
+              </tr>
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Statistics</td>
+                <td class="p-3 align-top"><code>_ga</code>, <code>_ga_*</code> — Google Analytics 4 (Google Ireland Limited)</td>
+                <td class="p-3 align-top">Website analytics: where visitors come from, what content they click on, and how much time they spend on the site. Only active with consent.</td>
+                <td class="p-3 align-top">Up to 14 months (Google default)</td>
+              </tr>
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Marketing</td>
+                <td class="p-3 align-top">No active marketing cookies at this time</td>
+                <td class="p-3 align-top">This category is prepared for a possible future feature; enabling it currently starts no tracking. If this changes, we will update this notice.</td>
+                <td class="p-3 align-top">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mt-4">
+          You can change your cookie settings, or withdraw previously given consent, at any time
+          via the "Cookie settings" button in the footer, or with the button below:
+        </p>
+        <p class="not-prose">
+          <button type="button" id="reopenCookiePrefsBtn" class="mt-1 px-5 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Open cookie settings</button>
+        </p>
+
+        <h2>3. Google Analytics — in more detail</h2>
+        <p>
+          If you consent to statistics cookies, the Website uses Google Analytics 4, operated by
+          Google Ireland Limited (Gordon House, Barrow Street, Dublin 4, Ireland), and data may
+          also be processed by Google LLC (United States). The legal basis for the transfer to the
+          US is the adequacy framework adopted by the European Commission (the EU–U.S. Data
+          Privacy Framework), as well as the Standard Contractual Clauses included in Google's
+          general terms of service. You can read more about Google's data processing in Google's
+          privacy policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.
+        </p>
+        <p>
+          The measurement ID (property) used only starts actually sending data once you give the
+          consent described above; until then, the tracking script doesn't even load in your
+          browser.
+        </p>
+
+        <h2>4. Data transfers</h2>
+        <p>
+          The Data Controller processes personal data primarily itself, and with the assistance of
+          the data processors named above (Google Ireland Limited / Google LLC; and, for the
+          contact form, the Google Workspace email service). Beyond this, we do not share your data
+          with third parties, except where required by law.
+        </p>
+
+        <h2>5. Your rights as a data subject</h2>
+        <p>Under the GDPR, you have the following rights regarding the personal data we process about you:</p>
+        <ul>
+          <li><strong>Right of access</strong> — you can ask for information about what data of yours we process.</li>
+          <li><strong>Right to rectification</strong> — you can ask us to correct inaccurate data.</li>
+          <li><strong>Right to erasure</strong> ("right to be forgotten") — you can ask us to delete your data if it's no longer needed, or if you withdraw your consent.</li>
+          <li><strong>Right to restriction of processing.</strong></li>
+          <li><strong>Right to object</strong> to processing.</li>
+          <li><strong>Right to data portability</strong> — you can ask to receive the data you provided in a structured, commonly used format, or have it transmitted to another controller.</li>
+          <li><strong>Right to withdraw consent at any time</strong>, which does not affect the lawfulness of processing carried out before the withdrawal.</li>
+        </ul>
+        <p>
+          To exercise these rights, please contact us at <a href="mailto:hello@bimline.hu">hello@bimline.hu</a>.
+        </p>
+
+        <h2>6. Remedies</h2>
+        <p>
+          If you believe that the processing of your data violates the GDPR or Hungarian data
+          protection law, you can lodge a complaint with the Hungarian National Authority for Data
+          Protection and Freedom of Information (NAIH):
+        </p>
+        <ul>
+          <li><strong>Address:</strong> 1055 Budapest, Falk Miksa utca 9-11., Hungary</li>
+          <li><strong>Postal address:</strong> 1363 Budapest, Pf. 9., Hungary</li>
+          <li><strong>Phone:</strong> +36 (1) 391-1400</li>
+          <li><strong>Email:</strong> <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a></li>
+          <li><strong>Website:</strong> <a href="https://www.naih.hu" target="_blank" rel="noopener noreferrer">www.naih.hu</a></li>
+        </ul>
+        <p>
+          You may also bring a claim before a court; such proceedings fall within the jurisdiction
+          of the regional courts (törvényszék), and — at your choice — may be brought before the
+          court with jurisdiction over your place of residence or habitual stay.
+        </p>
+
+        <h2>7. Changes to this notice</h2>
+        <p>
+          We reserve the right to amend this notice, particularly in the event of legal changes or
+          changes to our data-processing practices on the Website. The current version is always
+          available on this page, with the effective date shown at the top.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.getElementById('reopenCookiePrefsBtn')?.addEventListener('click', () => {
+    (window as unknown as { bimlineOpenCookiePreferences?: () => void }).bimlineOpenCookiePreferences?.();
+  });
+</script>

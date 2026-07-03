@@ -1,0 +1,468 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CompareSlider from '../../components/CompareSlider.astro';
+import StatCounter from '../../components/StatCounter.astro';
+import BrandMarquee from '../../components/BrandMarquee.astro';
+import ReferenceMap from '../../components/ReferenceMap.astro';
+import LatestArticles from '../../components/LatestArticles.astro';
+import CTASection from '../../components/CTASection.astro';
+import { projectsEn, categoryMetaEn, type ProjectCategory } from '../../data/projects';
+
+const categories: { key: ProjectCategory | 'all'; label: string }[] = [
+  { key: 'all', label: 'All' },
+  { key: 'ipar', label: 'Industrial & Pharma' },
+  { key: 'strategiai', label: 'Strategic & Healthcare' },
+  { key: 'kozulet', label: 'Commercial & Public' },
+  { key: 'lako', label: 'Residential' },
+];
+const base = import.meta.env.BASE_URL;
+const prefix = `${base}en/`;
+---
+
+<BaseLayout
+  title="BIMLine Gépész Kft. — Clash-Free MEP Design"
+  description="Budapest-based BIMLine Gépész Kft. provides full-scope MEP design, building diagnostics and investment consulting, up to BIM LOD 300, optimized for construction."
+  path="/en/"
+  lang="en"
+>
+  <!-- ============ HERO ============ -->
+  <section id="hero" class="relative pt-16 pb-20 lg:pb-28 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-16 lg:pt-24">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">MEP · BIM · LOD 300</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Clash-free MEP design.
+          <span class="block text-accent">Optimized for construction.</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          Budapest-based BIMLine Gépész Kft. provides full-scope MEP (mechanical, electrical &
+          plumbing) design, building diagnostics and investment consulting at any scale. We work
+          primarily with 2D design methods, and — on complex MEP nodes, where needed — we also
+          provide 3D BIM coordination.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`${prefix}#kapcsolat`} class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a Quote</a>
+          <a href={`${prefix}#referenciak`} class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Project Portfolio</a>
+        </div>
+      </div>
+
+      <CompareSlider lang="en" />
+    </div>
+  </section>
+
+  <!-- ============ WHY US (intro + stats + methodology) ============ -->
+  <section id="miert-minket" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-center">
+      <div data-reveal>
+        <p class="eyebrow mb-3">Why Us</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Engineering precision, BIM-driven thinking.
+        </h2>
+        <p class="mt-5 text-muted leading-relaxed">
+          As an innovative engineering office, we provide full-scope MEP design, building
+          diagnostics and investment consulting. Our small, highly qualified permanent team and
+          our reliable network of subcontractors deliver flexible, precise and energy-efficient
+          solutions — from residential buildings to critical industrial infrastructure.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <StatCounter value={3} label="permanent engineers on the team" />
+        <StatCounter value={300} prefix="LOD " label="BIM coordination level" />
+        <StatCounter value={244} label="project sites nationwide" />
+        <StatCounter value={2} suffix=" MW" label="largest system designed" />
+      </div>
+    </div>
+
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 mt-16">
+      <div class="max-w-2xl mb-12" data-reveal>
+        <p class="eyebrow mb-3">Methodology</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Four steps from sketch to clash-free construction.
+        </h2>
+        <p class="mt-3 text-muted">We combine classic engineering design with BIM-based coordination — so problems surface on screen, not on site.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">01</div>
+          <h3 class="font-display font-semibold text-lg">Consultation &amp; site visit</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Needs assessment, on-site survey, and review of existing design baselines (sketches, DWG, BIM) and condition assessment.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">02</div>
+          <h3 class="font-display font-semibold text-lg">Design <span class="text-xs text-muted font-sans font-normal">(BIM optional)</span></h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">2D construction design as the baseline; for complex MEP nodes, on request, BIM modeling and clash detection are added to the process, up to LOD 300.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">03</div>
+          <h3 class="font-display font-semibold text-lg">Construction documentation</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Construction-ready design documentation, sizing calculations, and energy/ROI calculations.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="font-display tracking-wide text-sm text-accent mb-3">04</div>
+          <h3 class="font-display font-semibold text-lg">Construction support</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">Design supervision, on-site coordination with the contractor, commissioning, and closing out as-built documentation.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SERVICES ============ -->
+  <section id="szolgaltatasok" class="py-16 lg:py-24">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Services</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Where we work at the highest engineering standard.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"/><path d="M7 3v18M17 3v18"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">MEP Design</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Custom systems from residential buildings to complex industrial technologies.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">BIM Integration <span class="text-xs text-muted font-sans font-normal">(optional)</span></h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">We work primarily with 2D design; for complex MEP nodes, on request, we also provide high-level 3D modeling and coordination up to LOD 300.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">Investment Decision Support & ROI</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">System optimization, investment decision support and ROI calculation for existing buildings.</p>
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <div class="w-11 h-11 rounded-lg bg-accent/10 grid place-items-center text-accent mb-4">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5z"/></svg>
+          </div>
+          <h3 class="font-display font-semibold text-lg">Critical Infrastructure</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Specialized cooling and ventilation for data centers, defense and healthcare facilities.</p>
+        </article>
+      </div>
+
+      <div class="mt-6 card rounded-xl p-6 lg:p-8" data-reveal>
+        <p class="eyebrow mb-4">What exactly do we do?</p>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3">
+          {[
+            'Energy audits',
+            'Building diagnostics',
+            'Permit / building-notification design',
+            'Construction design',
+            'As-built documentation',
+            'Overlay drawings',
+            'MEP expert opinions',
+          ].map((item) => (
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0"><path d="M20 6L9 17l-5-5"/></svg>
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <BrandMarquee lang="en" />
+
+  <CTASection
+    lang="en"
+    title="Not sure what you need?"
+    description="Request a free, no-obligation consultation — we'll discuss the project scope and recommend the right solution."
+    cta="Request a Free Consultation"
+  />
+
+  <!-- ============ REFERENCES ============ -->
+  <section id="referenciak" class="py-16 lg:py-24">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">References</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Project Portfolio</h2>
+        <p class="mt-3 text-muted">From residential buildings to data centers — by size, output and complexity.</p>
+      </div>
+
+      <div id="projectFilters" class="flex flex-wrap gap-2 mb-8">
+        {categories.map((c, i) => (
+          <button class="chip px-4 py-2 rounded-full border border-line text-sm" data-filter={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.label}</button>
+        ))}
+      </div>
+
+      <div id="projectGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {projectsEn.map((p) => (
+          <article class="project-card card rounded-xl p-6 flex flex-col" data-cat={p.cat}>
+            <div class="flex items-center justify-between mb-4">
+              <span class:list={["eyebrow", categoryMetaEn[p.cat].color]}>{categoryMetaEn[p.cat].label}</span>
+              <span class:list={["font-display tracking-wide text-sm font-bold", categoryMetaEn[p.cat].color]}>{p.metric}</span>
+            </div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{p.title}</h3>
+            <div class="text-xs text-muted font-display tracking-wide mt-1">{p.loc}</div>
+            <p class="text-sm text-muted mt-3 leading-relaxed flex-1">{p.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <ReferenceMap lang="en" />
+
+  <!-- ============ ENERGY ANALYSIS CTA ============ -->
+  <section id="energetika" class="py-16 lg:py-24 bg-surface/40 border-y border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8 text-center" data-reveal>
+      <p class="eyebrow mb-3">Energy Analysis</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Request a Custom Energy Analysis</h2>
+      <p class="mt-4 text-muted leading-relaxed">
+        The savings potential and payback of heating, cooling and ventilation systems vary from
+        building to building, which is why we don't rely on generic online estimators. In every
+        case, we produce a detailed, custom calculation backed by an on-site survey.
+      </p>
+      <a href={`${prefix}#kapcsolat`} class="mt-8 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request an Energy Analysis</a>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT US ============ -->
+  <section id="rolunk" class="py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">About Us</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">BIMLine Gépész Kft.</h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        BIMLine Gépész Kft. is a Budapest-based engineering office specializing in MEP design,
+        building diagnostics and investment consulting. Our goal is for every clash and design
+        error to surface at the drawing board — not during construction, where it costs more time
+        and money.
+      </p>
+      <p class="mt-4 text-muted leading-relaxed">
+        Thanks to our small, permanent engineering team and reliable network of subcontractors, we
+        adapt flexibly to a project's scale and complexity — whether it's the renovation of an
+        apartment building or the complete MEP system of a piece of critical infrastructure.
+      </p>
+    </div>
+  </section>
+
+  <LatestArticles lang="en" />
+
+  <!-- ============ CONTACT ============ -->
+  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Contact</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Let's build the future together!</h2>
+        <p class="mt-3 text-muted">Briefly describe your project — we'll get back to you within 1 business day.</p>
+      </div>
+
+      <form id="contactForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Name</label>
+            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Company</label>
+            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Email address</label>
+            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Phone number <span class="text-muted font-normal">(optional)</span></label>
+            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Project description</label>
+          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <fieldset>
+          <legend class="block text-sm font-medium mb-3">Available design baselines</legend>
+          <div class="grid sm:grid-cols-2 gap-2.5 text-sm">
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="skicc" class="accent-accent w-4 h-4"> Architectural sketch
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="dwg" class="accent-accent w-4 h-4"> 2D DWG
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="bim" class="accent-accent w-4 h-4"> 3D BIM model (IFC / Revit)
+            </label>
+            <label class="flex items-center gap-3 px-4 py-3 rounded-lg bg-base border border-line cursor-pointer hover:border-accent/50">
+              <input type="checkbox" name="alap" value="energetika" class="accent-accent w-4 h-4"> Energy performance report
+            </label>
+          </div>
+        </fieldset>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Share drawings</label>
+          <textarea name="linkek" rows="3" placeholder="If files (DWG, IFC, RVT) are already available, paste a download link here (WeTransfer, Google Drive, OneDrive), or let us know if you'd rather send them by email." class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+          <span>I consent to the processing of my data for the purpose of this inquiry, as described in the <a href={`${base}en/adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+        </label>
+
+        <button type="submit" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Send Inquiry
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-base); border-color: var(--color-accent); font-weight: 600; }
+</style>
+
+<script>
+  const filterBar = document.getElementById('projectFilters');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.project-card'));
+  filterBar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-filter]') as HTMLButtonElement | null;
+    if (!btn) return;
+    filterBar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const filter = btn.dataset.filter;
+    cards.forEach((card) => {
+      card.style.display = (filter === 'all' || card.dataset.cat === filter) ? '' : 'none';
+    });
+  });
+</script>
+
+<script>
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const contactForm = document.getElementById('contactForm') as HTMLFormElement;
+
+  function setFieldError(el: HTMLElement, msg: string) {
+    el.classList.add('border-red-500');
+    let err = el.parentElement!.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      el.parentElement!.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el: HTMLElement) {
+    el.classList.remove('border-red-500');
+    const err = el.parentElement!.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function validateContact() {
+    let ok = true;
+    const f = contactForm;
+    const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [f.nev, 'Please enter your name.'],
+      [f.email, 'Please enter your email address.'],
+      [f.leiras, 'Please briefly describe the project.'],
+    ];
+    required.forEach(([el, msg]) => {
+      if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+      else clearFieldError(el);
+    });
+    if (f.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) {
+      setFieldError(f.email, 'The email address format is invalid.'); ok = false;
+    }
+    if (f.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(f.telefon.value.trim())) {
+      setFieldError(f.telefon, 'The phone number format is invalid.'); ok = false;
+    } else {
+      clearFieldError(f.telefon);
+    }
+    if (!f.gdpr.checked) {
+      const box = f.gdpr.closest('label')!;
+      if (!box.querySelector('.field-error')) {
+        const err = document.createElement('p');
+        err.className = 'field-error text-xs text-red-400 mt-1';
+        err.textContent = 'Consent is required to get in touch.';
+        box.appendChild(err);
+      }
+      ok = false;
+    } else {
+      const e = f.gdpr.closest('label')!.querySelector('.field-error');
+      if (e) e.remove();
+    }
+    return ok;
+  }
+
+  function buildMailBody(f: HTMLFormElement) {
+    const alapok = Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', ') || '—';
+    return [
+      'Name: ' + f.nev.value.trim(),
+      'Company: ' + (f.ceg.value.trim() || '—'),
+      'Email: ' + f.email.value.trim(),
+      'Phone: ' + (f.telefon.value.trim() || '—'),
+      '',
+      'Project description:',
+      f.leiras.value.trim(),
+      '',
+      'Available design baselines: ' + alapok,
+      '',
+      'Drawing links:',
+      (f.linkek.value.trim() || '—'),
+    ].join('\n');
+  }
+
+  function fieldData(f: HTMLFormElement) {
+    return {
+      nev: f.nev.value.trim(),
+      ceg: f.ceg.value.trim(),
+      email: f.email.value.trim(),
+      telefon: f.telefon.value.trim(),
+      leiras: f.leiras.value.trim(),
+      alapok: Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', '),
+      linkek: f.linkek.value.trim(),
+    };
+  }
+
+  function sendMailto(f: HTMLFormElement) {
+    const subject = encodeURIComponent('Inquiry – ' + (f.ceg.value.trim() || f.nev.value.trim()));
+    const body = encodeURIComponent(buildMailBody(f));
+    window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+  }
+
+  contactForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validateContact()) return;
+
+    const btn = contactForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const params = new URLSearchParams(fieldData(contactForm) as Record<string, string>);
+        await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+        btn.textContent = 'Thank you! We will be in touch soon.';
+        btn.classList.add('bg-belimo');
+        contactForm.reset();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        sendMailto(contactForm);
+      }
+      return;
+    }
+    sendMailto(contactForm);
+    btn.textContent = 'Email client opened — thank you!';
+    btn.classList.add('bg-belimo');
+  });
+
+  contactForm?.querySelectorAll('input, textarea').forEach((el) => {
+    el.addEventListener('input', () => clearFieldError(el as HTMLElement));
+  });
+</script>

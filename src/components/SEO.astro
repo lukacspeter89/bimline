@@ -8,6 +8,7 @@ interface Props {
   image?: string; // abszolút vagy /-rel kezdődő OG kép útvonal
   type?: 'website' | 'article';
   noindex?: boolean;
+  lang?: 'hu' | 'en';
 }
 
 const {
@@ -17,11 +18,19 @@ const {
   image = '/og-image.png',
   type = 'website',
   noindex = false,
+  lang = 'hu',
 } = Astro.props;
 
 const canonicalURL = new URL(path, SITE.url).toString();
 const ogImageURL = image.startsWith('http') ? image : new URL(image, SITE.url).toString();
 const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
+
+// Nyelvi alternate (hreflang) — mivel a slugek azonosak a két nyelv között,
+// a HU <-> EN útvonal egyszerű "/en/" prefix hozzáadással/eltávolítással számolható.
+const huPath = path.startsWith('/en/') ? path.replace(/^\/en\//, '/') : path === '/en' ? '/' : path;
+const enPath = path.startsWith('/en/') || path === '/en' ? path : `/en${path === '/' ? '/' : path}`;
+const huAlternateURL = new URL(huPath, SITE.url).toString();
+const enAlternateURL = new URL(enPath, SITE.url).toString();
 ---
 
 <title>{fullTitle}</title>
@@ -29,13 +38,20 @@ const fullTitle = path === '/' ? title : `${title} | ${SITE.name}`;
 <link rel="canonical" href={canonicalURL} />
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
+<link rel="alternate" hreflang="hu" href={huAlternateURL} />
+<link rel="alternate" hreflang="en" href={enAlternateURL} />
+<link rel="alternate" hreflang="x-default" href={huAlternateURL} />
+<meta property="og:locale" content={lang === 'en' ? 'en_US' : 'hu_HU'} />
+{lang === 'en'
+  ? <meta property="og:locale:alternate" content="hu_HU" />
+  : <meta property="og:locale:alternate" content="en_US" />}
+
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={SITE.name} />
 <meta property="og:title" content={fullTitle} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={ogImageURL} />
 <meta property="og:url" content={canonicalURL} />
-<meta property="og:locale" content="hu_HU" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />

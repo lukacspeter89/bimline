@@ -1,0 +1,141 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CTASection from '../../../components/CTASection.astro';
+import { estimateReadingTime } from '../../../lib/reading-time';
+import { SITE } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blogEn', ({ data }) => !data.draft);
+  const sorted = [...posts].sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+  return sorted.map((post, i) => ({
+    params: { id: post.id },
+    props: {
+      post,
+      prev: sorted[i + 1] || null,
+      next: sorted[i - 1] || null,
+      allPosts: sorted,
+    },
+  }));
+}
+
+const { post, prev, next, allPosts } = Astro.props;
+const { Content, headings } = await render(post);
+const readingTime = estimateReadingTime(post.body || '');
+
+const related = allPosts
+  .filter((p) => p.id !== post.id && (p.data.category === post.data.category || p.data.tags.some((t: string) => post.data.tags.includes(t))))
+  .slice(0, 3);
+
+const ogImage = post.data.cover?.src || '/og-image.png';
+const canonicalPath = `/en/blog/${post.id}/`;
+const base = import.meta.env.BASE_URL;
+const prefix = `${base}en/`;
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.description,
+  image: new URL(ogImage, SITE.url).toString(),
+  datePublished: post.data.publishDate.toISOString(),
+  dateModified: (post.data.lastUpdated || post.data.publishDate).toISOString(),
+  author: { '@type': 'Organization', name: post.data.author },
+  publisher: {
+    '@type': 'Organization',
+    name: SITE.name,
+    logo: { '@type': 'ImageObject', url: `${SITE.url}/bimline-logo.png` },
+  },
+  mainEntityOfPage: new URL(canonicalPath, SITE.url).toString(),
+};
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  path={canonicalPath}
+  image={ogImage}
+  type="article"
+  lang="en"
+>
+  <script type="application/ld+json" set:html={JSON.stringify(articleSchema)} slot="head" />
+
+  <article class="py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <nav class="text-xs text-muted mb-6 font-display tracking-wide" aria-label="Breadcrumb">
+        <a href={prefix} class="hover:text-ink">Home</a> / <a href={`${prefix}blog/`} class="hover:text-ink">Knowledge Base</a> / <span class="text-ink">{post.data.title}</span>
+      </nav>
+
+      <p class="eyebrow mb-3">{post.data.category}</p>
+      <h1 class="font-display font-bold text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.15]">{post.data.title}</h1>
+
+      <div class="flex flex-wrap gap-3 mt-5 text-sm text-muted font-display tracking-wide">
+        <span>{post.data.author}</span>
+        <span>·</span>
+        <span>{post.data.publishDate.toLocaleDateString('en-US')}</span>
+        <span>·</span>
+        <span>{readingTime} min read</span>
+        {post.data.lastUpdated && <><span>·</span><span>Updated: {post.data.lastUpdated.toLocaleDateString('en-US')}</span></>}
+      </div>
+
+      {post.data.cover && (
+        <img src={post.data.cover.src} alt={post.data.coverAlt || ''} class="w-full rounded-2xl mt-8 aspect-[16/9] object-cover" />
+      )}
+
+      {headings.length > 1 && (
+        <nav class="card rounded-xl p-5 mt-8" aria-label="Table of contents">
+          <p class="eyebrow mb-3">Table of Contents</p>
+          <ul class="space-y-1.5 text-sm">
+            {headings.filter((h) => h.depth <= 3).map((h) => (
+              <li style={`margin-left:${(h.depth - Math.min(...headings.map((x) => x.depth))) * 1}rem`}>
+                <a href={`#${h.slug}`} class="text-muted hover:text-accent">{h.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <div class="prose-bimline mt-8">
+        <Content />
+      </div>
+
+      {post.data.tags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-10">
+          {post.data.tags.map((t: string) => (
+            <span class="px-3 py-1 rounded-full border border-line text-xs text-muted">#{t}</span>
+          ))}
+        </div>
+      )}
+
+      <div class="flex flex-col sm:flex-row justify-between gap-4 mt-12 pt-8 border-t border-line">
+        {prev ? (
+          <a href={`${prefix}blog/${prev.id}/`} class="text-sm text-muted hover:text-accent">← {prev.data.title}</a>
+        ) : <span />}
+        {next ? (
+          <a href={`${prefix}blog/${next.id}/`} class="text-sm text-muted hover:text-accent text-right sm:text-right">{next.data.title} →</a>
+        ) : <span />}
+      </div>
+
+      {related.length > 0 && (
+        <div class="mt-12">
+          <p class="eyebrow mb-4">Related Articles</p>
+          <div class="grid sm:grid-cols-3 gap-4">
+            {related.map((r) => (
+              <a href={`${prefix}blog/${r.id}/`} class="card rounded-lg p-4">
+                <h3 class="font-display font-semibold text-sm leading-snug">{r.data.title}</h3>
+                <p class="text-xs text-muted mt-2">{r.data.publishDate.toLocaleDateString('en-US')}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </article>
+
+  <CTASection
+    lang="en"
+    title="Not sure what you need?"
+    description="Request a free, no-obligation consultation — we'll discuss the project scope and recommend the right solution."
+    cta="Request a Free Consultation"
+  />
+</BaseLayout>

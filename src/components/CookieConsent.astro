@@ -1,61 +1,99 @@
 ---
+interface Props {
+  lang?: 'hu' | 'en';
+}
+const { lang = 'hu' } = Astro.props;
 const base = import.meta.env.BASE_URL;
+const privacyHref = `${base}${lang === 'en' ? 'en/adatkezeles/' : 'adatkezeles/'}`;
+
+const t = lang === 'en'
+  ? {
+      bannerText1: 'We use cookies for the site to function and — with your consent — to gather usage statistics (Google Analytics). You can read more about each category and your rights in our',
+      bannerText2: 'Privacy Policy',
+      bannerText3: '.',
+      reject: 'Necessary only',
+      settings: 'Settings',
+      acceptAll: 'Accept all',
+      modalTitle: 'Cookie settings',
+      modalIntro: 'Choose which cookie categories you allow. Without "Necessary" cookies, core site functions wouldn\'t work, so these are always on.',
+      necessaryTitle: 'Necessary cookies',
+      necessaryDesc: 'Required for the site to function (e.g. remembering your cookie preferences). They don\'t collect data for marketing purposes and can\'t be turned off.',
+      alwaysOn: 'Always on',
+      statsTitle: 'Statistics cookies',
+      statsDesc: 'Google Analytics — helps us understand where visitors come from, what they click on, and how much time they spend on the site, so we can improve it. Only activates with your consent.',
+      marketingTitle: 'Marketing cookies',
+      marketingDesc: 'We don\'t currently use any marketing tracking — this category is prepared for a possible future feature. Turning it on right now doesn\'t start any tracking.',
+      save: 'Save selection',
+    }
+  : {
+      bannerText1: 'Sütiket (cookie-kat) használunk a weboldal működéséhez, és — hozzájárulásod esetén — látogatottsági statisztikák készítéséhez (Google Analytics). Az egyes kategóriákról és a jogaidról bővebben az',
+      bannerText2: 'Adatkezelési tájékoztatóban',
+      bannerText3: 'olvashatsz.',
+      reject: 'Csak a szükségesek',
+      settings: 'Beállítások',
+      acceptAll: 'Összes elfogadása',
+      modalTitle: 'Süti beállítások',
+      modalIntro: 'Válaszd ki, mely süti-kategóriákat engedélyezed. A "Szükséges" sütik nélkül az oldal alapfunkciói nem működnének, ezért ezek mindig aktívak.',
+      necessaryTitle: 'Szükséges sütik',
+      necessaryDesc: 'A weboldal alapvető működéséhez kellenek (pl. a süti-beállításod megjegyzése). Nem gyűjtenek adatot marketing célra, és nem kapcsolhatók ki.',
+      alwaysOn: 'Mindig aktív',
+      statsTitle: 'Statisztikai sütik',
+      statsDesc: 'Google Analytics — segít megérteni, honnan érkeznek a látogatók, mely tartalmakra kattintanak és mennyi időt töltenek az oldalon, hogy javíthassuk a weboldalt. Csak hozzájárulásoddal aktiválódik.',
+      marketingTitle: 'Marketing sütik',
+      marketingDesc: 'Jelenleg nem használunk marketing célú követést — ez a kategória egy jövőbeli funkcióhoz van előkészítve. Bekapcsolása most nem indít el semmilyen követést.',
+      save: 'Kiválasztottak mentése',
+    };
 ---
 
 <div id="cookieBanner" class="fixed inset-x-0 bottom-0 z-[70] hidden px-4 pb-4">
   <div class="max-w-3xl mx-auto card rounded-2xl p-5 lg:p-6 shadow-2xl">
     <p class="text-sm text-muted leading-relaxed">
-      Sütiket (cookie-kat) használunk a weboldal működéséhez, és — hozzájárulásod esetén —
-      látogatottsági statisztikák készítéséhez (Google Analytics). Az egyes kategóriákról és a
-      jogaidról bővebben az
-      <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2">Adatkezelési tájékoztatóban</a>
-      olvashatsz.
+      {t.bannerText1}{' '}
+      <a href={privacyHref} class="text-accent hover:text-belimo underline underline-offset-2">{t.bannerText2}</a>{' '}
+      {t.bannerText3}
     </p>
     <div class="mt-4 flex flex-wrap gap-3">
-      <button id="cookieRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Csak a szükségesek</button>
-      <button id="cookieSettingsBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Beállítások</button>
-      <button id="cookieAcceptBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">Összes elfogadása</button>
+      <button id="cookieRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">{t.reject}</button>
+      <button id="cookieSettingsBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">{t.settings}</button>
+      <button id="cookieAcceptBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">{t.acceptAll}</button>
     </div>
   </div>
 </div>
 
 <div id="cookieModalOverlay" class="fixed inset-0 z-[80] hidden bg-black/60 backdrop-blur-sm items-center justify-center p-4">
   <div class="card rounded-2xl p-6 lg:p-8 max-w-lg w-full max-h-[85vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
-    <h2 id="cookieModalTitle" class="font-display font-bold text-lg mb-1">Süti beállítások</h2>
-    <p class="text-sm text-muted mb-5 leading-relaxed">
-      Válaszd ki, mely süti-kategóriákat engedélyezed. A "Szükséges" sütik nélkül az oldal
-      alapfunkciói nem működnének, ezért ezek mindig aktívak.
-    </p>
+    <h2 id="cookieModalTitle" class="font-display font-bold text-lg mb-1">{t.modalTitle}</h2>
+    <p class="text-sm text-muted mb-5 leading-relaxed">{t.modalIntro}</p>
 
     <div class="space-y-4">
       <div class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line">
         <div>
-          <p class="font-semibold text-sm">Szükséges sütik</p>
-          <p class="text-xs text-muted mt-1 leading-relaxed">A weboldal alapvető működéséhez kellenek (pl. a süti-beállításod megjegyzése). Nem gyűjtenek adatot marketing célra, és nem kapcsolhatók ki.</p>
+          <p class="font-semibold text-sm">{t.necessaryTitle}</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">{t.necessaryDesc}</p>
         </div>
-        <span class="shrink-0 mt-0.5 px-2.5 py-1 rounded-full bg-accent/15 text-accent text-xs font-semibold whitespace-nowrap">Mindig aktív</span>
+        <span class="shrink-0 mt-0.5 px-2.5 py-1 rounded-full bg-accent/15 text-accent text-xs font-semibold whitespace-nowrap">{t.alwaysOn}</span>
       </div>
 
       <label class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line cursor-pointer">
         <div>
-          <p class="font-semibold text-sm">Statisztikai sütik</p>
-          <p class="text-xs text-muted mt-1 leading-relaxed">Google Analytics — segít megérteni, honnan érkeznek a látogatók, mely tartalmakra kattintanak és mennyi időt töltenek az oldalon, hogy javíthassuk a weboldalt. Csak hozzájárulásoddal aktiválódik.</p>
+          <p class="font-semibold text-sm">{t.statsTitle}</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">{t.statsDesc}</p>
         </div>
         <input type="checkbox" id="consentStatistics" class="shrink-0 mt-1 w-5 h-5 accent-accent cursor-pointer" />
       </label>
 
       <label class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line cursor-pointer">
         <div>
-          <p class="font-semibold text-sm">Marketing sütik</p>
-          <p class="text-xs text-muted mt-1 leading-relaxed">Jelenleg nem használunk marketing célú követést — ez a kategória egy jövőbeli funkcióhoz van előkészítve. Bekapcsolása most nem indít el semmilyen követést.</p>
+          <p class="font-semibold text-sm">{t.marketingTitle}</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">{t.marketingDesc}</p>
         </div>
         <input type="checkbox" id="consentMarketing" class="shrink-0 mt-1 w-5 h-5 accent-accent cursor-pointer" />
       </label>
     </div>
 
     <div class="mt-6 flex flex-wrap gap-3">
-      <button id="cookieModalRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Csak a szükségesek</button>
-      <button id="cookieModalSaveBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">Kiválasztottak mentése</button>
+      <button id="cookieModalRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">{t.reject}</button>
+      <button id="cookieModalSaveBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">{t.save}</button>
     </div>
   </div>
 </div>

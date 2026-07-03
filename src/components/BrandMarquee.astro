@@ -1,5 +1,24 @@
 ---
 import { brands } from '../data/brands';
+
+interface Props {
+  lang?: 'hu' | 'en';
+}
+const { lang = 'hu' } = Astro.props;
+
+const t = lang === 'en'
+  ? {
+      eyebrow: 'System Optimization',
+      standard: 'Per the EN ISO 52120-1 standard',
+      body: 'We carry out controls-focused review and optimization of heating, cooling and ventilation systems in existing buildings, regardless of manufacturer, in line with the EN ISO 52120-1 standard. The survey covers the current and achievable efficiency class, and delivers concrete modernization proposals — such as pressure-independent valves, demand-controlled regulation, and pump optimization.',
+      brandsIntro: 'Systems we design with to the highest engineering standard.',
+    }
+  : {
+      eyebrow: 'Rendszeroptimalizálás',
+      standard: 'EN ISO 52120-1 szabvány szerint',
+      body: 'Meglévő épületek fűtési, hűtési és szellőzési rendszereinek szabályozástechnikai felülvizsgálatát és optimalizálását vállaljuk, gyártótól függetlenül, az EN ISO 52120-1 szabvány szerint. A felmérés kitér a jelenlegi és az elérhető hatékonysági osztályra, és konkrét modernizációs javaslatokat ad — például nyomásfüggetlen szelepek, igényvezérelt szabályozás, szivattyú-optimalizálás.',
+      brandsIntro: 'Rendszerek, melyekkel a legmagasabb mérnöki színvonalon tervezünk.',
+    };
 ---
 
 <section id="markak" class="py-14 lg:py-16 border-y border-line/60 bg-surface/40">
@@ -11,21 +30,15 @@ import { brands } from '../data/brands';
           <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
         </div>
         <div>
-          <p class="eyebrow">Rendszeroptimalizálás</p>
-          <p class="text-xs text-muted font-display tracking-wide mt-0.5">EN ISO 52120-1 szabvány szerint</p>
+          <p class="eyebrow">{t.eyebrow}</p>
+          <p class="text-xs text-muted font-display tracking-wide mt-0.5">{t.standard}</p>
         </div>
       </div>
-      <p class="text-sm text-muted leading-relaxed">
-        Meglévő épületek fűtési, hűtési és szellőzési rendszereinek szabályozástechnikai
-        felülvizsgálatát és optimalizálását vállaljuk, gyártótól függetlenül, az EN ISO 52120-1
-        szabvány szerint. A felmérés kitér a jelenlegi és az elérhető hatékonysági osztályra,
-        és konkrét modernizációs javaslatokat ad — például nyomásfüggetlen szelepek,
-        igényvezérelt szabályozás, szivattyú-optimalizálás.
-      </p>
+      <p class="text-sm text-muted leading-relaxed">{t.body}</p>
     </div>
 
     <div class="mt-6" data-reveal>
-      <p class="text-xs text-muted mb-3">Rendszerek, melyekkel a legmagasabb mérnöki színvonalon tervezünk.</p>
+      <p class="text-xs text-muted mb-3">{t.brandsIntro}</p>
       <div class="marquee relative">
         <div id="brandTrack" class="marquee__track gap-10 pr-10 text-muted/70 font-display font-semibold text-lg"></div>
         <div class="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-base to-transparent pointer-events-none"></div>

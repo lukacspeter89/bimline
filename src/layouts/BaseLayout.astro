@@ -13,22 +13,25 @@ interface Props {
   path?: string;
   image?: string;
   type?: 'website' | 'article';
+  lang?: 'hu' | 'en';
 }
 
-const { title, description, path, image, type } = Astro.props;
+const { title, description, path, image, type, lang = 'hu' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
 <!DOCTYPE html>
-<html lang="hu">
+<html lang={lang}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <SEO title={title} description={description} path={path} image={image} type={type} />
+  <SEO title={title} description={description} path={path} image={image} type={type} lang={lang} />
   <OrganizationSchema />
 
   <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
-  <link rel="alternate" type="application/rss+xml" title="BIMLine Gépész Kft. — Tudásbázis" href={`${base}rss.xml`} />
+  {lang === 'en'
+    ? <link rel="alternate" type="application/rss+xml" title="BIMLine Gépész Kft. — Knowledge Base" href={`${base}en/rss.xml`} />
+    : <link rel="alternate" type="application/rss+xml" title="BIMLine Gépész Kft. — Tudásbázis" href={`${base}rss.xml`} />}
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,12 +40,12 @@ const base = import.meta.env.BASE_URL;
   <slot name="head" />
 </head>
 <body class="antialiased selection:bg-accent/30">
-  <Header />
+  <Header lang={lang} />
   <main class="pt-16 lg:w-3/4 lg:mx-auto">
     <slot />
   </main>
-  <Footer />
-  <CookieConsent />
+  <Footer lang={lang} />
+  <CookieConsent lang={lang} />
 
   <script>
     function initReveal() {

@@ -1,0 +1,45 @@
+---
+// Nyelvváltó — a magyar oldalak a gyökéren (pl. /bimline/blog/), az angol
+// verzió a /en/ alatt fut (pl. /bimline/en/blog/). Mivel a slugek (cikk-id-k,
+// oldal-nevek) mindkét nyelven azonosak, a váltás egyszerű prefix hozzáadás/
+// eltávolítás — ha az aktuális oldalnak nincs (még) fordítása, a nyelv
+// kezdőlapjára visz, ez nem okoz 404-et.
+interface Props {
+  lang: 'hu' | 'en';
+  size?: 'default' | 'compact';
+}
+const { lang, size = 'default' } = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+let relPath = Astro.url.pathname;
+if (relPath.startsWith(base)) relPath = relPath.slice(base.length);
+
+let huRel: string;
+let enRel: string;
+if (relPath === 'en' || relPath.startsWith('en/')) {
+  huRel = relPath.replace(/^en\/?/, '');
+  enRel = relPath === 'en' ? 'en/' : relPath;
+} else {
+  huRel = relPath;
+  enRel = 'en/' + relPath;
+}
+
+const huHref = `${base}${huRel}`;
+const enHref = `${base}${enRel}`;
+const pad = size === 'compact' ? 'px-2 py-1' : 'px-2.5 py-1.5';
+---
+
+<div class={`inline-flex items-center gap-0.5 rounded-full border border-line ${size === 'compact' ? 'p-0.5' : 'p-1'}`} role="group" aria-label="Nyelv / Language">
+  <a
+    href={huHref}
+    aria-label="Magyar"
+    aria-current={lang === 'hu' ? 'true' : 'false'}
+    class:list={[`rounded-full ${pad} text-sm leading-none transition`, lang === 'hu' ? 'bg-surface2' : 'opacity-45 hover:opacity-90']}
+  >🇭🇺</a>
+  <a
+    href={enHref}
+    aria-label="English"
+    aria-current={lang === 'en' ? 'true' : 'false'}
+    class:list={[`rounded-full ${pad} text-sm leading-none transition`, lang === 'en' ? 'bg-surface2' : 'opacity-45 hover:opacity-90']}
+  >🇬🇧</a>
+</div>

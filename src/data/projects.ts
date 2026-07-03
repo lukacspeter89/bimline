@@ -47,3 +47,44 @@ export const categoryMeta: Record<ProjectCategory, { label: string; color: strin
   kozulet: { label: 'Középület', color: 'text-accent' },
   lako: { label: 'Lakó', color: 'text-belimo' },
 };
+
+// --- English translations (Referenciák / References section) ---
+export const projectsEn: Project[] = [
+  { cat: 'ipar', title: 'Geothermal Heating System', loc: 'Székesfehérvár', metric: '2 MW', desc: 'Geothermal system designed with production-line technology integration.' },
+  { cat: 'ipar', title: 'Pharmaceutical Manufacturing Plant', loc: 'Manufacturing Technology', metric: '3,000 m²', desc: 'Specialized air-handling network supporting production.' },
+  { cat: 'ipar', title: 'Food Industry Complexes', loc: 'Multiple locations', metric: 'Full MEP scope', desc: 'Complete MEP systems for slaughterhouses and meat processing plants.' },
+  { cat: 'ipar', title: 'Industrial Process Cooling', loc: 'Jásztelek', metric: '90 kW', desc: 'Industrial cooling system for existing injection molding machines.' },
+  { cat: 'ipar', title: 'Production Hall', loc: 'Sormás', metric: '1,600 m²', desc: 'Complete MEP design for an industrial hall.' },
+  { cat: 'ipar', title: 'Welding Shop Fume Extraction', loc: 'Kecskemét', metric: '1,000 m²', desc: 'Design of industrial ventilation and fume extraction.' },
+  { cat: 'ipar', title: 'Industrial Climate Chambers', loc: 'Process Technology', metric: 'Condenser cooling', desc: 'Design of condenser cooling systems for climate chambers.' },
+  { cat: 'ipar', title: 'Fume Hood MEP Systems', loc: 'Lab Technology', metric: 'Specialized extraction', desc: 'Specialized extraction and supporting MEP systems.' },
+  { cat: 'strategiai', title: 'Military Server Room', loc: 'Defense Forces Data Center', metric: '270 kW', desc: 'Server room infrastructure with redundant cooling capacity.' },
+  { cat: 'strategiai', title: 'Military Barracks', loc: 'Székesfehérvár', metric: '200 kW', desc: 'Server cooling with precision air conditioning units.' },
+  { cat: 'strategiai', title: 'Military Office Complex', loc: 'Hybrid system', metric: '3,600 m²', desc: 'Boiler + heat pump heating/cooling and server room MEP.' },
+  { cat: 'strategiai', title: 'Hospital Operating Block', loc: 'Székesfehérvár', metric: '1,500 m²', desc: 'Fit-out of sterile operating rooms in an existing building.' },
+  { cat: 'strategiai', title: 'Hospital Staff Residence', loc: 'Kaposvár', metric: '72 units', desc: 'Fit-out of an accommodation complex in an existing building.' },
+  { cat: 'strategiai', title: 'Military Server Rooms', loc: 'Multiple locations', metric: 'Redundant cooling', desc: 'Specialized security and redundant cooling systems.' },
+  { cat: 'kozulet', title: 'Retail Center', loc: 'Törökbálint', metric: '15,000 m²', desc: 'Full energy audit and investment ROI recommendations.' },
+  { cat: 'kozulet', title: 'Regional University', loc: '6 buildings', metric: 'Heating upgrade', desc: 'Comprehensive heating modernization design for university buildings.' },
+  { cat: 'kozulet', title: 'University Campus Renovation', loc: 'Budapest', metric: '10,000 m²', desc: 'MEP systems for the reconstruction of higher-education buildings.' },
+  { cat: 'kozulet', title: 'Premium Hotel', loc: 'Budapest, District V', metric: '60 rooms', desc: 'Complete MEP design for a hotel.' },
+  { cat: 'kozulet', title: 'Gastronomy Complex', loc: 'Budapest, District V', metric: 'Commercial kitchen', desc: 'Air handling and MEP systems for a downtown restaurant’s commercial kitchen.' },
+  { cat: 'kozulet', title: 'Industrial Catering Kitchen & Plant', loc: 'Aszófő', metric: '1,500 m²', desc: 'Process kitchen served by heat pump heating and cooling.' },
+  { cat: 'kozulet', title: 'Primary School', loc: 'Üröm', metric: '1,600 m²', desc: 'Complete MEP system for an educational institution.' },
+  { cat: 'kozulet', title: 'Hydroelectric Plant', loc: 'Gibárt', metric: 'Turbine cooling', desc: 'Specialized process cooling system for the water turbines.' },
+  { cat: 'kozulet', title: 'Regional Bank Center', loc: 'Branch network', metric: 'Redesign', desc: 'MEP redesign of the central bank branch building.' },
+  { cat: 'kozulet', title: 'Office Building Modernization', loc: 'Budapest', metric: 'Renewable energy', desc: 'Retrofit of an existing office building with renewable energy utilization.' },
+  { cat: 'kozulet', title: 'Futsal Sports Halls', loc: 'Multiple locations', metric: 'Redesign', desc: 'On-site adaptation of hall MEP systems.' },
+  { cat: 'kozulet', title: 'Recreation Center', loc: 'Kisköre', metric: 'Rafting course', desc: 'MEP design for the supporting building complex.' },
+  { cat: 'lako', title: 'Hévíz Premium Apartment Building', loc: 'Hévíz', metric: '73 units', desc: 'Including a wellness area, fully designed at BIM LOD 300.' },
+  { cat: 'lako', title: 'Apartment Building', loc: 'Alsóörs', metric: '38 units', desc: 'MEP design for an energy-efficient apartment building.' },
+  { cat: 'lako', title: 'Apartment Building', loc: 'Lábatlan', metric: '33 units', desc: 'Environmentally conscious hybrid boiler + heat pump system.' },
+  { cat: 'lako', title: 'Budapest Apartment Building', loc: 'Budapest', metric: '18 units', desc: 'Complete MEP design for a modern apartment building.' },
+];
+
+export const categoryMetaEn: Record<ProjectCategory, { label: string; color: string }> = {
+  ipar: { label: 'Industrial', color: 'text-accent' },
+  strategiai: { label: 'Strategic', color: 'text-belimo' },
+  kozulet: { label: 'Commercial & Public', color: 'text-accent' },
+  lako: { label: 'Residential', color: 'text-belimo' },
+};
