@@ -1,0 +1,48 @@
+---
+// Google Analytics 4 — csak akkor töltődik be, ha a látogató a "Statisztikai" süti-kategóriát
+// elfogadta a CookieConsent komponensben. Amíg a GA_MEASUREMENT_ID helyőrző (lásd
+// src/lib/analytics-config.ts), a szkript nem töltődik be, még hozzájárulás esetén sem.
+import { GA_MEASUREMENT_ID, ANALYTICS_DEBUG } from '../lib/analytics-config';
+---
+
+<script define:vars={{ GA_MEASUREMENT_ID, ANALYTICS_DEBUG }}>
+  (function () {
+    var GA_ID = GA_MEASUREMENT_ID;
+    var DEBUG = ANALYTICS_DEBUG;
+    var loaded = false;
+
+    function log() {
+      if (DEBUG && window.console) {
+        console.log.apply(console, ['[bimline-analytics]'].concat(Array.prototype.slice.call(arguments)));
+      }
+    }
+
+    function loadGA() {
+      if (loaded) return;
+      if (!GA_ID || GA_ID.indexOf('XXXXXXXXXX') > -1) {
+        log('GA4 mérési azonosító még nincs beállítva (helyőrző) — a szkript nem töltődik be.');
+        return;
+      }
+      loaded = true;
+
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', GA_ID, { anonymize_ip: true });
+
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(script);
+      log('GA4 betöltve, mérési azonosító:', GA_ID);
+    }
+
+    // Ha a hozzájárulás-kezelő (CookieConsent) jelzi, hogy statisztikai hozzájárulás van
+    // (akár most adta meg a látogató, akár korábbi, még érvényes hozzájárulásból jön),
+    // betöltjük a GA-t. Hozzájárulás hiányában / elutasítás esetén ez sosem fut le.
+    window.addEventListener('bimline:consent-changed', function (e) {
+      var detail = e.detail || {};
+      if (detail.statistics) loadGA();
+    });
+  })();
+</script>

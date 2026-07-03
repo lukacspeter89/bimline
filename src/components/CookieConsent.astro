@@ -1,0 +1,156 @@
+---
+const base = import.meta.env.BASE_URL;
+---
+
+<div id="cookieBanner" class="fixed inset-x-0 bottom-0 z-[70] hidden px-4 pb-4">
+  <div class="max-w-3xl mx-auto card rounded-2xl p-5 lg:p-6 shadow-2xl">
+    <p class="text-sm text-muted leading-relaxed">
+      Sütiket (cookie-kat) használunk a weboldal működéséhez, és — hozzájárulásod esetén —
+      látogatottsági statisztikák készítéséhez (Google Analytics). Az egyes kategóriákról és a
+      jogaidról bővebben az
+      <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2">Adatkezelési tájékoztatóban</a>
+      olvashatsz.
+    </p>
+    <div class="mt-4 flex flex-wrap gap-3">
+      <button id="cookieRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Csak a szükségesek</button>
+      <button id="cookieSettingsBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Beállítások</button>
+      <button id="cookieAcceptBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">Összes elfogadása</button>
+    </div>
+  </div>
+</div>
+
+<div id="cookieModalOverlay" class="fixed inset-0 z-[80] hidden bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+  <div class="card rounded-2xl p-6 lg:p-8 max-w-lg w-full max-h-[85vh] overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
+    <h2 id="cookieModalTitle" class="font-display font-bold text-lg mb-1">Süti beállítások</h2>
+    <p class="text-sm text-muted mb-5 leading-relaxed">
+      Válaszd ki, mely süti-kategóriákat engedélyezed. A "Szükséges" sütik nélkül az oldal
+      alapfunkciói nem működnének, ezért ezek mindig aktívak.
+    </p>
+
+    <div class="space-y-4">
+      <div class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line">
+        <div>
+          <p class="font-semibold text-sm">Szükséges sütik</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">A weboldal alapvető működéséhez kellenek (pl. a süti-beállításod megjegyzése). Nem gyűjtenek adatot marketing célra, és nem kapcsolhatók ki.</p>
+        </div>
+        <span class="shrink-0 mt-0.5 px-2.5 py-1 rounded-full bg-accent/15 text-accent text-xs font-semibold whitespace-nowrap">Mindig aktív</span>
+      </div>
+
+      <label class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line cursor-pointer">
+        <div>
+          <p class="font-semibold text-sm">Statisztikai sütik</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">Google Analytics — segít megérteni, honnan érkeznek a látogatók, mely tartalmakra kattintanak és mennyi időt töltenek az oldalon, hogy javíthassuk a weboldalt. Csak hozzájárulásoddal aktiválódik.</p>
+        </div>
+        <input type="checkbox" id="consentStatistics" class="shrink-0 mt-1 w-5 h-5 accent-accent cursor-pointer" />
+      </label>
+
+      <label class="flex items-start justify-between gap-4 p-4 rounded-xl bg-surface2/60 border border-line cursor-pointer">
+        <div>
+          <p class="font-semibold text-sm">Marketing sütik</p>
+          <p class="text-xs text-muted mt-1 leading-relaxed">Jelenleg nem használunk marketing célú követést — ez a kategória egy jövőbeli funkcióhoz van előkészítve. Bekapcsolása most nem indít el semmilyen követést.</p>
+        </div>
+        <input type="checkbox" id="consentMarketing" class="shrink-0 mt-1 w-5 h-5 accent-accent cursor-pointer" />
+      </label>
+    </div>
+
+    <div class="mt-6 flex flex-wrap gap-3">
+      <button id="cookieModalRejectBtn" type="button" class="px-4 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Csak a szükségesek</button>
+      <button id="cookieModalSaveBtn" type="button" class="px-4 py-2.5 rounded-lg bg-accent text-base text-sm font-semibold hover:bg-accent/90 transition glow-accent lg:ml-auto">Kiválasztottak mentése</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  interface StoredConsent {
+    necessary: true;
+    statistics: boolean;
+    marketing: boolean;
+    ts: number;
+    version: number;
+  }
+
+  const CONSENT_KEY = 'bimline_cookie_consent';
+  const CONSENT_VERSION = 1;
+  const CONSENT_MAX_AGE_MS = 180 * 24 * 60 * 60 * 1000; // 180 nap, utána újra rá kell kérdezni
+
+  function readConsent(): StoredConsent | null {
+    try {
+      const raw = localStorage.getItem(CONSENT_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      if (parsed.version !== CONSENT_VERSION) return null;
+      if (Date.now() - parsed.ts > CONSENT_MAX_AGE_MS) return null;
+      return parsed as StoredConsent;
+    } catch {
+      return null;
+    }
+  }
+
+  function writeConsent(statistics: boolean, marketing: boolean): StoredConsent {
+    const consent: StoredConsent = { necessary: true, statistics, marketing, ts: Date.now(), version: CONSENT_VERSION };
+    localStorage.setItem(CONSENT_KEY, JSON.stringify(consent));
+    window.dispatchEvent(new CustomEvent('bimline:consent-changed', { detail: consent }));
+    return consent;
+  }
+
+  const banner = document.getElementById('cookieBanner');
+  const overlay = document.getElementById('cookieModalOverlay');
+  const statisticsToggle = document.getElementById('consentStatistics') as HTMLInputElement | null;
+  const marketingToggle = document.getElementById('consentMarketing') as HTMLInputElement | null;
+
+  function showBanner() { banner?.classList.remove('hidden'); }
+  function hideBanner() { banner?.classList.add('hidden'); }
+
+  function openModal() {
+    const existing = readConsent();
+    if (statisticsToggle) statisticsToggle.checked = existing?.statistics ?? false;
+    if (marketingToggle) marketingToggle.checked = existing?.marketing ?? false;
+    overlay?.classList.remove('hidden');
+    overlay?.classList.add('flex');
+  }
+  function closeModal() {
+    overlay?.classList.add('hidden');
+    overlay?.classList.remove('flex');
+  }
+
+  document.getElementById('cookieAcceptBtn')?.addEventListener('click', () => {
+    writeConsent(true, true);
+    hideBanner();
+  });
+  document.getElementById('cookieRejectBtn')?.addEventListener('click', () => {
+    writeConsent(false, false);
+    hideBanner();
+  });
+  document.getElementById('cookieSettingsBtn')?.addEventListener('click', () => {
+    openModal();
+  });
+  document.getElementById('cookieModalRejectBtn')?.addEventListener('click', () => {
+    writeConsent(false, false);
+    closeModal();
+    hideBanner();
+  });
+  document.getElementById('cookieModalSaveBtn')?.addEventListener('click', () => {
+    writeConsent(!!statisticsToggle?.checked, !!marketingToggle?.checked);
+    closeModal();
+    hideBanner();
+  });
+  overlay?.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // Globálisan elérhető függvény — a lábléc "Süti beállítások" linkje ezzel nyitja
+  // újra a beállításokat bármikor, hozzájárulás visszavonásához vagy módosításához.
+  (window as unknown as { bimlineOpenCookiePreferences: () => void }).bimlineOpenCookiePreferences = () => {
+    openModal();
+  };
+
+  const existingConsent = readConsent();
+  if (!existingConsent) {
+    showBanner();
+  } else {
+    // Korábbi, még érvényes hozzájárulás — jelezzük az Analytics komponensnek,
+    // hogy a jóváhagyott kategóriák szerint töltődhet be a mérés.
+    window.dispatchEvent(new CustomEvent('bimline:consent-changed', { detail: existingConsent }));
+  }
+</script>

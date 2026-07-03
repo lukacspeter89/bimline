@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+const lastUpdated = '2026. 07. 03.';
+---
+
+<BaseLayout
+  title="Adatkezelési tájékoztató"
+  description="A BIMLine Gépész Kft. adatkezelési tájékoztatója: a weboldalon kezelt adatok köre, a sütik (cookie-k) használata, a Google Analytics méréssel kapcsolatos tudnivalók és az érintetti jogok."
+  path="/adatkezeles/"
+>
+  <section class="py-16 lg:py-24">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Jogi tájékoztató</p>
+      <h1 class="font-display font-bold text-[clamp(1.5rem,3vw,2.1rem)] leading-tight">Adatkezelési tájékoztató</h1>
+      <p class="mt-3 text-sm text-muted">Hatályos: {lastUpdated}</p>
+
+      <div class="prose-bimline mt-10">
+        <p>
+          Jelen tájékoztató célja, hogy átlátható és részletes tájékoztatást nyújtson arról, hogy a
+          BIMLine Gépész Kft. (a továbbiakban: <strong>Adatkezelő</strong>) a
+          <code>bimline.hu</code> weboldal (a továbbiakban: <strong>Weboldal</strong>) üzemeltetése
+          során milyen személyes adatokat, milyen célból, milyen jogalapon és meddig kezel, valamint
+          milyen jogok illetik meg ebben az érintetteket. A tájékoztató az Európai Parlament és a
+          Tanács (EU) 2016/679 rendelete (a továbbiakban: <strong>GDPR</strong>) és az információs
+          önrendelkezési jogról és az információszabadságról szóló 2011. évi CXII. törvény (Infotv.)
+          alapján készült.
+        </p>
+
+        <h2>1. Az adatkezelő adatai</h2>
+        <ul>
+          <li><strong>Név:</strong> BIMLine Gépész Kft.</li>
+          <li><strong>Székhely:</strong> 1053 Budapest, Ferenczy István utca 28.</li>
+          <li><strong>Cégjegyzékszám:</strong> [KITÖLTENDŐ: cégjegyzékszám]</li>
+          <li><strong>Adószám:</strong> [KITÖLTENDŐ: adószám]</li>
+          <li><strong>E-mail:</strong> <a href="mailto:hello@bimline.hu">hello@bimline.hu</a></li>
+          <li><strong>Adatvédelmi kapcsolattartó:</strong> [KITÖLTENDŐ: név és elérhetőség, ha van kijelölve; ha nincs önálló adatvédelmi tisztviselő, ez a sor törölhető, és a fenti e-mail cím szolgál kapcsolattartásra]</li>
+        </ul>
+
+        <h2>2. Milyen adatokat kezelünk, és miért</h2>
+
+        <h3>2.1 Kapcsolatfelvételi / ajánlatkérő űrlap</h3>
+        <p>
+          A Weboldal kapcsolatfelvételi űrlapján keresztül az alábbi adatokat kérjük be: név, cégnév
+          (opcionális), e-mail cím, telefonszám (opcionális), a projekt leírása, a rendelkezésre álló
+          tervezési alapok jelölése, valamint — ha megadod — tervrajzokra mutató linkek.
+        </p>
+        <ul>
+          <li><strong>Cél:</strong> a megkeresésed megválaszolása, ajánlat vagy konzultáció nyújtása.</li>
+          <li><strong>Jogalap:</strong> a GDPR 6. cikk (1) bekezdés a) pontja szerinti hozzájárulásod, amelyet az űrlap elküldésekor a jelölőnégyzet bepipálásával adsz meg.</li>
+          <li><strong>Az adatok megismerői:</strong> az űrlap adatai e-mailben érkeznek meg hozzánk (Google Workspace-en keresztül), és — ha megadtad az e-mail címed — automatikus visszaigazolást is küldünk róla.</li>
+          <li><strong>Megőrzési idő:</strong> [KITÖLTENDŐ: pl. „a kapcsolatfelvételtől számított 2 évig, vagy a hozzájárulás visszavonásáig”] — amíg nem kerül pontosításra, az adatokat a megkeresés lezárását követő legfeljebb 2 évig őrizzük meg.</li>
+          <li><strong>Hozzájárulás visszavonása:</strong> bármikor, indoklás nélkül, a <a href="mailto:hello@bimline.hu">hello@bimline.hu</a> címre küldött e-maillel.</li>
+        </ul>
+
+        <h3>2.2 Sütik (cookie-k) és látogatottsági statisztika</h3>
+        <p>
+          A Weboldal sütiket használ. A sütik kis méretű szövegfájlok, amelyeket a böngésződ a
+          látogatás során a készülékeden tárol. Egy részük a Weboldal működéséhez elengedhetetlen,
+          más részük — kizárólag a hozzájárulásod esetén — statisztikai célt szolgál.
+        </p>
+        <p>
+          Amikor először látogatod meg a Weboldalt, egy süti-beállító felület jelenik meg, ahol
+          kategóriánként dönthetsz arról, mely sütiket engedélyezed. A "Szükséges" kategórián kívüli
+          sütik (jelenleg: Statisztikai) csak az elfogadásod után aktiválódnak — előtte semmilyen
+          nem-szükséges süti nem kerül elhelyezésre a készülékeden.
+        </p>
+
+        <div class="not-prose overflow-x-auto mt-6 rounded-xl border border-line">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-surface2/60 text-left">
+                <th class="p-3 font-display font-semibold">Kategória</th>
+                <th class="p-3 font-display font-semibold">Süti / szolgáltató</th>
+                <th class="p-3 font-display font-semibold">Cél</th>
+                <th class="p-3 font-display font-semibold">Élettartam</th>
+              </tr>
+            </thead>
+            <tbody class="text-muted">
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Szükséges</td>
+                <td class="p-3 align-top"><code>bimline_cookie_consent</code> (saját, a Weboldal domainjén)</td>
+                <td class="p-3 align-top">Megjegyzi a süti-beállításaidat, hogy ne kelljen minden látogatáskor újra megadnod.</td>
+                <td class="p-3 align-top">180 nap</td>
+              </tr>
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Statisztikai</td>
+                <td class="p-3 align-top"><code>_ga</code>, <code>_ga_*</code> — Google Analytics 4 (Google Ireland Limited)</td>
+                <td class="p-3 align-top">Látogatottsági statisztika: honnan érkeznek a látogatók, mely tartalmakra kattintanak, mennyi időt töltenek az oldalon. Csak hozzájárulás esetén aktív.</td>
+                <td class="p-3 align-top">Legfeljebb 14 hónap (Google alapbeállítás szerint)</td>
+              </tr>
+              <tr class="border-t border-line/60">
+                <td class="p-3 align-top">Marketing</td>
+                <td class="p-3 align-top">Jelenleg nincs aktív marketing célú süti</td>
+                <td class="p-3 align-top">Ez a kategória egy jövőbeli funkcióhoz van előkészítve; bekapcsolása jelenleg nem indít el semmilyen követést. Ha ez változik, a tájékoztatót frissítjük.</td>
+                <td class="p-3 align-top">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="mt-4">
+          A süti-beállításaidat bármikor módosíthatod, vagy a korábban megadott hozzájárulásodat
+          visszavonhatod a lábléc "Süti beállítások" gombjára kattintva, vagy az alábbi gombbal:
+        </p>
+        <p class="not-prose">
+          <button type="button" id="reopenCookiePrefsBtn" class="mt-1 px-5 py-2.5 rounded-lg border border-line text-sm font-semibold hover:border-accent/60 transition">Süti beállítások megnyitása</button>
+        </p>
+
+        <h2>3. Google Analytics — bővebben</h2>
+        <p>
+          Statisztikai hozzájárulásod esetén a Weboldal a Google Analytics 4 szolgáltatást
+          használja, amelyet a Google Ireland Limited (Gordon House, Barrow Street, Dublin 4,
+          Írország) üzemeltet, az adatokat pedig a Google LLC (Amerikai Egyesült Államok) is
+          feldolgozhatja. Az USA-ba történő adattovábbítás jogalapja az Európai Bizottság által
+          elfogadott megfelelőségi keretrendszer (EU–U.S. Data Privacy Framework), illetve a Google
+          általános szerződési feltételeiben vállalt általános adatvédelmi kikötések (Standard
+          Contractual Clauses). A Google adatkezeléséről bővebben a Google adatvédelmi
+          tájékoztatójában olvashatsz: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.
+        </p>
+        <p>
+          A méréshez használt Mérési azonosítót (property) csak akkor kezdi el ténylegesen adatot
+          küldeni, ha a fenti hozzájárulást megadod; addig a mérőkód be sem töltődik a böngésződben.
+        </p>
+
+        <h2>4. Adattovábbítás</h2>
+        <p>
+          Az Adatkezelő a személyes adatokat elsősorban saját, illetve a fentiekben nevesített
+          adatfeldolgozók (Google Ireland Limited / Google LLC, a kapcsolatfelvételi űrlap esetén a
+          Google Workspace levelezési szolgáltatás) közreműködésével kezeli. Ezeken felül az
+          adatokat harmadik félnek nem adjuk át, kivéve, ha jogszabály erre kötelez.
+        </p>
+
+        <h2>5. Az érintett jogai</h2>
+        <p>A GDPR alapján az alábbi jogok illetnek meg a rólad kezelt személyes adatokkal kapcsolatban:</p>
+        <ul>
+          <li><strong>Hozzáférés joga</strong> — tájékoztatást kérhetsz arról, milyen adataidat kezeljük.</li>
+          <li><strong>Helyesbítés joga</strong> — kérheted a pontatlan adatok javítását.</li>
+          <li><strong>Törlés joga</strong> ("elfeledtetéshez való jog") — kérheted az adataid törlését, ha azok kezelésére már nincs szükség, vagy visszavontad a hozzájárulásod.</li>
+          <li><strong>Az adatkezelés korlátozásához való jog.</strong></li>
+          <li><strong>Tiltakozás joga</strong> az adatkezelés ellen.</li>
+          <li><strong>Adathordozhatósághoz való jog</strong> — kérheted, hogy az általad megadott adatokat tagolt, széles körben használt formátumban megkapd, vagy más adatkezelőhöz továbbítsuk.</li>
+          <li><strong>A hozzájárulás bármikori visszavonásának joga</strong>, ami nem érinti a visszavonás előtt végzett adatkezelés jogszerűségét.</li>
+        </ul>
+        <p>
+          Ezen jogaid érvényesítése érdekében fordulj hozzánk bizalommal a
+          <a href="mailto:hello@bimline.hu">hello@bimline.hu</a> e-mail címen.
+        </p>
+
+        <h2>6. Jogorvoslati lehetőségek</h2>
+        <p>
+          Ha úgy ítéled meg, hogy adataid kezelése sérti a GDPR-t vagy az Infotv.-t, panasszal
+          élhetsz a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH):
+        </p>
+        <ul>
+          <li><strong>Cím:</strong> 1055 Budapest, Falk Miksa utca 9-11.</li>
+          <li><strong>Postacím:</strong> 1363 Budapest, Pf. 9.</li>
+          <li><strong>Telefon:</strong> +36 (1) 391-1400</li>
+          <li><strong>E-mail:</strong> <a href="mailto:ugyfelszolgalat@naih.hu">ugyfelszolgalat@naih.hu</a></li>
+          <li><strong>Weboldal:</strong> <a href="https://www.naih.hu" target="_blank" rel="noopener noreferrer">www.naih.hu</a></li>
+        </ul>
+        <p>
+          A jogaid megsértése esetén emellett bírósághoz is fordulhatsz; a per elbírálása a
+          törvényszék hatáskörébe tartozik, és — választásod szerint — a lakóhelyed vagy
+          tartózkodási helyed szerinti törvényszék előtt is megindítható.
+        </p>
+
+        <h2>7. A tájékoztató módosítása</h2>
+        <p>
+          Fenntartjuk a jogot jelen tájékoztató módosítására, különösen jogszabályváltozás vagy a
+          Weboldalon alkalmazott adatkezelési gyakorlat változása esetén. A mindenkor hatályos
+          verzió ezen az oldalon érhető el, a hatálybalépés dátuma a lap tetején látható.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  document.getElementById('reopenCookiePrefsBtn')?.addEventListener('click', () => {
+    (window as unknown as { bimlineOpenCookiePreferences?: () => void }).bimlineOpenCookiePreferences?.();
+  });
+</script>

@@ -26,6 +26,7 @@ const socialIcons: Record<string, string> = {
         <li><a href={`${base}#referenciak`} class="hover:text-ink">Referenciák</a></li>
         <li><a href={`${base}#rolunk`} class="hover:text-ink">Rólunk</a></li>
         <li><a href={`${base}#kapcsolat`} class="hover:text-ink">Kapcsolat</a></li>
+        <li><a href={`${base}adatkezeles/`} class="hover:text-ink">Adatkezelés</a></li>
       </ul>
     </div>
 
@@ -64,6 +65,15 @@ const socialIcons: Record<string, string> = {
   </div>
   <div class="max-w-8xl mx-auto px-5 lg:px-8 pb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted/70 border-t border-line/50 pt-6">
     <p>© {new Date().getFullYear()} {SITE.name} Minden jog fenntartva.</p>
-    <p>A kapcsolatfelvételi űrlapon megadott adatokat kizárólag ajánlatadás céljából kezeljük.</p>
+    <div class="flex items-center gap-4">
+      <a href={`${base}adatkezeles/`} class="hover:text-muted">Adatkezelési tájékoztató</a>
+      <button type="button" id="footerCookiePrefsBtn" class="hover:text-muted underline underline-offset-2">Süti beállítások</button>
+    </div>
   </div>
 </footer>
+
+<script>
+  document.getElementById('footerCookiePrefsBtn')?.addEventListener('click', () => {
+    (window as unknown as { bimlineOpenCookiePreferences?: () => void }).bimlineOpenCookiePreferences?.();
+  });
+</script>
