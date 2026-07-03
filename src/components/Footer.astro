@@ -79,6 +79,8 @@ const socialIcons: Record<string, string> = {
           return (
             <a
               href={link?.url || '#'}
+              target={link ? '_blank' : undefined}
+              rel={link ? 'noopener noreferrer' : undefined}
               aria-label={platform}
               class:list={["w-8 h-8 rounded-lg bg-surface2 border border-line grid place-items-center transition", link ? "hover:border-accent/60 hover:text-accent text-muted" : "opacity-30 pointer-events-none text-muted"]}
             >
