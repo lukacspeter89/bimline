@@ -37,6 +37,31 @@ const prefix = `${base}en/`;
         <p class="mt-4 text-muted leading-relaxed">MEP, BIM and energy topics — from a practical engineering perspective.</p>
       </div>
 
+      <div class="card rounded-xl overflow-hidden mb-12">
+        <div class="p-5 sm:p-6 border-b border-line flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p class="eyebrow mb-2">Videos</p>
+            <h2 class="font-display font-semibold text-lg">Check out our YouTube channel</h2>
+          </div>
+          <a
+            href="https://www.youtube.com/playlist?list=PLWL33xA9KA-vay7ewIKoBI7CI6qYWlK_d"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-accent hover:underline whitespace-nowrap"
+          >
+            All videos on YouTube →
+          </a>
+        </div>
+        <div class="relative aspect-video bg-surface2" id="ytEmbed" data-list="PLWL33xA9KA-vay7ewIKoBI7CI6qYWlK_d">
+          <button id="ytPlayBtn" type="button" class="absolute inset-0 w-full h-full flex items-center justify-center group" aria-label="Play video playlist">
+            <span class="w-16 h-16 rounded-full bg-accent flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 5v14l11-7-11-7z" fill="var(--color-base)"/></svg>
+            </span>
+          </button>
+        </div>
+        <p class="px-5 sm:px-6 py-3 text-xs text-muted">Starting playback may set cookies and process data via YouTube (Google). Learn more: <a href={`${prefix}adatkezeles/`} class="underline hover:text-accent">Privacy Policy</a>.</p>
+      </div>
+
       <div class="flex flex-col lg:flex-row gap-4 mb-8">
         <input
           id="searchInput"
@@ -154,6 +179,24 @@ const prefix = `${base}en/`;
   }));
 
   applyFilters();
+</script>
+
+<script>
+  const ytBtn = document.getElementById('ytPlayBtn');
+  const ytContainer = document.getElementById('ytEmbed') as HTMLElement | null;
+  ytBtn?.addEventListener('click', () => {
+    if (!ytContainer) return;
+    const list = ytContainer.dataset.list;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube-nocookie.com/embed/videoseries?list=${list}&autoplay=1`;
+    iframe.className = 'absolute inset-0 w-full h-full';
+    iframe.title = 'YouTube playlist';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+    iframe.style.border = '0';
+    ytContainer.innerHTML = '';
+    ytContainer.appendChild(iframe);
+  });
 </script>
 
 <style>
