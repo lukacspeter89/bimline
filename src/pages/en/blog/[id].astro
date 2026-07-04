@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import CTASection from '../../../components/CTASection.astro';
 import { estimateReadingTime } from '../../../lib/reading-time';
 import { SITE } from '../../../lib/site';
 
@@ -131,11 +130,4 @@ const articleSchema = {
       )}
     </div>
   </article>
-
-  <CTASection
-    lang="en"
-    title="Not sure what you need?"
-    description="Request a free, no-obligation consultation — we'll discuss the project scope and recommend the right solution."
-    cta="Request a Free Consultation"
-  />
 </BaseLayout>
