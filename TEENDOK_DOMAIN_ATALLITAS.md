@@ -140,11 +140,41 @@ hírlevél, marketing pixel, egyéb harmadik fél szolgáltatás).
 
 ---
 
-## 4. Összefoglaló — mi van már kész, mi vár rád
+## 4. Közösségi média — állapot (2026-07-06)
+
+| Csatorna | Állapot |
+|---|---|
+| YouTube | ✅ Bekötve |
+| LinkedIn | ✅ Bekötve |
+| Facebook | ✅ Bekötve (`profile.php?id=61591986440282`) |
+| Instagram | ✅ Teljesen eltávolítva a kódból |
+
+**Opcionális, később:** a Facebook oldalnak érdemes "vanity URL"-t
+(felhasználónevet) beállítani a Facebook oldal beállításaiban — akkor a
+link `facebook.com/bimline` formájú lesz. Ha megvan, csak a
+`src/lib/site.ts` `social.facebook` értékét kell cserélni.
+
+---
+
+## 5. Végső élesítési sorrend (checklist)
+
+1. ☐ **Cégjegyzékszám + adószám** beírása (`src/pages/adatkezeles.astro`, `[KITÖLTENDŐ]` helyek) — 3. pont
+2. ☐ **GA4 property** létrehozása, mérési azonosító beírása (`src/lib/analytics-config.ts`) — 2. pont
+3. ☐ **DNS beállítás** a domain-regisztrátornál (A rekordok + www CNAME) — 1.1 pont
+4. ☐ **GitHub Pages** custom domain: `www.bimline.hu` + DNS-ellenőrzés kivárása — 1.2 pont
+5. ☐ **Kód-oldali domain-váltás push** (astro.config: site+base, `public/CNAME`) — csak a 3–4. lépés UTÁN! — 1.3 pont
+6. ☐ **Enforce HTTPS** bepipálása a GitHub Pages beállításokban
+7. ☐ **Ellenőrzés**: bimline.hu + www.bimline.hu betölt, HTTPS-lakat OK, süti-popup után GA4 valós idejű jelentésben látszol, footer social linkek (LinkedIn / Facebook / YouTube) jók
+8. ☐ **Google Search Console**: property felvétele a www.bimline.hu-ra, sitemap beküldése (`/sitemap-index.xml`)
+
+---
+
+## 6. Összefoglaló — mi van már kész, mi vár rád
 
 | Feladat | Állapot |
 |---|---|
 | Süti-kezelő popup (Szükséges / Statisztikai / Marketing) | ✅ Kész, élesben fut |
 | Google Analytics 4 integráció (hozzájárulás-függő betöltés) | ✅ Kód kész, ⏳ mérési azonosító hiányzik |
 | Adatkezelési tájékoztató oldal | ✅ Kész, ⏳ cégjegyzékszám / adószám kitöltendő |
+| Social linkek (YouTube, LinkedIn, Facebook — Instagram törölve) | ✅ Kész |
 | bimline.hu domain kód-oldali előkészítése | ✅ Instrukció kész ebben a fájlban, ⏳ DNS-váltás + push tőled/velem együtt |

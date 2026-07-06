@@ -52,4 +52,39 @@ A cikk törzsszövege itt, Markdown formátumban...
 
 Ha ez megvan, minden más automatikus:
 - megjelenik a `/blog/` listában (dátum szerint rendezve, kereshető, szűrhető kategória/tag szerint)
-- saját oldalt kap (`/blog/<fájlnév>/`) automatikus tartalomjegyzékkel, breadcrumb-bal, kapcsolódó ci
+- saját oldalt kap (`/blog/<fájlnév>/`) automatikus tartalomjegyzékkel, breadcrumb-bal, kapcsolódó cikkekkel, előző/következő navigációval
+- bekerül a sitemap-be és az RSS feedbe (`/rss.xml`)
+- a főoldal "Legfrissebb cikkeink" szekciója automatikusan mutatja, ha az egyik legújabb 3 közé kerül
+- egyedi SEO metaadatokat (title, description, canonical, OG, Twitter Card, Article schema) kap
+
+Nincs szükség route létrehozására vagy navigáció-frissítésre.
+
+## Helyi fejlesztés
+
+```
+npm install
+npm run dev       # fejlesztői szerver: http://localhost:4321
+npm run build      # statikus build a dist/ mappába
+npm run preview    # a kész build helyi kiszolgálása
+```
+
+## GitHub Pages beüzemelése
+
+1. Repo → Settings → Pages → Build and deployment → Source: **GitHub Actions**.
+2. Minden `main` ágra történő push után a `.github/workflows/deploy-pages.yml` telepíti a függőségeket (`npm ci`), lefuttatja az Astro buildet (`npm run build`), és publikálja a `dist/` mappa tartalmát.
+3. Egyedi domain (pl. www.bimline.hu) esetén add hozzá a `public/CNAME` fájlt, és állítsd be a DNS-t a domain-szolgáltatónál.
+
+## Ajánlatkérő űrlap bekötése
+
+Az űrlap a `hello@bimline.hu` címre küld e-mailt egy Google Apps Script webalkalmazáson keresztül (a script forrása szándékosan NEM része a publikus repónak — csak a helyi projekt mappában érhető el). A `FORM_ENDPOINT` konstans az `src/pages/index.astro` fájl alján, a kapcsolati form szkriptjében található.
+
+## Közösségi média linkek hozzáadása
+
+Amint elkészülnek a LinkedIn/Facebook/YouTube/Instagram profilok, az `src/lib/site.ts` fájlban a `social` objektumba kell beírni az URL-eket — a footer ikonjai és a strukturált adatok (`sameAs`) automatikusan felveszik őket.
+
+## Fontos, publikálás előtt ellenőrizendő
+
+- **Referenciatérkép (244 helyszín):** a térkép egy előre elkészített, 244 magyarországi településből álló minta-listát jelenít meg (`src/data/map-points.ts`). Ez demóadat — publikálás előtt cseréld le a ténylegesen valós projekt-helyszínekre.
+- **Alkalmazott márkák futószalag:** az `src/data/brands.ts` tömb a piacon elterjedt gyártói neveket sorolja fel — erősítsd meg, hogy ezekkel valóban dolgoztok.
+- **Adatvédelmi tájékoztató:** a lábléc jelenleg egy rövid, ideiglenes szöveget tartalmaz — érdemes egy teljes GDPR-tájékoztatót kiadatni jogásszal, majd belinkelni.
+- **Telefonszám:** az `src/lib/site.ts`-ben a `telephone` mező jelenleg üres — ha van publikus telefonszám, érdemes megadni (megjelenik a strukturált adatban is).

@@ -1,13 +1,6 @@
-// Google Analytics 4 mérési azonosító.
-//
-// Ez jelenleg egy HELYŐRZŐ érték — amíg nem cseréled le egy valódi
-// "G-" kezdetű GA4 Mérési azonosítóra, a followkövető kód nem fog
-// ténylegesen adatot küldeni a Google Analytics felé (a script be sem
-// töltődik hozzájárulás nélkül, illetve a Google elutasítja az érvénytelen azonosítót).
-//
-// Hogyan szerezd be: lásd a repo gyökerében a TEENDOK_DOMAIN_ATALLITAS.md
-// fájl "Google Analytics 4 beállítása" szakaszát.
-export const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX';
+// Google Analytics 4 mérési azonosító (éles).
+// A script csak a statisztikai sütik elfogadása után töltődik be.
+export const GA_MEASUREMENT_ID = 'G-2H4SM49MH9';
 
 // Ha true, a konzolba ír néhány debug-üzenetet a hozzájárulás-kezelésről
 // és a GA betöltéséről — fejlesztés közben hasznos, éles oldalon érdemes false-ra hagyni.
