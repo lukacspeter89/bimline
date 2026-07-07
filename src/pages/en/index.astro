@@ -238,6 +238,10 @@ const prefix = `${base}en/`;
       </div>
 
       <form id="contactForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <!-- Honeypot — hidden from humans; spam bots fill it in -->
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
         <div class="grid sm:grid-cols-2 gap-5">
           <div>
             <label class="block text-sm font-medium mb-2">Name</label>
@@ -322,6 +326,7 @@ const prefix = `${base}en/`;
 <script>
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
   const contactForm = document.getElementById('contactForm') as HTMLFormElement;
+  const formRenderedAt = Date.now(); // spam protection: instant submit = bot
 
   function setFieldError(el: HTMLElement, msg: string) {
     el.classList.add('border-red-500');
@@ -402,6 +407,8 @@ const prefix = `${base}en/`;
       leiras: f.leiras.value.trim(),
       alapok: Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', '),
       linkek: f.linkek.value.trim(),
+      website: (f.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - formRenderedAt) / 1000)),
     };
   }
 
