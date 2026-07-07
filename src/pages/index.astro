@@ -235,6 +235,10 @@ const base = import.meta.env.BASE_URL;
       </div>
 
       <form id="contactForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <!-- Honeypot — emberi látogató nem látja és nem tölti ki; a spamrobotok viszont igen -->
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+          <label>Weboldal <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
         <div class="grid sm:grid-cols-2 gap-5">
           <div>
             <label class="block text-sm font-medium mb-2">Név</label>
@@ -319,6 +323,7 @@ const base = import.meta.env.BASE_URL;
 <script>
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
   const contactForm = document.getElementById('contactForm') as HTMLFormElement;
+  const formRenderedAt = Date.now(); // spam-védelem: túl gyors beküldés = robot
 
   function setFieldError(el: HTMLElement, msg: string) {
     el.classList.add('border-red-500');
@@ -399,6 +404,8 @@ const base = import.meta.env.BASE_URL;
       leiras: f.leiras.value.trim(),
       alapok: Array.from(f.querySelectorAll<HTMLInputElement>('input[name="alap"]:checked')).map((c) => c.value).join(', '),
       linkek: f.linkek.value.trim(),
+      website: (f.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - formRenderedAt) / 1000)),
     };
   }
 
