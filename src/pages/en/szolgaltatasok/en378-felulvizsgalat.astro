@@ -1,0 +1,748 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { SITE } from '../../../lib/site';
+
+const base = import.meta.env.BASE_URL;
+
+const serviceSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'EN 378 compliance survey for refrigeration machinery rooms',
+  serviceType: 'EN 378 compliance survey of refrigeration machinery rooms and refrigerant systems, with remediation design',
+  provider: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    email: SITE.email,
+  },
+  areaServed: { '@type': 'Country', name: 'Hungary' },
+  url: new URL('/en/szolgaltatasok/en378-felulvizsgalat/', SITE.url).toString(),
+  description:
+    'On-site survey, EN 378-3 compliance assessment and remediation concept for refrigeration machinery rooms: transcritical CO₂ (R744) commercial refrigeration, VRF, industrial systems. Based in Budapest, serving all of Hungary.',
+});
+
+const steps = [
+  {
+    n: '01',
+    title: 'On-site survey',
+    desc: 'Machinery room geometry, refrigerant charge, equipment nameplates, existing gas detection and ventilation, ductwork opportunities, photo documentation.',
+    out: 'Survey report',
+    fix: true,
+  },
+  {
+    n: '02',
+    title: 'Compliance assessment',
+    desc: 'Charge / room-volume checks, machinery room classification, itemised verification of the requirements of MSZ EN 378-3.',
+    out: 'Compliance report — what is missing, and how large the gap is',
+    fix: true,
+  },
+  {
+    n: '03',
+    title: 'Remediation concept',
+    desc: 'Technically and financially realistic options, making use of existing site conditions (e.g. existing ventilation risers).',
+    out: 'Concept design with order-of-magnitude cost estimate',
+    fix: true,
+  },
+  {
+    n: '04',
+    title: 'Detailed design',
+    desc: 'Sizing, equipment selection, controls, bill of quantities — documentation ready for contractor tendering.',
+    out: 'Technical specification + unpriced bill of quantities',
+    fix: false,
+  },
+  {
+    n: '05',
+    title: 'Construction support',
+    desc: "Designer's site supervision, verification of commissioning and functional tests, as-built documentation.",
+    out: 'Handover / as-built documentation',
+    fix: false,
+  },
+];
+
+const targets = [
+  {
+    title: 'Retail chains',
+    desc: 'Operations and investment teams (grocery, discount, fuel-station shops). A repeatable survey with uniform methodology and documentation across multiple sites.',
+  },
+  {
+    title: 'Facility management companies',
+    desc: 'Documented coverage of the compliance risk under an operating contract — the compliance report is a tool for managing operator liability.',
+  },
+  {
+    title: 'Refrigeration contractors and general contractors',
+    desc: 'As a mechanical / ventilation design subcontractor: from survey to detailed design, with construction supervision.',
+  },
+  {
+    title: 'Office and hotel operators',
+    desc: 'Charge / room-volume verification of VRF and split systems — meeting rooms, hotel rooms and other small-volume spaces are most frequently affected.',
+  },
+];
+
+const deliverables = [
+  'Survey report with photo documentation',
+  'Compliance report (itemised EN 378-3 assessment)',
+  'Remediation concept with order-of-magnitude cost estimate',
+  'Detailed design: technical specification, sizing, controls',
+  'Unpriced bill of quantities for contractor tendering',
+  'As-built design and handover documentation',
+];
+
+const systems = [
+  {
+    title: 'Transcritical CO₂ (R744) commercial refrigeration',
+    desc: 'Machinery rooms of grocery stores and discount chains. Large charge, small floor area, heavy gas — emergency ventilation and gas detection are most critical here.',
+    tag: 'A1 · asphyxiation risk',
+  },
+  {
+    title: 'VRF and split systems',
+    desc: 'Office buildings, hotels. The ratio of refrigerant charge to the volume of the smallest occupied room (practical limit) is regularly exceeded; with R32 (A2L) flammability requirements also apply.',
+    tag: 'A1 / A2L',
+  },
+  {
+    title: 'Industrial and cold-room systems',
+    desc: 'Machinery rooms and refrigerated spaces of cold stores, food-industry plants and logistics centres — ammonia (B2L) systems together with a specialist partner.',
+    tag: 'A1 / A3 / B2L',
+  },
+  {
+    title: 'Other refrigerants',
+    desc: 'Siting and ventilation requirements of propane (R290, A3) and other flammable-refrigerant equipment according to the EN 378 safety classification.',
+    tag: 'A1 · A2L · A3',
+  },
+];
+
+const faq = [
+  {
+    q: "Why now, if it has never been a problem?",
+    a: 'Most modern high-charge systems (transcritical CO₂, VRF) were retrofitted into existing buildings, and the machinery room itself was often never brought up to standard. The deficiency causes no malfunction — the system cools perfectly — so it never surfaces on its own. It only shows up in a survey, and it is better if that survey is a planned one rather than an incident.',
+  },
+  {
+    q: 'Is this mandatory? Can we be fined?',
+    a: 'EN 378 is a standard, not a law, so there is no direct "EN 378 fine". The obligation applies indirectly: through employer health-and-safety duties, national fire-safety regulations, the responsibility of the installer and the operator, and contractual and insurance conditions. The absence of a standard-compliant installation is a risk that falls within the responsibility of the employer and the operator — the compliance report is the documented management of that risk.',
+  },
+  {
+    q: 'How long does the survey take, and does it disturb the store?',
+    a: 'Surveying one machinery room typically takes 2–3 hours on site, with one engineer. Store operation is not disturbed: we work in the machinery room and along the ventilation routes; at most a short walk-through of the sales area is needed.',
+  },
+  {
+    q: 'Does the system need to be shut down?',
+    a: 'No. The survey is carried out without opening the operating system: geometry, nameplates, existing detection and ventilation, photo documentation. There is no intervention.',
+  },
+  {
+    q: 'How much does the remediation cost?',
+    a: 'The survey and assessment fee is fixed and can be calculated in advance with the calculator above. The cost of remediation, however, is site-specific: whether an existing ventilation riser can be reused or a new shaft must be opened makes an order-of-magnitude difference. That is why step 3 provides an order-of-magnitude estimate for the decision, and firm construction prices come from contractor bids on the unpriced bill of quantities.',
+  },
+  {
+    q: 'What if it turns out everything is fine?',
+    a: 'Then you receive a compliance report stating exactly that — documenting that the installation is operated in line with the requirements of the standard. In insurance, leasing and audit situations this is valuable in itself, and it closes the liability question.',
+  },
+  {
+    q: 'Do you cover multiple sites?',
+    a: 'Yes — this service was built for that: for multi-site chains we work with a uniform methodology and identically structured reports, making risk comparable across the portfolio. For multiple sites we provide an individual package offer at a discount — request a quote using the form.',
+  },
+];
+---
+
+<BaseLayout
+  title="EN 378 machinery room compliance survey — from compliance report to detailed design"
+  description="EN 378 compliance survey of refrigeration machinery rooms and refrigerant systems: on-site survey, compliance report, emergency ventilation and gas detection design. Transcritical CO₂ (R744), VRF, industrial systems. Based in Budapest, serving all of Hungary."
+  path="/en/szolgaltatasok/en378-felulvizsgalat/"
+  lang="en"
+>
+  <script type="application/ld+json" set:html={serviceSchema} slot="head" is:inline />
+
+  <!-- ============ HERO ============ -->
+  <section class="relative pt-16 pb-16 lg:pb-24 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-12 lg:pt-20">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">EN 378 · Machinery room survey</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Is your refrigeration machinery room compliant?
+          <span class="block text-accent">We survey it, document it, and design the fix.</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          EN 378 compliance survey of refrigeration machinery rooms and refrigerant systems
+          — emergency ventilation, gas detection, charge/volume checks — and the design of
+          remediation for any deficiencies found. Fixed-fee survey and compliance report,
+          based in Budapest, serving all of Hungary.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#kapcsolat" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a survey</a>
+          <a href="#kalkulator" data-cta="hero-calc" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Fee calculator</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE PROBLEM ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">The problem</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          The deficiency causes no malfunction — so it never surfaces on its own.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Retrofitted systems</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Most modern refrigeration systems went into existing buildings. The plant room was never designed as a machinery room — the refrigeration replacement made it one, but the room itself was often never brought up to standard.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">CO₂ escapes mandatory inspection</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">CO₂ is not a fluorinated greenhouse gas, so it is outside the leak-check and record-keeping obligations of the F-gas Regulation (EU 517/2014). The regular, documented external inspections that would eventually surface deficiencies in HFC systems simply do not happen.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Yet the personal risk is highest here</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">Transcritical CO₂ systems operate with large charges of a heavy gas in typically small machinery rooms. In case of a leak the gas accumulates near the floor — emergency ventilation and gas detection are not a formality.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Only an on-site survey reveals it</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">The remedy is also site-specific: whether an existing ventilation riser can be reused or a new shaft must be opened makes an order-of-magnitude cost difference. It cannot be judged from the desk — it can from a survey.</p>
+        </article>
+      </div>
+
+      <p class="mt-8 max-w-3xl text-sm text-muted leading-relaxed" data-reveal>
+        The same logic applies to VRF systems: the ratio of refrigerant charge to the volume of the
+        smallest occupied room (practical limit) is regularly exceeded in offices, hotels and meeting
+        rooms — and with A2L refrigerants (e.g. R32) flammability requirements apply as well.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ WHO IT IS FOR ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Who it is for</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          For operations decision-makers — from a single site to a portfolio.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {targets.map((t) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <h3 class="font-display font-semibold text-lg">{t.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{t.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW WE WORK ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">How we work</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          A stepped service — after the first steps, you decide whether to continue.
+        </h2>
+        <p class="mt-3 text-muted">
+          Step 2 is valuable on its own: the compliance report tells you where you stand,
+          and you can plan with it — without committing to the full design up front.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
+        {steps.map((s) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-display tracking-wide text-sm text-accent">{s.n}</span>
+              {s.fix
+                ? <span class="text-[11px] font-display tracking-wide uppercase px-2 py-0.5 rounded-full bg-accent/15 text-accent">Fixed fee</span>
+                : <span class="text-[11px] font-display tracking-wide uppercase px-2 py-0.5 rounded-full bg-surface2 text-muted">Optional</span>}
+            </div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{s.desc}</p>
+            <p class="text-xs text-belimo mt-4 font-medium leading-snug">→ {s.out}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="mt-6 text-sm text-muted max-w-3xl" data-reveal>
+        Steps 1–3 form the fixed-fee base product. If you decide to proceed, we quote the detailed
+        design separately, and accompany the construction with designer's supervision — closing
+        with as-built documentation.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ WHAT YOU RECEIVE ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1fr_1.2fr] gap-10 items-center">
+      <div data-reveal>
+        <p class="eyebrow mb-3">What you receive</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Documents you can decide and tender with.
+        </h2>
+        <div class="mt-6 grid gap-3">
+          {deliverables.map((d) => (
+            <div class="flex items-start gap-3 text-sm text-muted">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
+              {d}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- TODO: machinery room photo (base64) goes here once the file is available: public/images/en378-gephaz.jpg -->
+      <figure id="gephazPhoto" class="rounded-2xl overflow-hidden border border-line bg-surface" data-reveal>
+        <div class="aspect-[4/3] grid place-items-center blueprint-grid">
+          <p class="text-sm text-muted px-6 text-center">Machinery room photo — upload pending.</p>
+        </div>
+        <figcaption class="px-5 py-3 text-xs text-muted border-t border-line/60">
+          Transcritical CO₂ machinery room — during an on-site survey.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ SYSTEMS COVERED ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Systems covered</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Independent of refrigerant and safety class.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        {systems.map((s) => (
+          <article class="card rounded-xl p-6" data-reveal>
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+              <span class="shrink-0 text-[11px] font-display tracking-wide px-2 py-0.5 rounded-full bg-accent/15 text-accent">{s.tag}</span>
+            </div>
+            <p class="text-sm text-muted leading-relaxed">{s.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CASE STUDY ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Case study</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+        Downtown Budapest grocery store — emergency ventilation, retrofitted.
+      </h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        In the transcritical CO₂ (R744) machinery room of a downtown Budapest grocery store,
+        standard-compliant emergency ventilation had to be built in retrospectively. The survey
+        revealed that the machinery room had no mechanical emergency ventilation and no make-up
+        air path, the enclosure was not gas-tight, and only one of the two mandatory manual
+        emergency controls was present.
+      </p>
+
+      <div class="mt-8 grid sm:grid-cols-3 gap-4">
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">120 kg</div>
+          <div class="text-xs text-muted mt-1">CO₂ charge</div>
+        </div>
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">13.6 m²</div>
+          <div class="text-xs text-muted mt-1">machinery room floor area</div>
+        </div>
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">~1,230 m³/h</div>
+          <div class="text-xs text-muted mt-1">emergency ventilation airflow required by EN 378-3</div>
+        </div>
+      </div>
+
+      <p class="mt-8 text-muted leading-relaxed">
+        The key to the solution was a site condition: by reusing an existing ventilation riser,
+        opening a new shaft through several floors could be avoided — an order-of-magnitude saving
+        in cost and time. This is exactly what cannot be decided from the desk, but can from an
+        on-site survey.
+      </p>
+      <p class="mt-4 text-xs text-muted/70">
+        We do not name the client for reasons of business confidentiality — we handle every engagement discreetly.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ FEE CALCULATOR ============ -->
+  <section id="kalkulator" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Fee calculator</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          A fixed-fee base product — calculate it in advance.
+        </h2>
+        <p class="mt-3 text-muted">
+          On-site survey + compliance assessment (compliance report) + preliminary remediation
+          concept, for one machinery room. Based in Budapest; the travel fee is calculated from
+          the site's postal code, for the round trip.
+        </p>
+      </div>
+
+      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
+        <label class="block text-sm font-medium mb-2" for="zipInput">Postal code of the site (Hungary)</label>
+        <div class="flex gap-3">
+          <input
+            id="zipInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="e.g. 6720"
+            class="w-36 bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
+          />
+          <button id="calcBtn" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Calculate</button>
+        </div>
+        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Please enter a valid Hungarian postal code (4 digits).</p>
+
+        <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
+          <dl class="space-y-2.5 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">On-site survey (1 machinery room, 1 engineer)</dt>
+              <dd class="font-medium whitespace-nowrap" id="rSurvey"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Compliance assessment + report + remediation concept</dt>
+              <dd class="font-medium whitespace-nowrap" id="rAssess"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Travel <span id="rKmDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rTravel"></dd>
+            </div>
+          </dl>
+          <div class="flex justify-between gap-4 mt-4 pt-4 border-t border-line/60">
+            <div class="font-display font-semibold">Indicative total</div>
+            <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
+          </div>
+          <p class="text-xs text-muted mt-3 leading-relaxed">
+            Net, indicative price; VAT not included. The travel fee includes vehicle costs and the
+            engineering fee for travel time, with the route estimated at average speed. A firm,
+            binding offer is sent by e-mail. For multiple machinery rooms or sites we provide an
+            individual package offer at a discount.
+          </p>
+          <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+            Request a quote for this site
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">FAQ</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">What clients ask us first.</h2>
+      </div>
+      <div class="space-y-3">
+        {faq.map((f) => (
+          <details class="card rounded-xl px-6 py-4 group" data-reveal>
+            <summary class="font-display font-semibold cursor-pointer list-none flex items-center justify-between gap-4">
+              {f.q}
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="shrink-0 text-accent transition-transform group-open:rotate-45"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <p class="text-sm text-muted leading-relaxed mt-3">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DESIGNER BACKGROUND ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Designer background</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">A licensed designer, with documented responsibility.</h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        The survey and design work is carried out by <strong class="text-ink">Péter Lukács</strong>, MSc mechanical
+        engineer, lead designer of BIMLine Gépész Kft., registered with the Hungarian Chamber of
+        Engineers: <strong class="text-ink">G — mechanical (MEP) designer (07-02103)</strong>.
+      </p>
+      <p class="mt-4 text-muted leading-relaxed">
+        Where the task requires fire-safety expert or other specialist input, it is provided by a
+        specialist partner — clearly indicated in the documentation.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Contact</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Request a survey</h2>
+        <p class="mt-3 text-muted">Tell us about your site(s) — we respond within 24 hours to arrange an appointment.</p>
+      </div>
+
+      <form id="en378Form" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Name</label>
+            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Company</label>
+            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">E-mail</label>
+            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Phone <span class="text-muted font-normal">(optional)</span></label>
+            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Number of sites</label>
+            <input type="number" name="telephelyek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">System type</label>
+            <select name="rendszer" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+              <option value="">— Select —</option>
+              <option>Transcritical CO₂ (R744) commercial refrigeration</option>
+              <option>VRF / split system</option>
+              <option>Industrial / cold-room system</option>
+              <option>Other / not sure</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Short description <span class="text-muted font-normal">(site address, machinery room, what you know about the system)</span></label>
+          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+          <span>I consent to the processing of my data for the purpose of contact, as described in the <a href={`${base}en/adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</span>
+        </label>
+
+        <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Request a survey
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // ---------------- Analytics: CTA events (GA4, gtag exists only after consent) ----------------
+  function track(action: string, params: Record<string, string | number> = {}) {
+    const w = window as any;
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', action, { page_group: 'en378', ...params });
+    }
+  }
+  document.querySelectorAll<HTMLElement>('[data-cta]').forEach((el) => {
+    el.addEventListener('click', () => track('en378_cta_click', { cta: el.dataset.cta || '' }));
+  });
+
+  // ---------------- Fee calculator ----------------
+  // Fee constants (net HUF) — editable in one place:
+  const PRICE_SURVEY = 140000;   // on-site survey, 1 machinery room, 1 engineer
+  const PRICE_ASSESS = 290000;   // compliance assessment + report + concept
+  const PRICE_PER_KM = 420;      // HUF/km, round trip (vehicle + engineering fee for travel time)
+
+  // Road distance from Budapest (km, one way) — estimated from postal code prefix.
+  // A 3-digit prefix overrides the 2-digit one, which overrides the 1-digit one.
+  const D3: Record<string, number> = {
+    '240': 75, '244': 30, '266': 80, '700': 85, '703': 110,
+    '823': 130, '830': 160, '836': 190,
+  };
+  const D2: Record<string, number> = {
+    '20': 20, '21': 28, '22': 30, '23': 35, '24': 60, '25': 55, '26': 45, '27': 80, '28': 62, '29': 95,
+    '30': 110, '31': 100, '32': 85, '33': 135, '34': 145, '35': 185, '36': 170, '37': 200, '38': 225, '39': 235,
+    '40': 230, '41': 230, '42': 215, '43': 280, '44': 235, '45': 280, '46': 260, '47': 290, '48': 305, '49': 320,
+    '50': 100, '51': 80, '52': 120, '53': 150, '54': 140, '55': 165, '56': 210, '57': 225,
+    '60': 85, '61': 110, '62': 115, '63': 120, '64': 130, '65': 150, '66': 150, '67': 175, '68': 190, '69': 200,
+    '70': 85, '71': 150, '72': 160, '73': 190, '74': 190, '75': 230, '76': 200, '77': 210, '78': 230, '79': 220,
+    '80': 65, '81': 70, '82': 115, '83': 160, '84': 145, '85': 160, '86': 120, '87': 170, '88': 210, '89': 220,
+    '90': 125, '91': 125, '92': 160, '93': 150, '94': 215, '95': 180, '96': 200, '97': 230, '98': 250, '99': 270,
+  };
+  const D1: Record<string, number> = { '1': 0, '2': 50, '3': 160, '4': 260, '5': 150, '6': 150, '7': 180, '8': 150, '9': 190 };
+
+  function distanceFromZip(zip: string): number | null {
+    if (!/^[1-9]\d{3}$/.test(zip)) return null;
+    const p3 = zip.slice(0, 3);
+    const p2 = zip.slice(0, 2);
+    const p1 = zip.slice(0, 1);
+    if (p3 in D3) return D3[p3];
+    if (p2 in D2) return D2[p2];
+    return D1[p1] ?? null;
+  }
+
+  const fmt = (n: number) => 'HUF ' + n.toLocaleString('en-US');
+
+  const zipInput = document.getElementById('zipInput') as HTMLInputElement;
+  const calcBtn = document.getElementById('calcBtn')!;
+  const calcError = document.getElementById('calcError')!;
+  const calcResult = document.getElementById('calcResult')!;
+  let lastCalc = '';
+
+  function runCalc() {
+    const zip = zipInput.value.trim();
+    const km = distanceFromZip(zip);
+    if (km === null) {
+      calcError.classList.remove('hidden');
+      calcResult.classList.add('hidden');
+      return;
+    }
+    calcError.classList.add('hidden');
+
+    const kmRound = 2 * km;
+    const travel = km === 0 ? 0 : Math.round((kmRound * PRICE_PER_KM) / 1000) * 1000;
+    const total = PRICE_SURVEY + PRICE_ASSESS + travel;
+
+    document.getElementById('rSurvey')!.textContent = fmt(PRICE_SURVEY);
+    document.getElementById('rAssess')!.textContent = fmt(PRICE_ASSESS);
+    document.getElementById('rTravel')!.textContent = km === 0 ? 'free of charge' : fmt(travel);
+    document.getElementById('rKmDetail')!.textContent =
+      km === 0 ? '(within Budapest)' : `(~${km} km · round trip ~${kmRound} km)`;
+    document.getElementById('rTotal')!.textContent = fmt(total);
+    calcResult.classList.remove('hidden');
+
+    lastCalc = `Postal code: ${zip} — indicative calculated price: ${fmt(total)} + VAT (survey ${fmt(PRICE_SURVEY)}, assessment+concept ${fmt(PRICE_ASSESS)}, travel ${km === 0 ? 'free' : fmt(travel)})`;
+    track('en378_calc', { zip, total });
+  }
+
+  calcBtn.addEventListener('click', runCalc);
+  zipInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runCalc(); } });
+
+  // ---------------- Contact form (existing Apps Script endpoint) ----------------
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const form = document.getElementById('en378Form') as HTMLFormElement;
+  const formRenderedAt = Date.now();
+
+  function setFieldError(el: HTMLElement, msg: string) {
+    el.classList.add('border-red-500');
+    let err = el.parentElement!.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      el.parentElement!.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el: HTMLElement) {
+    el.classList.remove('border-red-500');
+    const err = el.parentElement!.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function validate() {
+    let ok = true;
+    const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [form.nev, 'Please enter your name.'],
+      [form.email, 'Please enter your e-mail address.'],
+      [form.leiras, 'Please describe the site and the system briefly.'],
+    ];
+    required.forEach(([el, msg]) => {
+      if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+      else clearFieldError(el);
+    });
+    if (form.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) {
+      setFieldError(form.email, 'The e-mail address format is invalid.'); ok = false;
+    }
+    if (form.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(form.telefon.value.trim())) {
+      setFieldError(form.telefon, 'The phone number format is invalid.'); ok = false;
+    } else {
+      clearFieldError(form.telefon);
+    }
+    if (!form.gdpr.checked) {
+      const box = form.gdpr.closest('label')!;
+      if (!box.querySelector('.field-error')) {
+        const err = document.createElement('p');
+        err.className = 'field-error text-xs text-red-400 mt-1';
+        err.textContent = 'Consent is required for us to contact you.';
+        box.appendChild(err);
+      }
+      ok = false;
+    } else {
+      const e = form.gdpr.closest('label')!.querySelector('.field-error');
+      if (e) e.remove();
+    }
+    return ok;
+  }
+
+  // Extra fields (sites, system type, calculated price) are packed into the description,
+  // so the existing Apps Script works without modification.
+  function composedLeiras() {
+    const parts = [
+      '[EN 378 machinery room survey — EN page]',
+      'Number of sites: ' + (form.telephelyek.value || '1'),
+      'System type: ' + (form.rendszer.value || '—'),
+    ];
+    if (lastCalc) parts.push(lastCalc);
+    parts.push('', form.leiras.value.trim());
+    return parts.join('\n');
+  }
+
+  function fieldData() {
+    return {
+      nev: form.nev.value.trim(),
+      ceg: form.ceg.value.trim(),
+      email: form.email.value.trim(),
+      telefon: form.telefon.value.trim(),
+      leiras: composedLeiras(),
+      alapok: '',
+      linkek: '',
+      website: (form.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - formRenderedAt) / 1000)),
+    };
+  }
+
+  function sendMailto() {
+    const subject = encodeURIComponent('EN 378 survey request – ' + (form.ceg.value.trim() || form.nev.value.trim()));
+    const body = encodeURIComponent(
+      ['Name: ' + form.nev.value.trim(), 'Company: ' + (form.ceg.value.trim() || '—'),
+       'E-mail: ' + form.email.value.trim(), 'Phone: ' + (form.telefon.value.trim() || '—'),
+       '', composedLeiras()].join('\n')
+    );
+    window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    track('en378_form_submit');
+
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      try {
+        const params = new URLSearchParams(fieldData() as Record<string, string>);
+        await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+        btn.textContent = 'Thank you! We will be in touch shortly.';
+        btn.classList.add('bg-belimo');
+        form.reset();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        sendMailto();
+      }
+      return;
+    }
+    sendMailto();
+    btn.textContent = 'E-mail client opened — thank you!';
+    btn.classList.add('bg-belimo');
+  });
+
+  form?.querySelectorAll('input, textarea, select').forEach((el) => {
+    el.addEventListener('input', () => clearFieldError(el as HTMLElement));
+  });
+</script>

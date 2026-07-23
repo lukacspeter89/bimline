@@ -158,14 +158,14 @@ link `facebook.com/bimline` formájú lesz. Ha megvan, csak a
 
 ## 5. Végső élesítési sorrend (checklist)
 
-1. ☐ **Cégjegyzékszám + adószám** beírása (`src/pages/adatkezeles.astro`, `[KITÖLTENDŐ]` helyek) — 3. pont
-2. ☐ **GA4 property** létrehozása, mérési azonosító beírása (`src/lib/analytics-config.ts`) — 2. pont
-3. ☐ **DNS beállítás** a domain-regisztrátornál (A rekordok + www CNAME) — 1.1 pont
-4. ☐ **GitHub Pages** custom domain: `www.bimline.hu` + DNS-ellenőrzés kivárása — 1.2 pont
-5. ☐ **Kód-oldali domain-váltás push** (astro.config: site+base, `public/CNAME`) — csak a 3–4. lépés UTÁN! — 1.3 pont
-6. ☐ **Enforce HTTPS** bepipálása a GitHub Pages beállításokban
+1. ✅ **Cégjegyzékszám + adószám** beírva (01-09-434556 / 26710156-2-41) — 2026-07-06
+2. ✅ **GA4** mérési azonosító beírva: `G-2H4SM49MH9` — 2026-07-06
+3. ✅ **DNS beállítás** a regisztrátornál kész — 2026-07-06
+4. ✅ **GitHub Pages** custom domain + Enforce HTTPS kész — 2026-07-06
+5. ✅ **Kód-oldali domain-váltás** push-olva (commit `fc149a9`) — 2026-07-06
+6. ✅ (lásd 4.)
 7. ☐ **Ellenőrzés**: bimline.hu + www.bimline.hu betölt, HTTPS-lakat OK, süti-popup után GA4 valós idejű jelentésben látszol, footer social linkek (LinkedIn / Facebook / YouTube) jók
-8. ☐ **Google Search Console**: property felvétele a www.bimline.hu-ra, sitemap beküldése (`/sitemap-index.xml`)
+8. ☐ **Google Search Console**: property felvétele a www.bimline.hu-ra, sitemap beküldése (`https://www.bimline.hu/sitemap-index.xml`)
 
 ---
 

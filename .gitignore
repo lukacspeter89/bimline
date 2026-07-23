@@ -11,3 +11,8 @@ node_modules/
 
 # Editor/OS
 .DS_Store
+
+# Csak helyi használatra — nem publikus (Apps Script backend + belső útmutatók)
+google-apps-script.gs
+_FELTOLTENDO/
+TEENDOK_DOMAIN_ATALLITAS.md

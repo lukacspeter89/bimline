@@ -1,0 +1,746 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../lib/site';
+
+const base = import.meta.env.BASE_URL;
+
+const serviceSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Hűtőgépház EN 378 szabványossági felülvizsgálat',
+  serviceType: 'Hűtőgépházak és hűtőközeg-rendszerek MSZ EN 378 szerinti szabványossági felülvizsgálata és a hiányosságok megszüntetésének tervezése',
+  provider: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    email: SITE.email,
+  },
+  areaServed: { '@type': 'Country', name: 'Magyarország' },
+  url: new URL('/szolgaltatasok/en378-felulvizsgalat/', SITE.url).toString(),
+  description:
+    'Helyszíni felmérés, EN 378-3 szerinti megfelelőségi értékelés és megoldási koncepció hűtőgépházakra: CO₂ (R744) transzkritikus kereskedelmi hűtés, VRF, ipari rendszerek. Budapesti indulással, országosan.',
+});
+
+const steps = [
+  {
+    n: '01',
+    title: 'Helyszíni felmérés',
+    desc: 'Gépház-geometria, hűtőközeg-töltet, berendezés-adattáblák, meglévő gázérzékelés és szellőzés, légtechnikai adottságok, fotódokumentáció.',
+    out: 'Felmérési jegyzőkönyv',
+    fix: true,
+  },
+  {
+    n: '02',
+    title: 'Szabványossági értékelés',
+    desc: 'Töltet / helyiségtérfogat vizsgálat, gépház-besorolás, az MSZ EN 378-3 szerinti kötelezettségek tételes ellenőrzése.',
+    out: 'Megfelelőségi jegyzőkönyv — mi hiányzik, és mekkora az eltérés',
+    fix: true,
+  },
+  {
+    n: '03',
+    title: 'Megoldási koncepció',
+    desc: 'Műszakilag és költségben reális változatok, a meglévő adottságok (pl. légtechnikai felszállók) kihasználásával.',
+    out: 'Koncepcióterv, nagyságrendi költségbecslés',
+    fix: true,
+  },
+  {
+    n: '04',
+    title: 'Kiviteli terv',
+    desc: 'Méretezés, elemkiválasztás, automatika, tételjegyzék — kivitelezői ajánlatkérésre kész dokumentáció.',
+    out: 'Műszaki leírás + árazatlan tételjegyzék',
+    fix: false,
+  },
+  {
+    n: '05',
+    title: 'Kivitelezés-támogatás',
+    desc: 'Tervezői művezetés, beszabályozás- és funkciópróba-ellenőrzés, megvalósulási terv.',
+    out: 'Átadási / megvalósulási dokumentáció',
+    fix: false,
+  },
+];
+
+const targets = [
+  {
+    title: 'Kiskereskedelmi láncok',
+    desc: 'Üzemeltetési és beruházási szervezetek (élelmiszer, diszkont, benzinkút-shop). Több telephelyen ismételhető, egységes módszertanú felmérés és dokumentáció.',
+  },
+  {
+    title: 'Létesítménygazdálkodó (FM) cégek',
+    desc: 'Üzemeltetési szerződés mellett a szabványossági kockázat dokumentált lefedése — a megfelelőségi jegyzőkönyv az üzemeltetői felelősség kezelésének eszköze.',
+  },
+  {
+    title: 'Hűtéstechnikai kivitelezők, fővállalkozók',
+    desc: 'Gépészeti és légtechnikai szakági tervező alvállalkozóként: felméréstől a kiviteli tervig, a kivitelezés tervezői kíséretével.',
+  },
+  {
+    title: 'Irodaház- és szállodaüzemeltetők',
+    desc: 'VRF- és split-rendszerek töltet / helyiségtérfogat vizsgálata — tárgyalók, szállodaszobák, kis légterű helyiségek érintettek a leggyakrabban.',
+  },
+];
+
+const deliverables = [
+  'Felmérési jegyzőkönyv fotódokumentációval',
+  'Megfelelőségi jegyzőkönyv (EN 378-3 szerinti tételes értékelés)',
+  'Megoldási koncepcióterv nagyságrendi költségbecsléssel',
+  'Kiviteli terv: műszaki leírás, méretezés, automatika',
+  'Árazatlan tételjegyzék kivitelezői ajánlatkéréshez',
+  'Megvalósulási terv és átadási dokumentáció',
+];
+
+const systems = [
+  {
+    title: 'CO₂ (R744) transzkritikus kereskedelmi hűtés',
+    desc: 'Élelmiszerüzletek, diszkontok gépházai. Nagy töltet, kis alapterületű gépház, nehéz gáz — a vészszellőztetés és a gázérzékelés itt a legkritikusabb.',
+    tag: 'A1 · fulladásveszély',
+  },
+  {
+    title: 'VRF- és split-rendszerek',
+    desc: 'Irodaházak, szállodák. A töltet és a legkisebb érintett helyiség térfogatának aránya (gyakorlati határérték) rendszeresen sérül; R32-nél (A2L) éghetőségi követelmények is belépnek.',
+    tag: 'A1 / A2L',
+  },
+  {
+    title: 'Ipari és hűtőkamrai rendszerek',
+    desc: 'Hűtőházak, élelmiszeripari üzemek, logisztikai központok gépházai és hűtött terei — ammóniás (B2L) rendszereknél szakági partnerrel.',
+    tag: 'A1 / A3 / B2L',
+  },
+  {
+    title: 'Egyéb hűtőközegek',
+    desc: 'Propán (R290, A3) és más éghető közegű berendezések elhelyezési és szellőztetési követelményei az EN 378 biztonsági besorolása szerint.',
+    tag: 'A1 · A2L · A3',
+  },
+];
+
+const faq = [
+  {
+    q: 'Miért most, ha eddig sem volt probléma?',
+    a: 'A modern, nagy töltetű rendszerek (transzkritikus CO₂, VRF) többsége utólag került meglévő épületekbe, és a gépészeti helyiség szabványos átalakítása gyakran elmaradt. A hiányosság nem okoz üzemzavart — a rendszer hibátlanul hűt —, ezért magától soha nem derül ki. Csak felmérésből derül ki, és jobb, ha egy tervezett felmérésből, mint egy eseményből.',
+  },
+  {
+    q: 'Kötelező ez? Bírságolható?',
+    a: 'Az EN 378 szabvány, nem jogszabály, ezért közvetlen "EN 378-bírság" nincs. A kötelezettség áttételesen érvényesül: a munkáltatói munkavédelmi kötelezettségeken, az OTSZ-en, a telepítő és az üzemeltető felelősségén, valamint szerződéses és biztosítási feltételeken keresztül. A szabvány szerinti kialakítás hiánya a munkáltató és az üzemeltető felelősségi körébe tartozó kockázat — a megfelelőségi jegyzőkönyv ennek dokumentált kezelése.',
+  },
+  {
+    q: 'Mennyi ideig tart a felmérés, és zavarja-e az üzletet?',
+    a: 'Egy gépház felmérése jellemzően 2–3 óra helyszíni munka, 1 fő részvételével. Az üzlet működését nem zavarja: a gépházban és a légtechnikai útvonalakon dolgozunk, az eladótérben legfeljebb rövid szemle szükséges.',
+  },
+  {
+    q: 'Kell-e a rendszert leállítani?',
+    a: 'Nem. A felmérés a működő rendszer megbontása nélkül történik: geometria, adattáblák, meglévő érzékelés és szellőzés vizsgálata, fotódokumentáció. Beavatkozás nincs.',
+  },
+  {
+    q: 'Mennyibe kerül a megoldás?',
+    a: 'A felmérés és az értékelés díja fix, a fenti kalkulátorral előre kiszámolható. A feltárt hiányosságok megszüntetésének költsége viszont helyszínfüggő: az, hogy egy meglévő légtechnikai felszálló felhasználható-e, vagy új aknát kell nyitni, nagyságrendi különbséget jelent. Ezért ad a 3. lépcső nagyságrendi költségbecslést a döntéshez, konkrét kivitelezési árat pedig az árazatlan tételjegyzékre beérkező kivitelezői ajánlatok adnak.',
+  },
+  {
+    q: 'Mi van, ha kiderül, hogy minden rendben van?',
+    a: 'Akkor erről kap egy megfelelőségi jegyzőkönyvet — ami dokumentálja, hogy az üzemeltetés a szabvány követelményei szerint történik. Ez biztosítási, bérbeadási és audithelyzetben önmagában is érték, és a felelősségi kérdést lezárja.',
+  },
+  {
+    q: 'Több telephelyre is vállalják?',
+    a: 'Igen, kifejezetten erre készültünk: több telephelyes láncoknál egységes módszertannal, azonos szerkezetű jegyzőkönyvekkel dolgozunk, így a portfólió kockázata összehasonlíthatóvá válik. Több telephely esetén egyedi, kedvezményes csomagajánlatot adunk — kérjen ajánlatot az űrlapon.',
+  },
+];
+---
+
+<BaseLayout
+  title="Hűtőgépház EN 378 felülvizsgálat — megfelelőségi jegyzőkönyvtől a kiviteli tervig"
+  description="Hűtőgépházak és hűtőközeg-rendszerek MSZ EN 378 szerinti szabványossági felülvizsgálata: helyszíni felmérés, megfelelőségi jegyzőkönyv, vészszellőztetés és gázérzékelés tervezése. CO₂ (R744), VRF, ipari rendszerek. Budapesti indulással, országosan."
+  path="/szolgaltatasok/en378-felulvizsgalat/"
+>
+  <script type="application/ld+json" set:html={serviceSchema} slot="head" is:inline />
+
+  <!-- ============ HERO ============ -->
+  <section class="relative pt-16 pb-16 lg:pb-24 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-12 lg:pt-20">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">EN 378 · Hűtőgépház-felülvizsgálat</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Szabványos-e a hűtőgépháza?
+          <span class="block text-accent">Felmérjük, dokumentáljuk, megtervezzük a megoldást.</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          Hűtőgépházak és hűtőközeg-rendszerek MSZ EN 378 szerinti szabványossági felülvizsgálata
+          — vészszellőztetés, gázérzékelés, töltet/térfogat vizsgálat —, és a feltárt hiányosságok
+          megszüntetésének megtervezése. Fix díjas felmérés és megfelelőségi jegyzőkönyv,
+          budapesti indulással, országosan.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#kapcsolat" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Felmérés kérése</a>
+          <a href="#kalkulator" data-cta="hero-calc" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Díjkalkulátor</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A PROBLÉMA ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">A probléma</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          A hiányosság nem okoz üzemzavart — ezért nem derül ki magától.
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Utólag beépített rendszerek</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">A modern hűtőrendszerek többsége meglévő épületbe került. A gépészeti helyiséget annak idején nem gépháznak tervezték — a hűtéstechnikai csere során azzá vált, de a helyiség szabványos átalakítása gyakran elmaradt.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">A CO₂ kimarad a kötelező ellenőrzésből</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">A CO₂ nem fluortartalmú üvegházhatású gáz, ezért nem tartozik az F-gáz rendelet (517/2014/EU) szivárgásvizsgálati és nyilvántartási kötelezettsége alá. Hiányzik az a rendszeres külső ellenőrzés, amely a HFC-s rendszereknél előbb-utóbb felszínre hozná a hiányosságokat.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">A személyi kockázat mégis itt a legnagyobb</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">A transzkritikus CO₂-rendszerek nagy töltetű, nehéz gázt használó, jellemzően kis alapterületű gépházakban üzemelnek. Szivárgás esetén a gáz a padló közelében gyűlik — a vészszellőztetés és a gázérzékelés ezért nem formalitás.</p>
+        </article>
+        <article class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Csak helyszíni felmérésből derül ki</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed">A megoldás is helyszínfüggő: az, hogy egy meglévő légtechnikai felszálló felhasználható-e, vagy új aknát kell nyitni, nagyságrendi költségkülönbség. Tervasztalról nem megmondható — felmérésből igen.</p>
+        </article>
+      </div>
+
+      <p class="mt-8 max-w-3xl text-sm text-muted leading-relaxed" data-reveal>
+        Ugyanez a logika érvényes a VRF-rendszerekre is: a hűtőközeg-töltet és a legkisebb érintett
+        helyiség térfogatának aránya (gyakorlati határérték) irodákban, szállodákban, tárgyalókban
+        rendszeresen sérül — A2L besorolású közegeknél (pl. R32) pedig éghetőségi követelmények is belépnek.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ KINEK SZÓL ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Kinek szól</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Üzemeltetői döntéshozóknak — telephelytől a portfólióig.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {targets.map((t) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <h3 class="font-display font-semibold text-lg">{t.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{t.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOGYAN DOLGOZUNK ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Hogyan dolgozunk</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Lépcsős szolgáltatás — az első lépcső után Ön dönt a folytatásról.
+        </h2>
+        <p class="mt-3 text-muted">
+          A 2. lépcső önmagában is értékes: a megfelelőségi jegyzőkönyvből megtudja, hol áll,
+          és ezzel már tud tervezni — nem kell azonnal a teljes tervezésre elköteleződnie.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
+        {steps.map((s) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <div class="flex items-center justify-between mb-3">
+              <span class="font-display tracking-wide text-sm text-accent">{s.n}</span>
+              {s.fix
+                ? <span class="text-[11px] font-display tracking-wide uppercase px-2 py-0.5 rounded-full bg-accent/15 text-accent">Fix díjas csomag</span>
+                : <span class="text-[11px] font-display tracking-wide uppercase px-2 py-0.5 rounded-full bg-surface2 text-muted">Opció</span>}
+            </div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{s.desc}</p>
+            <p class="text-xs text-belimo mt-4 font-medium leading-snug">→ {s.out}</p>
+          </article>
+        ))}
+      </div>
+
+      <p class="mt-6 text-sm text-muted max-w-3xl" data-reveal>
+        Az 1–3. lépcső a fix díjas alaptermék. Ha a koncepció alapján a megvalósítás mellett dönt,
+        a kiviteli tervre külön ajánlatot adunk, a kivitelezést pedig tervezői művezetéssel végigkísérjük
+        — megvalósulási tervvel zárva.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ MIT KAP KÉZHEZ ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1fr_1.2fr] gap-10 items-center">
+      <div data-reveal>
+        <p class="eyebrow mb-3">Mit kap kézhez</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Dokumentumok, amelyekkel dönteni és ajánlatot kérni lehet.
+        </h2>
+        <div class="mt-6 grid gap-3">
+          {deliverables.map((d) => (
+            <div class="flex items-start gap-3 text-sm text-muted">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
+              {d}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- TODO: ide kerül a gépházi fotó (base64), amint a fájl elérhető: public/images/en378-gephaz.jpg -->
+      <figure id="gephazPhoto" class="rounded-2xl overflow-hidden border border-line bg-surface" data-reveal>
+        <div class="aspect-[4/3] grid place-items-center blueprint-grid">
+          <p class="text-sm text-muted px-6 text-center">Gépházi felvétel — a fotó feltöltés alatt.</p>
+        </div>
+        <figcaption class="px-5 py-3 text-xs text-muted border-t border-line/60">
+          Transzkritikus CO₂ hűtőgépház — helyszíni felmérés közben.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ MILYEN RENDSZEREKRE ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Milyen rendszerekre</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Hűtőközegtől és besorolástól függetlenül.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        {systems.map((s) => (
+          <article class="card rounded-xl p-6" data-reveal>
+            <div class="flex items-center justify-between gap-3 mb-2">
+              <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+              <span class="shrink-0 text-[11px] font-display tracking-wide px-2 py-0.5 rounded-full bg-accent/15 text-accent">{s.tag}</span>
+            </div>
+            <p class="text-sm text-muted leading-relaxed">{s.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ESETTANULMÁNY ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Esettanulmány</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+        Budapesti belvárosi élelmiszerüzlet — vészszellőztetés utólag.
+      </h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        Egy budapesti belvárosi élelmiszerüzlet transzkritikus CO₂ (R744) hűtőgépházában kellett
+        utólag kiépíteni a szabvány szerinti vészszellőztetést. A felmérés során kiderült: a gépháznak
+        nem volt sem gépi vészszellőztetése, sem pótlevegő-útvonala, a határoló szerkezet nem volt
+        gáztömör, és a kötelező két kézi vészkezelőszervből csak az egyik volt meg.
+      </p>
+
+      <div class="mt-8 grid sm:grid-cols-3 gap-4">
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">120 kg</div>
+          <div class="text-xs text-muted mt-1">CO₂-töltet</div>
+        </div>
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">13,6 m²</div>
+          <div class="text-xs text-muted mt-1">gépház-alapterület</div>
+        </div>
+        <div class="card rounded-xl p-5 text-center">
+          <div class="font-display font-bold text-3xl text-accent">~1 230 m³/h</div>
+          <div class="text-xs text-muted mt-1">szükséges vészszellőztetési légmennyiség az EN 378-3 szerint</div>
+        </div>
+      </div>
+
+      <p class="mt-8 text-muted leading-relaxed">
+        A megoldás kulcsa a helyszíni adottság volt: egy meglévő légtechnikai felszálló
+        felhasználásával elkerülhető volt egy több szinten átmenő új akna nyitása — ami
+        nagyságrendi költség- és időmegtakarítást jelentett. Pontosan ez az, ami tervasztalról
+        nem dönthető el, helyszíni felmérésből viszont igen.
+      </p>
+      <p class="mt-4 text-xs text-muted/70">
+        A megbízót üzleti bizalmi okból nem nevesítjük — minden megbízásunkat diszkréten kezeljük.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ DÍJKALKULÁTOR ============ -->
+  <section id="kalkulator" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Díjkalkulátor</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Fix díjas alaptermék — számolja ki előre.
+        </h2>
+        <p class="mt-3 text-muted">
+          Helyszíni felmérés + szabványossági értékelés (megfelelőségi jegyzőkönyv) + előzetes
+          megoldási koncepció, egy gépházra. Budapesti indulással; a kiszállási díj a telephely
+          irányítószáma alapján, oda-vissza távra számolva.
+        </p>
+      </div>
+
+      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
+        <label class="block text-sm font-medium mb-2" for="zipInput">A telephely irányítószáma</label>
+        <div class="flex gap-3">
+          <input
+            id="zipInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="pl. 6720"
+            class="w-36 bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
+          />
+          <button id="calcBtn" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Számol</button>
+        </div>
+        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Kérjük, érvényes magyar irányítószámot adjon meg (4 számjegy).</p>
+
+        <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
+          <dl class="space-y-2.5 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Helyszíni felmérés (1 gépház, 1 fő)</dt>
+              <dd class="font-medium whitespace-nowrap" id="rSurvey"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Szabványossági értékelés + megfelelőségi jegyzőkönyv + megoldási koncepció</dt>
+              <dd class="font-medium whitespace-nowrap" id="rAssess"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Kiszállás <span id="rKmDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rTravel"></dd>
+            </div>
+          </dl>
+          <div class="flex justify-between gap-4 mt-4 pt-4 border-t border-line/60">
+            <div class="font-display font-semibold">Tájékoztató ár összesen</div>
+            <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
+          </div>
+          <p class="text-xs text-muted mt-3 leading-relaxed">
+            Nettó, tájékoztató jellegű ár; az ÁFA-t nem tartalmazza. A kiszállási díjban a jármű
+            költsége és az utazási idő mérnöki díja is benne van, átlagsebességgel becsült úttal.
+            Végleges, kötelező érvényű ajánlatot e-mailben küldünk. Több gépház vagy több telephely
+            esetén egyedi, kedvezményes csomagajánlatot adunk.
+          </p>
+          <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+            Ajánlatot kérek erre a címre
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GYIK ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Gyakori kérdések</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Amit a megrendelőink először kérdeznek.</h2>
+      </div>
+      <div class="space-y-3">
+        {faq.map((f) => (
+          <details class="card rounded-xl px-6 py-4 group" data-reveal>
+            <summary class="font-display font-semibold cursor-pointer list-none flex items-center justify-between gap-4">
+              {f.q}
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="shrink-0 text-accent transition-transform group-open:rotate-45"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <p class="text-sm text-muted leading-relaxed mt-3">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TERVEZŐI HÁTTÉR ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8" data-reveal>
+      <p class="eyebrow mb-3">Tervezői háttér</p>
+      <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Jogosult tervező, dokumentált felelősséggel.</h2>
+      <p class="mt-5 text-muted leading-relaxed">
+        A felülvizsgálatot és a tervezést <strong class="text-ink">Lukács Péter</strong> okleveles gépészmérnök,
+        a BIMLine Gépész Kft. vezető tervezője végzi, a Magyar Mérnöki Kamara névjegyzékében szereplő
+        jogosultsággal: <strong class="text-ink">G — gépészeti tervező (07-02103)</strong>.
+      </p>
+      <p class="mt-4 text-muted leading-relaxed">
+        Ahol a feladat tűzvédelmi szakértői vagy más szakági közreműködést igényel, azt bevont
+        szakági partner végzi — ezt a dokumentációban egyértelműen jelöljük.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ KAPCSOLAT ============ -->
+  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Kapcsolat</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Felmérés kérése</h2>
+        <p class="mt-3 text-muted">Adja meg a telephely(ek) adatait — 24 órán belül jelentkezünk időpont-egyeztetéssel.</p>
+      </div>
+
+      <form id="en378Form" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+          <label>Weboldal <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Név</label>
+            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Cég</label>
+            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">E-mail cím</label>
+            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Telefonszám <span class="text-muted font-normal">(opcionális)</span></label>
+            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Telephelyek száma</label>
+            <input type="number" name="telephelyek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Rendszer típusa</label>
+            <select name="rendszer" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+              <option value="">— Válasszon —</option>
+              <option>CO₂ (R744) transzkritikus kereskedelmi hűtés</option>
+              <option>VRF / split rendszer</option>
+              <option>Ipari / hűtőkamrai rendszer</option>
+              <option>Egyéb / nem tudom</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Rövid leírás <span class="text-muted font-normal">(telephely címe, gépház jellege, amit a rendszerről tud)</span></label>
+          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+          <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez, az <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Adatkezelési tájékoztatóban</a> foglaltak szerint.</span>
+        </label>
+
+        <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Felmérés kérése
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // ---------------- Analitika: CTA-események (GA4, csak hozzájárulás után létező gtag-gel) ----------------
+  function track(action: string, params: Record<string, string | number> = {}) {
+    const w = window as any;
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', action, { page_group: 'en378', ...params });
+    }
+  }
+  document.querySelectorAll<HTMLElement>('[data-cta]').forEach((el) => {
+    el.addEventListener('click', () => track('en378_cta_click', { cta: el.dataset.cta || '' }));
+  });
+
+  // ---------------- Díjkalkulátor ----------------
+  // Díjtételek (nettó Ft) — egy helyen módosíthatók:
+  const PRICE_SURVEY = 140000;   // helyszíni felmérés, 1 gépház, 1 fő
+  const PRICE_ASSESS = 290000;   // szabványossági értékelés + jegyzőkönyv + koncepció
+  const PRICE_PER_KM = 420;      // Ft/km, oda-vissza távra (jármű + utazási idő mérnöki díja)
+
+  // Közúti távolság Budapesttől (km, egy irány) — irányítószám-prefix alapú becslés.
+  // 3 jegyű prefix felülírja a 2 jegyűt, az az 1 jegyűt.
+  const D3: Record<string, number> = {
+    '240': 75, '244': 30, '266': 80, '700': 85, '703': 110,
+    '823': 130, '830': 160, '836': 190,
+  };
+  const D2: Record<string, number> = {
+    '20': 20, '21': 28, '22': 30, '23': 35, '24': 60, '25': 55, '26': 45, '27': 80, '28': 62, '29': 95,
+    '30': 110, '31': 100, '32': 85, '33': 135, '34': 145, '35': 185, '36': 170, '37': 200, '38': 225, '39': 235,
+    '40': 230, '41': 230, '42': 215, '43': 280, '44': 235, '45': 280, '46': 260, '47': 290, '48': 305, '49': 320,
+    '50': 100, '51': 80, '52': 120, '53': 150, '54': 140, '55': 165, '56': 210, '57': 225,
+    '60': 85, '61': 110, '62': 115, '63': 120, '64': 130, '65': 150, '66': 150, '67': 175, '68': 190, '69': 200,
+    '70': 85, '71': 150, '72': 160, '73': 190, '74': 190, '75': 230, '76': 200, '77': 210, '78': 230, '79': 220,
+    '80': 65, '81': 70, '82': 115, '83': 160, '84': 145, '85': 160, '86': 120, '87': 170, '88': 210, '89': 220,
+    '90': 125, '91': 125, '92': 160, '93': 150, '94': 215, '95': 180, '96': 200, '97': 230, '98': 250, '99': 270,
+  };
+  const D1: Record<string, number> = { '1': 0, '2': 50, '3': 160, '4': 260, '5': 150, '6': 150, '7': 180, '8': 150, '9': 190 };
+
+  function distanceFromZip(zip: string): number | null {
+    if (!/^[1-9]\d{3}$/.test(zip)) return null;
+    const p3 = zip.slice(0, 3);
+    const p2 = zip.slice(0, 2);
+    const p1 = zip.slice(0, 1);
+    if (p3 in D3) return D3[p3];
+    if (p2 in D2) return D2[p2];
+    return D1[p1] ?? null;
+  }
+
+  const fmt = (n: number) => n.toLocaleString('hu-HU') + ' Ft';
+
+  const zipInput = document.getElementById('zipInput') as HTMLInputElement;
+  const calcBtn = document.getElementById('calcBtn')!;
+  const calcError = document.getElementById('calcError')!;
+  const calcResult = document.getElementById('calcResult')!;
+  let lastCalc = '';
+
+  function runCalc() {
+    const zip = zipInput.value.trim();
+    const km = distanceFromZip(zip);
+    if (km === null) {
+      calcError.classList.remove('hidden');
+      calcResult.classList.add('hidden');
+      return;
+    }
+    calcError.classList.add('hidden');
+
+    const kmRound = 2 * km;
+    const travel = km === 0 ? 0 : Math.round((kmRound * PRICE_PER_KM) / 1000) * 1000;
+    const total = PRICE_SURVEY + PRICE_ASSESS + travel;
+
+    document.getElementById('rSurvey')!.textContent = fmt(PRICE_SURVEY);
+    document.getElementById('rAssess')!.textContent = fmt(PRICE_ASSESS);
+    document.getElementById('rTravel')!.textContent = km === 0 ? 'díjmentes' : fmt(travel);
+    document.getElementById('rKmDetail')!.textContent =
+      km === 0 ? '(Budapesten belül)' : `(~${km} km · oda-vissza ~${kmRound} km)`;
+    document.getElementById('rTotal')!.textContent = fmt(total);
+    calcResult.classList.remove('hidden');
+
+    lastCalc = `Irányítószám: ${zip} — kalkulált tájékoztató ár: ${fmt(total)} + ÁFA (felmérés ${fmt(PRICE_SURVEY)}, értékelés+koncepció ${fmt(PRICE_ASSESS)}, kiszállás ${km === 0 ? 'díjmentes' : fmt(travel)})`;
+    track('en378_calc', { zip, total });
+  }
+
+  calcBtn.addEventListener('click', runCalc);
+  zipInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runCalc(); } });
+
+  // ---------------- Kapcsolatfelvételi űrlap (meglévő Apps Script végponttal) ----------------
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const form = document.getElementById('en378Form') as HTMLFormElement;
+  const formRenderedAt = Date.now();
+
+  function setFieldError(el: HTMLElement, msg: string) {
+    el.classList.add('border-red-500');
+    let err = el.parentElement!.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      el.parentElement!.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el: HTMLElement) {
+    el.classList.remove('border-red-500');
+    const err = el.parentElement!.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function validate() {
+    let ok = true;
+    const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [form.nev, 'Kérjük, adja meg a nevét.'],
+      [form.email, 'Adja meg az e-mail címét.'],
+      [form.leiras, 'Írja le röviden a telephelyet és a rendszert.'],
+    ];
+    required.forEach(([el, msg]) => {
+      if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+      else clearFieldError(el);
+    });
+    if (form.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) {
+      setFieldError(form.email, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+    }
+    if (form.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(form.telefon.value.trim())) {
+      setFieldError(form.telefon, 'A telefonszám formátuma nem megfelelő.'); ok = false;
+    } else {
+      clearFieldError(form.telefon);
+    }
+    if (!form.gdpr.checked) {
+      const box = form.gdpr.closest('label')!;
+      if (!box.querySelector('.field-error')) {
+        const err = document.createElement('p');
+        err.className = 'field-error text-xs text-red-400 mt-1';
+        err.textContent = 'A kapcsolatfelvételhez a hozzájárulás szükséges.';
+        box.appendChild(err);
+      }
+      ok = false;
+    } else {
+      const e = form.gdpr.closest('label')!.querySelector('.field-error');
+      if (e) e.remove();
+    }
+    return ok;
+  }
+
+  // Az extra mezőket (telephelyek, rendszer, kalkulált ár) a leírásba csomagoljuk,
+  // így a meglévő Apps Script módosítás nélkül működik.
+  function composedLeiras() {
+    const parts = [
+      '[EN 378 hűtőgépház-felülvizsgálat]',
+      'Telephelyek száma: ' + (form.telephelyek.value || '1'),
+      'Rendszer típusa: ' + (form.rendszer.value || '—'),
+    ];
+    if (lastCalc) parts.push(lastCalc);
+    parts.push('', form.leiras.value.trim());
+    return parts.join('\n');
+  }
+
+  function fieldData() {
+    return {
+      nev: form.nev.value.trim(),
+      ceg: form.ceg.value.trim(),
+      email: form.email.value.trim(),
+      telefon: form.telefon.value.trim(),
+      leiras: composedLeiras(),
+      alapok: '',
+      linkek: '',
+      website: (form.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - formRenderedAt) / 1000)),
+    };
+  }
+
+  function sendMailto() {
+    const subject = encodeURIComponent('EN 378 felmérés kérése – ' + (form.ceg.value.trim() || form.nev.value.trim()));
+    const body = encodeURIComponent(
+      ['Név: ' + form.nev.value.trim(), 'Cég: ' + (form.ceg.value.trim() || '—'),
+       'E-mail: ' + form.email.value.trim(), 'Telefon: ' + (form.telefon.value.trim() || '—'),
+       '', composedLeiras()].join('\n')
+    );
+    window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    track('en378_form_submit');
+
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true;
+      btn.textContent = 'Küldés…';
+      try {
+        const params = new URLSearchParams(fieldData() as Record<string, string>);
+        await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+        btn.textContent = 'Köszönjük! Hamarosan jelentkezünk.';
+        btn.classList.add('bg-belimo');
+        form.reset();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        sendMailto();
+      }
+      return;
+    }
+    sendMailto();
+    btn.textContent = 'Levelezőprogram megnyitva — köszönjük!';
+    btn.classList.add('bg-belimo');
+  });
+
+  form?.querySelectorAll('input, textarea, select').forEach((el) => {
+    el.addEventListener('input', () => clearFieldError(el as HTMLElement));
+  });
+</script>
