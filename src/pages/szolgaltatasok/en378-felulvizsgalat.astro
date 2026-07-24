@@ -272,31 +272,21 @@ const faq = [
 
   <!-- ============ MIT KAP KÉZHEZ ============ -->
   <section class="py-16 lg:py-20">
-    <div class="max-w-8xl mx-auto px-5 lg:px-8 grid lg:grid-cols-[1fr_1.2fr] gap-10 items-center">
-      <div data-reveal>
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl" data-reveal>
         <p class="eyebrow mb-3">Mit kap kézhez</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
           Dokumentumok, amelyekkel dönteni és ajánlatot kérni lehet.
         </h2>
-        <div class="mt-6 grid gap-3">
-          {deliverables.map((d) => (
-            <div class="flex items-start gap-3 text-sm text-muted">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
-              {d}
-            </div>
-          ))}
-        </div>
       </div>
-
-      <!-- TODO: ide kerül a gépházi fotó (base64), amint a fájl elérhető: public/images/en378-gephaz.jpg -->
-      <figure id="gephazPhoto" class="rounded-2xl overflow-hidden border border-line bg-surface" data-reveal>
-        <div class="aspect-[4/3] grid place-items-center blueprint-grid">
-          <p class="text-sm text-muted px-6 text-center">Gépházi felvétel — a fotó feltöltés alatt.</p>
-        </div>
-        <figcaption class="px-5 py-3 text-xs text-muted border-t border-line/60">
-          Transzkritikus CO₂ hűtőgépház — helyszíni felmérés közben.
-        </figcaption>
-      </figure>
+      <div class="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3" data-reveal>
+        {deliverables.map((d) => (
+          <div class="flex items-start gap-3 text-sm text-muted">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
+            {d}
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 
