@@ -1,0 +1,728 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE } from '../../lib/site';
+
+const base = import.meta.env.BASE_URL;
+
+const serviceSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  name: 'Kötelező energetikai felülvizsgálat 70 kW feletti fűtési rendszerekre',
+  serviceType:
+    '70 kW feletti effektív névleges teljesítményű fűtési (és kombinált fűtő-szellőző) rendszerek kötelező, rendszeres energetikai felülvizsgálata a helyszíni felméréstől a hatósági lejelentésig',
+  provider: {
+    '@type': 'Organization',
+    name: SITE.name,
+    url: SITE.url,
+    email: SITE.email,
+  },
+  areaServed: { '@type': 'Country', name: 'Magyarország' },
+  url: new URL('/szolgaltatasok/energetikai-felulvizsgalat/', SITE.url).toString(),
+  description:
+    'Az energiahatékonysági törvény szerinti kötelező energetikai felülvizsgálat 70 kW feletti fűtési rendszerekre: helyszíni felülvizsgálat, jogszabálynak megfelelő jegyzőkönyv és hatósági lejelentés — átlátható, fix árakon, országosan.',
+});
+
+const targets = [
+  {
+    title: '70 kW feletti rendszerek üzemeltetői',
+    desc: 'A kötelezettség a 70 kW összesített effektív névleges teljesítmény feletti fűtési rendszerek üzemeltetőire vonatkozik — ennek hiányában a tulajdonosokra.',
+  },
+  {
+    title: 'Minden épülettípus érintett',
+    desc: 'Irodaház, ipari csarnok, társasház, intézmény, kereskedelmi és egészségügyi épület — az épület funkciójától függetlenül.',
+  },
+  {
+    title: '4 vagy 8 évente esedékes',
+    desc: 'Nagyvállalati energetikai auditra kötelezett cégeknél a felülvizsgálat 4 évente, egyébként 8 évente esedékes.',
+  },
+  {
+    title: 'Új rendszernél 1 éven belül',
+    desc: 'Új rendszer esetén az üzembe helyezéstől számított 1 éven belül el kell végezni az első felülvizsgálatot.',
+  },
+  {
+    title: 'Mentesülés épületautomatikával',
+    desc: 'Mentesülhet, aki megfelelő épületautomatikai és -felügyeleti rendszert üzemeltet — ezt is felmérjük és dokumentáljuk.',
+  },
+];
+
+const scope = [
+  'A hőtermelő berendezések hatásfoka és állapota (kazánok, hőszivattyúk, hőközpontok)',
+  'Méretezés-ellenőrzés: a beépített teljesítmény összevetése az épület tényleges fűtési igényével — az üzemeltetői tapasztalat alapján rögzítve',
+  'A szabályozás, hőelosztás és szivattyúzás energiahatékonysága',
+  'Az üzemeltetési és karbantartási gyakorlat értékelése',
+  'Javaslatok: költséghatékony üzemviteli és beruházási intézkedések a fogyasztás csökkentésére',
+];
+
+const legal = [
+  {
+    k: 'Uniós alap',
+    v: 'Az épületek energiahatékonyságáról szóló EPBD irányelv (2010/31/EU, módosítva: (EU) 2018/844) — a 70 kW feletti fűtési és légkondicionáló rendszerek kötelező felülvizsgálata.',
+  },
+  {
+    k: 'Magyar szabályozás',
+    v: 'Az energiahatékonyságról szóló 2015. évi LVII. törvény és végrehajtási rendeletei — köztük a 666/2020. (XII. 28.) Korm. rendelet, valamint a 19/2021. (IV. 14.) ITM rendelet — a felülvizsgálat tartalma, gyakorisága, a jogosultság és a szankciók.',
+  },
+  {
+    k: 'Mire terjed ki?',
+    v: 'A kötelezettség nemcsak a fűtőrendszereket érinti: a) a 70 kW-nál nagyobb effektív névleges teljesítményű fűtési rendszer vagy kombinált helyiségfűtési és szellőzőrendszer, b) a 70 kW-nál nagyobb effektív névleges teljesítményű légkondicionáló rendszer vagy kombinált légkondicionáló és szellőzőrendszer hozzáférhető részeire is rendszeres energetikai felülvizsgálatot kell készíteni.',
+  },
+  {
+    k: 'Ki végezheti?',
+    v: 'Kizárólag a Magyar Mérnöki Kamara névjegyzékében szereplő, energetikai felülvizsgálói jogosultsággal rendelkező szakember.',
+  },
+  {
+    k: 'Lejelentés',
+    v: 'A felülvizsgálat eredményét jegyzőkönyvben kell rögzíteni és a hatósági nyilvántartásba (klímagáz adatbázis) fel kell tölteni — ezt is mi intézzük.',
+  },
+];
+
+const steps = [
+  {
+    n: '1',
+    title: 'Adategyeztetés',
+    desc: 'Rövid adatbekérés a berendezésekről (típus, teljesítmény, darabszám), majd közös időpont-egyeztetés.',
+  },
+  {
+    n: '2',
+    title: 'Helyszíni felülvizsgálat',
+    desc: 'Berendezésenként kb. 30–40 perc, az üzemmenet megzavarása nélkül. Az adatokat saját fejlesztésű digitális audit-szoftverünkben rögzítjük.',
+  },
+  {
+    n: '3',
+    title: 'Jegyzőkönyv és lejelentés',
+    desc: 'Jogszabálynak megfelelő jegyzőkönyv, hatósági lejelentés, valamint automatikus emlékeztető a következő esedékességről.',
+  },
+];
+
+const why = [
+  {
+    title: 'Saját fejlesztésű auditszoftver',
+    desc: 'A felülvizsgálatot saját digitális rendszerünkkel végezzük: a helyszínen rögzített adatokból hibamentes, egységes jegyzőkönyv készül — gyorsabban és pontosabban, mint papíron.',
+  },
+  {
+    title: 'Teljes körű ügyintézés',
+    desc: 'Nemcsak felmérünk: elkészítjük a jogszabály szerinti jegyzőkönyvet és elvégezzük a hatósági lejelentést is. Önnek egyetlen dolga az időpont és a bejutás biztosítása.',
+  },
+  {
+    title: 'Jogosult mérnök szakértelem',
+    desc: 'A felülvizsgálatot a Magyar Mérnöki Kamara névjegyzékében szereplő épületgépész mérnök végzi, sokéves tervezői és energetikai audit tapasztalattal.',
+  },
+  {
+    title: 'Határidő-figyelés díjmentesen',
+    desc: 'Rendszerünk nyilvántartja az esedékességeket, és időben jelezzük a következő kötelező felülvizsgálatot — ügyfeleink többé nem csúsznak határidőt, és nem kockáztatnak bírságot.',
+  },
+];
+
+const priceTable = {
+  cols: ['1 berendezés', '3 berendezés', '5 berendezés', '10 berendezés'],
+  rows: [
+    { d: '50 km', v: ['144 000 Ft', '264 000 Ft', '384 000 Ft', '684 000 Ft'] },
+    { d: '100 km', v: ['168 000 Ft', '288 000 Ft', '408 000 Ft', '708 000 Ft'] },
+    { d: '150 km', v: ['192 000 Ft', '312 000 Ft', '432 000 Ft', '732 000 Ft'] },
+  ],
+};
+
+const faq = [
+  {
+    q: 'Mi számít 70 kW feletti rendszernek?',
+    a: 'A 70 kW összesített effektív névleges teljesítmény feletti hőtermelő berendezéssel üzemelő fűtési (és kombinált fűtő-szellőző) rendszerek. A kötelezettség a 70 kW-nál nagyobb teljesítményű légkondicionáló, illetve kombinált légkondicionáló és szellőzőrendszerekre is kiterjed.',
+  },
+  {
+    q: 'Mikorra kellett volna elvégezni? Késésben vagyok?',
+    a: 'A 2022 előtt üzembe helyezett rendszerek első felülvizsgálatának határideje 2025. december 31-én lejárt. Aki most pótolja, még a hatósági ellenőrzés előtt rendezheti kötelezettségét — a mulasztás kategóriától függően 150 000 – 600 000 Ft bírsággal sújtható, ismételt mulasztás esetén a bírság 150%-os emelt összegben szabható ki.',
+  },
+  {
+    q: 'Milyen gyakran kell ismételni?',
+    a: 'Nagyvállalati energetikai auditra kötelezett cégeknél 4 évente, egyébként 8 évente. Új rendszernél az üzembe helyezéstől számított 1 éven belül kell az első felülvizsgálatot elvégezni. A következő esedékességet rendszerünk díjmentesen figyeli, és időben jelezzük.',
+  },
+  {
+    q: 'Mentesülhetek a kötelezettség alól?',
+    a: 'Igen: mentesülhet, aki megfelelő épületautomatikai és -felügyeleti rendszert üzemeltet. Hogy az Ön rendszere megfelel-e a mentesülés feltételeinek, azt a helyszínen felmérjük és dokumentáljuk.',
+  },
+  {
+    q: 'Mennyi ideig tart, és zavarja-e az üzemet?',
+    a: 'A helyszíni felülvizsgálat berendezésenként kb. 30–40 percet vesz igénybe, az üzemmenet megzavarása nélkül — a rendszert nem kell leállítani.',
+  },
+  {
+    q: 'Mit tartalmaz az ár?',
+    a: 'Az árak nettó, ÁFA nélküli tájékoztató végösszegek, amelyek az alapdíjat, a további berendezések díját és a kiszállást is tartalmazzák — rejtett költség nincs. Több telephely vagy 10 db feletti berendezésszám esetén egyedi ajánlatot adunk.',
+  },
+];
+---
+
+<BaseLayout
+  title="Kötelező energetikai felülvizsgálat 70 kW feletti fűtési rendszerekre — jegyzőkönyv és hatósági lejelentés"
+  description="70 kW feletti fűtési rendszerek kötelező energetikai felülvizsgálata: helyszíni felmérés, jogszabálynak megfelelő jegyzőkönyv, hatósági lejelentés. A 2025. december 31-i határidő lejárt — pótolja most, átlátható fix árakon, országosan."
+  path="/szolgaltatasok/energetikai-felulvizsgalat/"
+>
+  <script type="application/ld+json" set:html={serviceSchema} slot="head" is:inline />
+
+  <!-- ============ HERO ============ -->
+  <section class="relative pt-16 pb-16 lg:pb-24 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-12 lg:pt-20">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">Energetikai felülvizsgálat · 70 kW felett</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Kötelező energetikai felülvizsgálat
+          <span class="block text-accent">70 kW feletti fűtési rendszerekre.</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          Az energiahatékonysági törvény alapján minden 70 kW effektív névleges teljesítmény feletti
+          hőtermelő berendezéssel üzemelő fűtési (és kombinált fűtő-szellőző) rendszert rendszeres
+          energetikai felülvizsgálatnak kell alávetni. A BIMLine Gépész Kft. a helyszíni felméréstől
+          a hatósági lejelentésig teljes körűen elvégzi ezt Ön helyett.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#kapcsolat" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Ajánlatkérés</a>
+          <a href="#kalkulator" data-cta="hero-calc" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Díjkalkulátor</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HATÁRIDŐ ============ -->
+  <section class="py-10 border-t border-line/60">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="card rounded-2xl p-6 lg:p-8 border-red-500/40 flex flex-col sm:flex-row gap-5 sm:items-center" data-reveal>
+        <div class="shrink-0 sm:w-40">
+          <p class="font-display font-bold text-xl text-red-400 leading-tight">A határidő lejárt!</p>
+        </div>
+        <p class="text-sm text-muted leading-relaxed">
+          A 2022 előtt üzembe helyezett rendszerek első felülvizsgálatának határideje
+          <strong class="text-ink">2025. december 31-én lejárt</strong>. A mulasztás kategóriától függően
+          <strong class="text-ink">150 000 – 600 000 Ft bírsággal</strong> sújtható, ismételt mulasztás
+          esetén a bírság 150%-os emelt összegben szabható ki. Aki most pótolja, még a hatósági
+          ellenőrzés előtt rendezheti kötelezettségét.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KIRE VONATKOZIK ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Kire vonatkozik</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Üzemeltetőkre és tulajdonosokra — épülettípustól függetlenül.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {targets.map((t) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <h3 class="font-display font-semibold text-lg">{t.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{t.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MIT VIZSGÁLUNK ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl" data-reveal>
+        <p class="eyebrow mb-3">Mit vizsgálunk</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          A hőtermelőtől az üzemeltetési gyakorlatig.
+        </h2>
+      </div>
+      <div class="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3" data-reveal>
+        {scope.map((s) => (
+          <div class="flex items-start gap-3 text-sm text-muted">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
+            {s}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ JOGSZABÁLYI HÁTTÉR ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Jogszabályi háttér röviden</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Uniós irányelvtől a hatósági lejelentésig.
+        </h2>
+      </div>
+      <div class="card rounded-2xl divide-y divide-line/60" data-reveal>
+        {legal.map((l) => (
+          <div class="grid sm:grid-cols-[11rem_1fr] gap-2 sm:gap-6 px-6 py-5">
+            <div class="font-display font-semibold text-sm text-accent">{l.k}</div>
+            <p class="text-sm text-muted leading-relaxed">{l.v}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ÍGY DOLGOZUNK ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Így dolgozunk</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Három egyszerű lépés — Önnek egyetlen dolga az időpont és a bejutás.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-5">
+        {steps.map((s) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <div class="w-9 h-9 rounded-full bg-accent/15 text-accent grid place-items-center font-display font-bold mb-4">{s.n}</div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{s.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DÍJKALKULÁTOR + ÁRAZÁS ============ -->
+  <section id="kalkulator" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Átlátható árazás</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Fix, rejtett költség nélküli díjak — számolja ki előre.
+        </h2>
+        <p class="mt-3 text-muted">
+          Az ár az alapdíjat, a további berendezések díját és a kiszállást is tartalmazza.
+          Budapesti indulással; a kiszállási díj a telephely irányítószáma alapján számolva.
+        </p>
+      </div>
+
+      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2" for="zipInput">A telephely irányítószáma</label>
+            <input
+              id="zipInput"
+              type="text"
+              inputmode="numeric"
+              maxlength="4"
+              placeholder="pl. 6720"
+              class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2" for="devInput">Berendezések száma (1–10)</label>
+            <input
+              id="devInput"
+              type="number"
+              min="1"
+              max="10"
+              value="1"
+              class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
+            />
+          </div>
+        </div>
+        <button id="calcBtn" class="mt-5 px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Számol</button>
+        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Kérjük, érvényes magyar irányítószámot (4 számjegy) és 1–10 közötti berendezésszámot adjon meg.</p>
+
+        <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
+          <dl class="space-y-2.5 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Alapdíj (tartalmazza az első berendezés felülvizsgálatát)</dt>
+              <dd class="font-medium whitespace-nowrap" id="rBase"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">További berendezések <span id="rDevDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rDevices"></dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-muted">Kiszállás <span id="rKmDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rTravel"></dd>
+            </div>
+          </dl>
+          <div class="flex justify-between gap-4 mt-4 pt-4 border-t border-line/60">
+            <div class="font-display font-semibold">Tájékoztató ár összesen</div>
+            <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
+          </div>
+          <p class="text-xs text-muted mt-3 leading-relaxed">
+            Nettó, tájékoztató jellegű végösszeg; az ÁFA-t nem tartalmazza. Az ár az alapdíjat,
+            a további berendezések díját és a kiszállást is tartalmazza — rejtett költség nincs.
+            Több telephely vagy 10 db feletti berendezésszám esetén egyedi ajánlatot adunk.
+            Végleges, kötelező érvényű ajánlatot e-mailben küldünk.
+          </p>
+          <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+            Ajánlatot kérek erre a telephelyre
+          </a>
+        </div>
+      </div>
+
+      <!-- Ártáblázat -->
+      <div class="mt-8" data-reveal>
+        <h3 class="font-display font-semibold text-lg mb-4">Tájékoztató árak — távolság és berendezésszám szerint</h3>
+        <div class="card rounded-2xl overflow-hidden overflow-x-auto">
+          <table class="w-full text-sm min-w-[34rem]">
+            <thead>
+              <tr class="border-b border-line/60 text-left">
+                <th class="px-5 py-3.5 font-display font-semibold">Távolság (Budapesttől)</th>
+                {priceTable.cols.map((c) => (
+                  <th class="px-5 py-3.5 font-display font-semibold text-right">{c}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-line/40">
+              {priceTable.rows.map((r) => (
+                <tr>
+                  <td class="px-5 py-3.5 font-medium">{r.d}</td>
+                  {r.v.map((v) => (
+                    <td class="px-5 py-3.5 text-right text-muted">{v}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-muted mt-3 leading-relaxed">
+          Az árak nettó, ÁFA nélküli tájékoztató végösszegek, amelyek az alapdíjat, a további
+          berendezések díját és a kiszállást is tartalmazzák. Több telephely vagy 10 db feletti
+          berendezésszám esetén egyedi ajánlatot adunk. Az ajánlat rejtett költséget nem tartalmaz.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MIÉRT A BIMLINE ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Miért a BIMLine</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Digitális auditszoftver, teljes körű ügyintézés.
+        </h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {why.map((w) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <h3 class="font-display font-semibold text-lg leading-snug">{w.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{w.desc}</p>
+          </article>
+        ))}
+      </div>
+
+      <div class="mt-6 card rounded-xl p-6 lg:p-8" data-reveal>
+        <p class="eyebrow mb-3">Referenciák</p>
+        <p class="text-sm text-muted leading-relaxed">
+          Többek között egy 15 000 m²-es bevásárlóközpont energetikai felülvizsgálata, egyetemi
+          épületek fűtéskorszerűsítése, ipari és egészségügyi létesítmények gépészeti tervezése.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GYIK ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Gyakori kérdések</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Amit az üzemeltetők először kérdeznek.</h2>
+      </div>
+      <div class="space-y-3">
+        {faq.map((f) => (
+          <details class="card rounded-xl px-6 py-4 group" data-reveal>
+            <summary class="font-display font-semibold cursor-pointer list-none flex items-center justify-between gap-4">
+              {f.q}
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="shrink-0 text-accent transition-transform group-open:rotate-45"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <p class="text-sm text-muted leading-relaxed mt-3">{f.a}</p>
+          </details>
+        ))}
+      </div>
+      <p class="text-xs text-muted mt-6" data-reveal>
+        Jelen tájékoztató nem minősül teljes körű jogi tájékoztatásnak. Az árak 2026-ban érvényes nettó árak.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ KAPCSOLAT ============ -->
+  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="mb-8" data-reveal>
+        <p class="eyebrow mb-3">Kapcsolat</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Kérjen ajánlatot még ma!</h2>
+        <p class="mt-3 text-muted">
+          Küldje el a berendezései listáját (típus, teljesítmény, helyszín), és 24 órán belül
+          pontos, kötelezettség nélküli árajánlatot adunk.
+        </p>
+      </div>
+
+      <form id="energetikaForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+          <label>Weboldal <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Név</label>
+            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Cég</label>
+            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">E-mail cím</label>
+            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Telefonszám <span class="text-muted font-normal">(opcionális)</span></label>
+            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-medium mb-2">Telephelyek száma</label>
+            <input type="number" name="telephelyek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Hőtermelő berendezések száma</label>
+            <input type="number" name="berendezesek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">Berendezéslista, rövid leírás <span class="text-muted font-normal">(típus, teljesítmény, helyszín — amit a rendszerről tud)</span></label>
+          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+        </div>
+
+        <label class="flex items-start gap-3 text-sm text-muted">
+          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+          <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez, az <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Adatkezelési tájékoztatóban</a> foglaltak szerint.</span>
+        </label>
+
+        <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+          Ajánlatkérés küldése
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // ---------------- Analitika: CTA-események (GA4, csak hozzájárulás után létező gtag-gel) ----------------
+  function track(action: string, params: Record<string, string | number> = {}) {
+    const w = window as any;
+    if (typeof w.gtag === 'function') {
+      w.gtag('event', action, { page_group: 'energetikai', ...params });
+    }
+  }
+  document.querySelectorAll<HTMLElement>('[data-cta]').forEach((el) => {
+    el.addEventListener('click', () => track('energetikai_cta_click', { cta: el.dataset.cta || '' }));
+  });
+
+  // ---------------- Díjkalkulátor ----------------
+  // Díjtételek (nettó Ft) — a flyer ártáblázatával konzisztens képlet:
+  //   ár = alapdíj (első berendezéssel) + 60 000 Ft × további berendezés + kiszállás
+  const PRICE_BASE = 120000;       // alapdíj, az első berendezés felülvizsgálatával
+  const PRICE_PER_DEVICE = 60000;  // minden további berendezés
+  const PRICE_PER_KM = 480;        // Ft/km, a Budapesttől mért egyirányú távolságra vetítve
+  const MAX_DEVICES = 10;          // e fölött egyedi ajánlat
+
+  // Közúti távolság Budapesttől (km, egy irány) — irányítószám-prefix alapú becslés.
+  // 3 jegyű prefix felülírja a 2 jegyűt, az az 1 jegyűt.
+  const D3: Record<string, number> = {
+    '240': 75, '244': 30, '266': 80, '700': 85, '703': 110,
+    '823': 130, '830': 160, '836': 190,
+  };
+  const D2: Record<string, number> = {
+    '20': 20, '21': 28, '22': 30, '23': 35, '24': 60, '25': 55, '26': 45, '27': 80, '28': 62, '29': 95,
+    '30': 110, '31': 100, '32': 85, '33': 135, '34': 145, '35': 185, '36': 170, '37': 200, '38': 225, '39': 235,
+    '40': 230, '41': 230, '42': 215, '43': 280, '44': 235, '45': 280, '46': 260, '47': 290, '48': 305, '49': 320,
+    '50': 100, '51': 80, '52': 120, '53': 150, '54': 140, '55': 165, '56': 210, '57': 225,
+    '60': 85, '61': 110, '62': 115, '63': 120, '64': 130, '65': 150, '66': 150, '67': 175, '68': 190, '69': 200,
+    '70': 85, '71': 150, '72': 160, '73': 190, '74': 190, '75': 230, '76': 200, '77': 210, '78': 230, '79': 220,
+    '80': 65, '81': 70, '82': 115, '83': 160, '84': 145, '85': 160, '86': 120, '87': 170, '88': 210, '89': 220,
+    '90': 125, '91': 125, '92': 160, '93': 150, '94': 215, '95': 180, '96': 200, '97': 230, '98': 250, '99': 270,
+  };
+  const D1: Record<string, number> = { '1': 0, '2': 50, '3': 160, '4': 260, '5': 150, '6': 150, '7': 180, '8': 150, '9': 190 };
+
+  function distanceFromZip(zip: string): number | null {
+    if (!/^[1-9]\d{3}$/.test(zip)) return null;
+    const p3 = zip.slice(0, 3);
+    const p2 = zip.slice(0, 2);
+    const p1 = zip.slice(0, 1);
+    if (p3 in D3) return D3[p3];
+    if (p2 in D2) return D2[p2];
+    return D1[p1] ?? null;
+  }
+
+  const fmt = (n: number) => n.toLocaleString('hu-HU') + ' Ft';
+
+  const zipInput = document.getElementById('zipInput') as HTMLInputElement;
+  const devInput = document.getElementById('devInput') as HTMLInputElement;
+  const calcBtn = document.getElementById('calcBtn')!;
+  const calcError = document.getElementById('calcError')!;
+  const calcResult = document.getElementById('calcResult')!;
+  let lastCalc = '';
+
+  function runCalc() {
+    const zip = zipInput.value.trim();
+    const devices = parseInt(devInput.value, 10);
+    const km = distanceFromZip(zip);
+    if (km === null || !Number.isFinite(devices) || devices < 1 || devices > MAX_DEVICES) {
+      calcError.classList.remove('hidden');
+      calcResult.classList.add('hidden');
+      return;
+    }
+    calcError.classList.add('hidden');
+
+    const extraDevices = devices - 1;
+    const devicesFee = extraDevices * PRICE_PER_DEVICE;
+    const travel = km === 0 ? 0 : Math.round((km * PRICE_PER_KM) / 1000) * 1000;
+    const total = PRICE_BASE + devicesFee + travel;
+
+    document.getElementById('rBase')!.textContent = fmt(PRICE_BASE);
+    document.getElementById('rDevices')!.textContent = extraDevices === 0 ? '—' : fmt(devicesFee);
+    document.getElementById('rDevDetail')!.textContent =
+      extraDevices === 0 ? '' : `(${extraDevices} × ${fmt(PRICE_PER_DEVICE)})`;
+    document.getElementById('rTravel')!.textContent = km === 0 ? 'díjmentes' : fmt(travel);
+    document.getElementById('rKmDetail')!.textContent =
+      km === 0 ? '(Budapesten belül)' : `(~${km} km)`;
+    document.getElementById('rTotal')!.textContent = fmt(total);
+    calcResult.classList.remove('hidden');
+
+    lastCalc = `Irányítószám: ${zip}, berendezések: ${devices} db — kalkulált tájékoztató ár: ${fmt(total)} + ÁFA (alapdíj ${fmt(PRICE_BASE)}, további berendezések ${extraDevices === 0 ? '—' : fmt(devicesFee)}, kiszállás ${km === 0 ? 'díjmentes' : fmt(travel)})`;
+    track('energetikai_calc', { zip, devices, total });
+  }
+
+  calcBtn.addEventListener('click', runCalc);
+  [zipInput, devInput].forEach((el) =>
+    el.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') { e.preventDefault(); runCalc(); } })
+  );
+
+  // ---------------- Kapcsolatfelvételi űrlap (meglévő Apps Script végponttal) ----------------
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const form = document.getElementById('energetikaForm') as HTMLFormElement;
+  const formRenderedAt = Date.now();
+
+  function setFieldError(el: HTMLElement, msg: string) {
+    el.classList.add('border-red-500');
+    let err = el.parentElement!.querySelector('.field-error');
+    if (!err) {
+      err = document.createElement('p');
+      err.className = 'field-error text-xs text-red-400 mt-1';
+      el.parentElement!.appendChild(err);
+    }
+    err.textContent = msg;
+  }
+  function clearFieldError(el: HTMLElement) {
+    el.classList.remove('border-red-500');
+    const err = el.parentElement!.querySelector('.field-error');
+    if (err) err.remove();
+  }
+
+  function validate() {
+    let ok = true;
+    const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
+      [form.nev, 'Kérjük, adja meg a nevét.'],
+      [form.email, 'Adja meg az e-mail címét.'],
+      [form.leiras, 'Írja le röviden a berendezéseket (típus, teljesítmény, helyszín).'],
+    ];
+    required.forEach(([el, msg]) => {
+      if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
+      else clearFieldError(el);
+    });
+    if (form.email.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim())) {
+      setFieldError(form.email, 'Az e-mail cím formátuma nem megfelelő.'); ok = false;
+    }
+    if (form.telefon.value.trim() && !/^[0-9+()\s/-]{6,}$/.test(form.telefon.value.trim())) {
+      setFieldError(form.telefon, 'A telefonszám formátuma nem megfelelő.'); ok = false;
+    } else {
+      clearFieldError(form.telefon);
+    }
+    if (!form.gdpr.checked) {
+      const box = form.gdpr.closest('label')!;
+      if (!box.querySelector('.field-error')) {
+        const err = document.createElement('p');
+        err.className = 'field-error text-xs text-red-400 mt-1';
+        err.textContent = 'A kapcsolatfelvételhez a hozzájárulás szükséges.';
+        box.appendChild(err);
+      }
+      ok = false;
+    } else {
+      const e = form.gdpr.closest('label')!.querySelector('.field-error');
+      if (e) e.remove();
+    }
+    return ok;
+  }
+
+  // Az extra mezőket (telephelyek, berendezések, kalkulált ár) a leírásba csomagoljuk,
+  // így a meglévő Apps Script módosítás nélkül működik.
+  function composedLeiras() {
+    const parts = [
+      '[Energetikai felülvizsgálat — 70 kW feletti fűtési rendszer]',
+      'Telephelyek száma: ' + (form.telephelyek.value || '1'),
+      'Hőtermelő berendezések száma: ' + (form.berendezesek.value || '1'),
+    ];
+    if (lastCalc) parts.push(lastCalc);
+    parts.push('', form.leiras.value.trim());
+    return parts.join('\n');
+  }
+
+  function fieldData() {
+    return {
+      nev: form.nev.value.trim(),
+      ceg: form.ceg.value.trim(),
+      email: form.email.value.trim(),
+      telefon: form.telefon.value.trim(),
+      leiras: composedLeiras(),
+      alapok: '',
+      linkek: '',
+      website: (form.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - formRenderedAt) / 1000)),
+    };
+  }
+
+  function sendMailto() {
+    const subject = encodeURIComponent('Energetikai felülvizsgálat ajánlatkérés – ' + (form.ceg.value.trim() || form.nev.value.trim()));
+    const body = encodeURIComponent(
+      ['Név: ' + form.nev.value.trim(), 'Cég: ' + (form.ceg.value.trim() || '—'),
+       'E-mail: ' + form.email.value.trim(), 'Telefon: ' + (form.telefon.value.trim() || '—'),
+       '', composedLeiras()].join('\n')
+    );
+    window.location.href = 'mailto:hello@bimline.hu?subject=' + subject + '&body=' + body;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    track('energetikai_form_submit');
+
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+
+    if (FORM_ENDPOINT) {
+      btn.disabled = true;
+      btn.textContent = 'Küldés…';
+      try {
+        const params = new URLSearchParams(fieldData() as Record<string, string>);
+        await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
+        btn.textContent = 'Köszönjük! Hamarosan jelentkezünk.';
+        btn.classList.add('bg-belimo');
+        form.reset();
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = orig;
+        sendMailto();
+      }
+      return;
+    }
+    sendMailto();
+    btn.textContent = 'Levelezőprogram megnyitva — köszönjük!';
+    btn.classList.add('bg-belimo');
+  });
+
+  form?.querySelectorAll('input, textarea, select').forEach((el) => {
+    el.addEventListener('input', () => clearFieldError(el as HTMLElement));
+  });
+</script>
