@@ -27,7 +27,7 @@ export const SITE = {
   social: {
     // A footer és a JSON-LD (sameAs) automatikusan ezekből dolgozik.
     linkedin: 'https://www.linkedin.com/company/bimline-gepesz-kft/',
-    facebook: 'https://www.facebook.com/profile.php?id=61591986440282',
+    facebook: 'https://www.facebook.com/bimline.hu',
     youtube: 'https://www.youtube.com/playlist?list=PLWL33xA9KA-vay7ewIKoBI7CI6qYWlK_d',
   },
 };
