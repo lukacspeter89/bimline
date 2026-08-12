@@ -121,14 +121,28 @@ const why = [
   },
 ];
 
-const priceTable = {
-  cols: ['1 berendezés', '3 berendezés', '5 berendezés', '10 berendezés'],
-  rows: [
-    { d: '50 km', v: ['144 000 Ft', '264 000 Ft', '384 000 Ft', '684 000 Ft'] },
-    { d: '100 km', v: ['168 000 Ft', '288 000 Ft', '408 000 Ft', '708 000 Ft'] },
-    { d: '150 km', v: ['192 000 Ft', '312 000 Ft', '432 000 Ft', '732 000 Ft'] },
-  ],
-};
+// A Magyar Mérnöki Kamara 2025. októberi díjajánlása (MMK_Á/483-3/2025.) szerinti sávos
+// rendszerdíjak, a KSH éves fogyasztóiár-indexével (+1,7%) indexálva, 5 000 Ft-ra kerekítve.
+const priceGroups = [
+  {
+    group: 'Lakóépületekben',
+    rows: [
+      { name: 'Fűtési rendszerek', band: '50 lakásszámig', price: '200 000 Ft' },
+      { name: '', band: '50 lakásszám felett', price: '330 000 Ft' },
+      { name: 'Légkondicionáló rendszerek, hőszivattyúk', band: '50 lakásszámig', price: '330 000 Ft' },
+      { name: '', band: '50 lakásszám felett', price: '465 000 Ft' },
+    ],
+  },
+  {
+    group: 'Vállalkozásoknál',
+    rows: [
+      { name: 'Fűtési rendszerek', band: '70 kW felett', price: '200 000 Ft' },
+      { name: '', band: '290 kW felett', price: '330 000 Ft' },
+      { name: 'Légkondicionáló rendszerek, hőszivattyúk', band: '290 kW teljesítményig', price: '465 000 Ft' },
+      { name: '', band: '290 kW felett', price: '595 000 Ft' },
+    ],
+  },
+];
 
 const faq = [
   {
@@ -161,7 +175,7 @@ const faq = [
   },
   {
     q: 'Mit tartalmaz az ár?',
-    a: 'Az árak nettó, ÁFA nélküli tájékoztató végösszegek, amelyek az alapdíjat, a további berendezések díját és a kiszállást is tartalmazzák — rejtett költség nincs. Több telephely vagy 10 db feletti berendezésszám esetén egyedi ajánlatot adunk.',
+    a: 'Díjszabásunk a Magyar Mérnöki Kamara hivatalos díjajánlását követi, az éves inflációval indexálva. A rendszerdíj a felülvizsgálat teljes szakmai tartalmát magában foglalja: helyszíni felmérés, jogszabálynak megfelelő jegyzőkönyv és hatósági lejelentés. A kiszállást — az MMK-ajánlással összhangban — külön, kilométeralapon számoljuk, de a kalkulátor előre megmutatja; Budapesten belül díjmentes. Rejtett költség nincs. Több rendszer vagy több telephely esetén egyedi, kedvezményes ajánlatot adunk.',
   },
 ];
 ---
@@ -306,11 +320,12 @@ const faq = [
       <div class="mb-8" data-reveal>
         <p class="eyebrow mb-3">Átlátható árazás</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Fix, rejtett költség nélküli díjak — számolja ki előre.
+          A Magyar Mérnöki Kamara díjajánlása szerint — számolja ki előre.
         </h2>
         <p class="mt-3 text-muted">
-          Az ár az alapdíjat, a további berendezések díját és a kiszállást is tartalmazza.
-          Budapesti indulással; a kiszállási díj a telephely irányítószáma alapján számolva.
+          Rendszertípus szerinti sávos díjszabással, a Magyar Mérnöki Kamara hivatalos
+          díjajánlásával összhangban dolgozunk. A kiszállási díj a telephely irányítószáma
+          alapján előre kalkulálható — rejtett költség nincs.
         </p>
       </div>
 
@@ -328,29 +343,31 @@ const faq = [
             />
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2" for="devInput">Berendezések száma (1–10)</label>
-            <input
-              id="devInput"
-              type="number"
-              min="1"
-              max="10"
-              value="1"
-              class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
-            />
+            <label class="block text-sm font-medium mb-2" for="sysInput">Rendszer típusa</label>
+            <select id="sysInput" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+              <optgroup label="Vállalkozásoknál">
+                <option value="v-f-1" selected>Fűtési rendszer · 70–290 kW</option>
+                <option value="v-f-2">Fűtési rendszer · 290 kW felett</option>
+                <option value="v-k-1">Légkondicionáló / hőszivattyú · 290 kW-ig</option>
+                <option value="v-k-2">Légkondicionáló / hőszivattyú · 290 kW felett</option>
+              </optgroup>
+              <optgroup label="Lakóépületben">
+                <option value="l-f-1">Fűtési rendszer · 50 lakásig</option>
+                <option value="l-f-2">Fűtési rendszer · 50 lakás felett</option>
+                <option value="l-k-1">Légkondicionáló / hőszivattyú · 50 lakásig</option>
+                <option value="l-k-2">Légkondicionáló / hőszivattyú · 50 lakás felett</option>
+              </optgroup>
+            </select>
           </div>
         </div>
         <button id="calcBtn" class="mt-5 px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Számol</button>
-        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Kérjük, érvényes magyar irányítószámot (4 számjegy) és 1–10 közötti berendezésszámot adjon meg.</p>
+        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Kérjük, érvényes magyar irányítószámot adjon meg (4 számjegy).</p>
 
         <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
           <dl class="space-y-2.5 text-sm">
             <div class="flex justify-between gap-4">
-              <dt class="text-muted">Alapdíj (tartalmazza az első berendezés felülvizsgálatát)</dt>
-              <dd class="font-medium whitespace-nowrap" id="rBase"></dd>
-            </div>
-            <div class="flex justify-between gap-4">
-              <dt class="text-muted">További berendezések <span id="rDevDetail" class="text-xs"></span></dt>
-              <dd class="font-medium whitespace-nowrap" id="rDevices"></dd>
+              <dt class="text-muted">Rendszerdíj <span id="rSysDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rSystem"></dd>
             </div>
             <div class="flex justify-between gap-4">
               <dt class="text-muted">Kiszállás <span id="rKmDetail" class="text-xs"></span></dt>
@@ -362,10 +379,11 @@ const faq = [
             <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
           </div>
           <p class="text-xs text-muted mt-3 leading-relaxed">
-            Nettó, tájékoztató jellegű végösszeg; az ÁFA-t nem tartalmazza. Az ár az alapdíjat,
-            a további berendezések díját és a kiszállást is tartalmazza — rejtett költség nincs.
-            Több telephely vagy 10 db feletti berendezésszám esetén egyedi ajánlatot adunk.
-            Végleges, kötelező érvényű ajánlatot e-mailben küldünk.
+            Nettó, tájékoztató jellegű végösszeg; az ÁFA-t nem tartalmazza. A rendszerdíj a
+            Magyar Mérnöki Kamara díjajánlását követi, és a felülvizsgálat teljes szakmai
+            tartalmát (helyszíni felmérés, jegyzőkönyv, hatósági lejelentés) magában foglalja —
+            rejtett költség nincs. Több rendszer vagy több telephely esetén egyedi, kedvezményes
+            ajánlatot adunk. Végleges, kötelező érvényű ajánlatot e-mailben küldünk.
           </p>
           <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
             Ajánlatot kérek erre a telephelyre
@@ -375,33 +393,41 @@ const faq = [
 
       <!-- Ártáblázat -->
       <div class="mt-8" data-reveal>
-        <h3 class="font-display font-semibold text-lg mb-4">Tájékoztató árak — távolság és berendezésszám szerint</h3>
+        <h3 class="font-display font-semibold text-lg mb-4">Rendszerdíjak — a Magyar Mérnöki Kamara díjajánlása alapján</h3>
         <div class="card rounded-2xl overflow-hidden overflow-x-auto">
           <table class="w-full text-sm min-w-[34rem]">
             <thead>
               <tr class="border-b border-line/60 text-left">
-                <th class="px-5 py-3.5 font-display font-semibold">Távolság (Budapesttől)</th>
-                {priceTable.cols.map((c) => (
-                  <th class="px-5 py-3.5 font-display font-semibold text-right">{c}</th>
-                ))}
+                <th class="px-5 py-3.5 font-display font-semibold">Rendszer</th>
+                <th class="px-5 py-3.5 font-display font-semibold">Sávozás</th>
+                <th class="px-5 py-3.5 font-display font-semibold text-right">Rendszerdíj (nettó)</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-line/40">
-              {priceTable.rows.map((r) => (
-                <tr>
-                  <td class="px-5 py-3.5 font-medium">{r.d}</td>
-                  {r.v.map((v) => (
-                    <td class="px-5 py-3.5 text-right text-muted">{v}</td>
+              {priceGroups.map((g) => (
+                <>
+                  <tr class="bg-surface2/50">
+                    <td colspan="3" class="px-5 py-2.5 font-display font-semibold text-accent text-xs tracking-wide uppercase">{g.group}</td>
+                  </tr>
+                  {g.rows.map((r) => (
+                    <tr>
+                      <td class="px-5 py-3.5 font-medium">{r.name}</td>
+                      <td class="px-5 py-3.5 text-muted">{r.band}</td>
+                      <td class="px-5 py-3.5 text-right text-muted">{r.price}</td>
+                    </tr>
                   ))}
-                </tr>
+                </>
               ))}
             </tbody>
           </table>
         </div>
         <p class="text-xs text-muted mt-3 leading-relaxed">
-          Az árak nettó, ÁFA nélküli tájékoztató végösszegek, amelyek az alapdíjat, a további
-          berendezések díját és a kiszállást is tartalmazzák. Több telephely vagy 10 db feletti
-          berendezésszám esetén egyedi ajánlatot adunk. Az ajánlat rejtett költséget nem tartalmaz.
+          Nettó, ÁFA nélküli díjak, a Magyar Mérnöki Kamara 2025. októberi díjajánlása
+          (MMK_Á/483-3/2025.) alapján, a KSH éves fogyasztóiár-indexével indexálva. A kiszállás
+          díja — az MMK-ajánlással összhangban — külön tételként, a Budapesttől mért távolság
+          alapján kerül elszámolásra (480 Ft/km); Budapesten belül díjmentes, és a fenti
+          kalkulátor előre megmutatja. Több rendszer vagy több telephely esetén egyedi,
+          kedvezményes csomagajánlatot adunk. Az ajánlat rejtett költséget nem tartalmaz.
         </p>
       </div>
     </div>
@@ -539,12 +565,19 @@ const faq = [
   });
 
   // ---------------- Díjkalkulátor ----------------
-  // Díjtételek (nettó Ft) — a flyer ártáblázatával konzisztens képlet:
-  //   ár = alapdíj (első berendezéssel) + 60 000 Ft × további berendezés + kiszállás
-  const PRICE_BASE = 120000;       // alapdíj, az első berendezés felülvizsgálatával
-  const PRICE_PER_DEVICE = 60000;  // minden további berendezés
-  const PRICE_PER_KM = 480;        // Ft/km, a Budapesttől mért egyirányú távolságra vetítve
-  const MAX_DEVICES = 10;          // e fölött egyedi ajánlat
+  // Rendszerdíjak (nettó Ft) — az MMK 2025. októberi díjajánlása (MMK_Á/483-3/2025.),
+  // a KSH éves fogyasztóiár-indexével (+1,7%) indexálva, 5 000 Ft-ra kerekítve.
+  const SYSTEM_PRICES: Record<string, { label: string; price: number }> = {
+    'v-f-1': { label: 'fűtési rendszer, 70–290 kW · vállalkozás', price: 200000 },
+    'v-f-2': { label: 'fűtési rendszer, 290 kW felett · vállalkozás', price: 330000 },
+    'v-k-1': { label: 'légkondicionáló / hőszivattyú, 290 kW-ig · vállalkozás', price: 465000 },
+    'v-k-2': { label: 'légkondicionáló / hőszivattyú, 290 kW felett · vállalkozás', price: 595000 },
+    'l-f-1': { label: 'fűtési rendszer, 50 lakásig · lakóépület', price: 200000 },
+    'l-f-2': { label: 'fűtési rendszer, 50 lakás felett · lakóépület', price: 330000 },
+    'l-k-1': { label: 'légkondicionáló / hőszivattyú, 50 lakásig · lakóépület', price: 330000 },
+    'l-k-2': { label: 'légkondicionáló / hőszivattyú, 50 lakás felett · lakóépület', price: 465000 },
+  };
+  const PRICE_PER_KM = 480; // Ft/km, a Budapesttől mért egyirányú távolságra vetítve
 
   // Közúti távolság Budapesttől (km, egy irány) — irányítószám-prefix alapú becslés.
   // 3 jegyű prefix felülírja a 2 jegyűt, az az 1 jegyűt.
@@ -577,7 +610,7 @@ const faq = [
   const fmt = (n: number) => n.toLocaleString('hu-HU') + ' Ft';
 
   const zipInput = document.getElementById('zipInput') as HTMLInputElement;
-  const devInput = document.getElementById('devInput') as HTMLInputElement;
+  const sysInput = document.getElementById('sysInput') as HTMLSelectElement;
   const calcBtn = document.getElementById('calcBtn')!;
   const calcError = document.getElementById('calcError')!;
   const calcResult = document.getElementById('calcResult')!;
@@ -585,38 +618,33 @@ const faq = [
 
   function runCalc() {
     const zip = zipInput.value.trim();
-    const devices = parseInt(devInput.value, 10);
+    const sys = SYSTEM_PRICES[sysInput.value];
     const km = distanceFromZip(zip);
-    if (km === null || !Number.isFinite(devices) || devices < 1 || devices > MAX_DEVICES) {
+    if (km === null || !sys) {
       calcError.classList.remove('hidden');
       calcResult.classList.add('hidden');
       return;
     }
     calcError.classList.add('hidden');
 
-    const extraDevices = devices - 1;
-    const devicesFee = extraDevices * PRICE_PER_DEVICE;
     const travel = km === 0 ? 0 : Math.round((km * PRICE_PER_KM) / 1000) * 1000;
-    const total = PRICE_BASE + devicesFee + travel;
+    const total = sys.price + travel;
 
-    document.getElementById('rBase')!.textContent = fmt(PRICE_BASE);
-    document.getElementById('rDevices')!.textContent = extraDevices === 0 ? '—' : fmt(devicesFee);
-    document.getElementById('rDevDetail')!.textContent =
-      extraDevices === 0 ? '' : `(${extraDevices} × ${fmt(PRICE_PER_DEVICE)})`;
+    document.getElementById('rSystem')!.textContent = fmt(sys.price);
+    document.getElementById('rSysDetail')!.textContent = `(${sys.label})`;
     document.getElementById('rTravel')!.textContent = km === 0 ? 'díjmentes' : fmt(travel);
     document.getElementById('rKmDetail')!.textContent =
       km === 0 ? '(Budapesten belül)' : `(~${km} km)`;
     document.getElementById('rTotal')!.textContent = fmt(total);
     calcResult.classList.remove('hidden');
 
-    lastCalc = `Irányítószám: ${zip}, berendezések: ${devices} db — kalkulált tájékoztató ár: ${fmt(total)} + ÁFA (alapdíj ${fmt(PRICE_BASE)}, további berendezések ${extraDevices === 0 ? '—' : fmt(devicesFee)}, kiszállás ${km === 0 ? 'díjmentes' : fmt(travel)})`;
-    track('energetikai_calc', { zip, devices, total });
+    lastCalc = `Irányítószám: ${zip}, rendszer: ${sys.label} — kalkulált tájékoztató ár: ${fmt(total)} + ÁFA (rendszerdíj ${fmt(sys.price)}, kiszállás ${km === 0 ? 'díjmentes' : fmt(travel)})`;
+    track('energetikai_calc', { zip, sys: sysInput.value, total });
   }
 
   calcBtn.addEventListener('click', runCalc);
-  [zipInput, devInput].forEach((el) =>
-    el.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') { e.preventDefault(); runCalc(); } })
-  );
+  zipInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runCalc(); } });
+  sysInput.addEventListener('change', () => { if (!calcResult.classList.contains('hidden')) runCalc(); });
 
   // ---------------- Kapcsolatfelvételi űrlap (meglévő Apps Script végponttal) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';

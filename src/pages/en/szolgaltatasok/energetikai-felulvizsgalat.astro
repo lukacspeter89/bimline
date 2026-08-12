@@ -121,14 +121,28 @@ const why = [
   },
 ];
 
-const priceTable = {
-  cols: ['1 unit', '3 units', '5 units', '10 units'],
-  rows: [
-    { d: '50 km', v: ['HUF 144,000', 'HUF 264,000', 'HUF 384,000', 'HUF 684,000'] },
-    { d: '100 km', v: ['HUF 168,000', 'HUF 288,000', 'HUF 408,000', 'HUF 708,000'] },
-    { d: '150 km', v: ['HUF 192,000', 'HUF 312,000', 'HUF 432,000', 'HUF 732,000'] },
-  ],
-};
+// Banded system fees per the Hungarian Chamber of Engineers' October 2025 fee
+// recommendation (MMK_Á/483-3/2025.), indexed with the KSH annual CPI (+1.7%), rounded.
+const priceGroups = [
+  {
+    group: 'Residential buildings',
+    rows: [
+      { name: 'Heating systems', band: 'up to 50 flats', price: 'HUF 200,000' },
+      { name: '', band: 'above 50 flats', price: 'HUF 330,000' },
+      { name: 'Air-conditioning systems, heat pumps', band: 'up to 50 flats', price: 'HUF 330,000' },
+      { name: '', band: 'above 50 flats', price: 'HUF 465,000' },
+    ],
+  },
+  {
+    group: 'Businesses',
+    rows: [
+      { name: 'Heating systems', band: 'above 70 kW', price: 'HUF 200,000' },
+      { name: '', band: 'above 290 kW', price: 'HUF 330,000' },
+      { name: 'Air-conditioning systems, heat pumps', band: 'up to 290 kW', price: 'HUF 465,000' },
+      { name: '', band: 'above 290 kW', price: 'HUF 595,000' },
+    ],
+  },
+];
 
 const faq = [
   {
@@ -161,7 +175,7 @@ const faq = [
   },
   {
     q: 'What does the price include?',
-    a: 'Prices are indicative net totals excluding VAT, covering the base fee, the fee for additional units and the travel — with no hidden costs. For multiple sites or more than 10 units we provide an individual quote.',
+    a: 'Our fees follow the Hungarian Chamber of Engineers’ official fee recommendation, indexed with annual inflation. The system fee covers the full professional scope of the inspection: on-site survey, statutory report and filing with the authority. In line with the recommendation, travel is charged separately on a per-kilometre basis, but the calculator shows it in advance; it is free of charge within Budapest. There are no hidden costs. For multiple systems or sites we provide an individual, discounted quote.',
   },
 ];
 ---
@@ -307,11 +321,12 @@ const faq = [
       <div class="mb-8" data-reveal>
         <p class="eyebrow mb-3">Transparent pricing</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Fixed fees with no hidden costs — calculate in advance.
+          Per the Hungarian Chamber of Engineers’ fee recommendation — calculate in advance.
         </h2>
         <p class="mt-3 text-muted">
-          The price covers the base fee, the fee for additional units and the travel.
-          Departing from Budapest; the travel fee is calculated from the site’s postcode.
+          We work with banded, system-type-based fees in line with the Hungarian Chamber of
+          Engineers’ official fee recommendation. The travel fee can be calculated in advance
+          from the site’s postcode — there are no hidden costs.
         </p>
       </div>
 
@@ -329,29 +344,31 @@ const faq = [
             />
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2" for="devInput">Number of units (1–10)</label>
-            <input
-              id="devInput"
-              type="number"
-              min="1"
-              max="10"
-              value="1"
-              class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
-            />
+            <label class="block text-sm font-medium mb-2" for="sysInput">System type</label>
+            <select id="sysInput" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+              <optgroup label="Businesses">
+                <option value="v-f-1" selected>Heating system · 70–290 kW</option>
+                <option value="v-f-2">Heating system · above 290 kW</option>
+                <option value="v-k-1">Air-conditioning / heat pump · up to 290 kW</option>
+                <option value="v-k-2">Air-conditioning / heat pump · above 290 kW</option>
+              </optgroup>
+              <optgroup label="Residential buildings">
+                <option value="l-f-1">Heating system · up to 50 flats</option>
+                <option value="l-f-2">Heating system · above 50 flats</option>
+                <option value="l-k-1">Air-conditioning / heat pump · up to 50 flats</option>
+                <option value="l-k-2">Air-conditioning / heat pump · above 50 flats</option>
+              </optgroup>
+            </select>
           </div>
         </div>
         <button id="calcBtn" class="mt-5 px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Calculate</button>
-        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Please enter a valid Hungarian postcode (4 digits) and a number of units between 1 and 10.</p>
+        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Please enter a valid Hungarian postcode (4 digits).</p>
 
         <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
           <dl class="space-y-2.5 text-sm">
             <div class="flex justify-between gap-4">
-              <dt class="text-muted">Base fee (includes the inspection of the first unit)</dt>
-              <dd class="font-medium whitespace-nowrap" id="rBase"></dd>
-            </div>
-            <div class="flex justify-between gap-4">
-              <dt class="text-muted">Additional units <span id="rDevDetail" class="text-xs"></span></dt>
-              <dd class="font-medium whitespace-nowrap" id="rDevices"></dd>
+              <dt class="text-muted">System fee <span id="rSysDetail" class="text-xs"></span></dt>
+              <dd class="font-medium whitespace-nowrap" id="rSystem"></dd>
             </div>
             <div class="flex justify-between gap-4">
               <dt class="text-muted">Travel <span id="rKmDetail" class="text-xs"></span></dt>
@@ -363,9 +380,11 @@ const faq = [
             <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
           </div>
           <p class="text-xs text-muted mt-3 leading-relaxed">
-            Net, indicative total excluding VAT. The price covers the base fee, the fee for
-            additional units and the travel — with no hidden costs. For multiple sites or more
-            than 10 units we provide an individual quote. A final, binding offer is sent by e-mail.
+            Net, indicative total excluding VAT. The system fee follows the Hungarian Chamber of
+            Engineers’ fee recommendation and covers the full professional scope of the inspection
+            (on-site survey, statutory report, filing with the authority) — there are no hidden
+            costs. For multiple systems or sites we provide an individual, discounted quote.
+            A final, binding offer is sent by e-mail.
           </p>
           <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
             Request a quote for this site
@@ -375,33 +394,41 @@ const faq = [
 
       <!-- Price table -->
       <div class="mt-8" data-reveal>
-        <h3 class="font-display font-semibold text-lg mb-4">Indicative prices — by distance and number of units</h3>
+        <h3 class="font-display font-semibold text-lg mb-4">System fees — based on the Hungarian Chamber of Engineers’ recommendation</h3>
         <div class="card rounded-2xl overflow-hidden overflow-x-auto">
           <table class="w-full text-sm min-w-[34rem]">
             <thead>
               <tr class="border-b border-line/60 text-left">
-                <th class="px-5 py-3.5 font-display font-semibold">Distance (from Budapest)</th>
-                {priceTable.cols.map((c) => (
-                  <th class="px-5 py-3.5 font-display font-semibold text-right">{c}</th>
-                ))}
+                <th class="px-5 py-3.5 font-display font-semibold">System</th>
+                <th class="px-5 py-3.5 font-display font-semibold">Band</th>
+                <th class="px-5 py-3.5 font-display font-semibold text-right">System fee (net)</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-line/40">
-              {priceTable.rows.map((r) => (
-                <tr>
-                  <td class="px-5 py-3.5 font-medium">{r.d}</td>
-                  {r.v.map((v) => (
-                    <td class="px-5 py-3.5 text-right text-muted">{v}</td>
+              {priceGroups.map((g) => (
+                <>
+                  <tr class="bg-surface2/50">
+                    <td colspan="3" class="px-5 py-2.5 font-display font-semibold text-accent text-xs tracking-wide uppercase">{g.group}</td>
+                  </tr>
+                  {g.rows.map((r) => (
+                    <tr>
+                      <td class="px-5 py-3.5 font-medium">{r.name}</td>
+                      <td class="px-5 py-3.5 text-muted">{r.band}</td>
+                      <td class="px-5 py-3.5 text-right text-muted">{r.price}</td>
+                    </tr>
                   ))}
-                </tr>
+                </>
               ))}
             </tbody>
           </table>
         </div>
         <p class="text-xs text-muted mt-3 leading-relaxed">
-          Prices are indicative net totals excluding VAT, covering the base fee, the fee for
-          additional units and the travel. For multiple sites or more than 10 units we provide
-          an individual quote. The offer contains no hidden costs.
+          Net fees excluding VAT, based on the Hungarian Chamber of Engineers’ October 2025 fee
+          recommendation (MMK_Á/483-3/2025.), indexed with the KSH annual consumer price index.
+          In line with the recommendation, travel is charged separately, based on the distance
+          from Budapest (HUF 480/km); free of charge within Budapest, and shown in advance by
+          the calculator above. For multiple systems or sites we provide an individual,
+          discounted package offer. The offer contains no hidden costs.
         </p>
       </div>
     </div>
@@ -539,12 +566,19 @@ const faq = [
   });
 
   // ---------------- Fee calculator ----------------
-  // Fee items (net HUF) — formula consistent with the flyer's price table:
-  //   price = base fee (incl. first unit) + HUF 60,000 × additional unit + travel
-  const PRICE_BASE = 120000;       // base fee, incl. inspection of the first unit
-  const PRICE_PER_DEVICE = 60000;  // each additional unit
-  const PRICE_PER_KM = 480;        // HUF/km, applied to the one-way distance from Budapest
-  const MAX_DEVICES = 10;          // above this: individual quote
+  // System fees (net HUF) — per the Hungarian Chamber of Engineers' October 2025 fee
+  // recommendation (MMK_Á/483-3/2025.), indexed with the KSH annual CPI (+1.7%), rounded.
+  const SYSTEM_PRICES: Record<string, { label: string; price: number }> = {
+    'v-f-1': { label: 'heating system, 70–290 kW · business', price: 200000 },
+    'v-f-2': { label: 'heating system, above 290 kW · business', price: 330000 },
+    'v-k-1': { label: 'air-conditioning / heat pump, up to 290 kW · business', price: 465000 },
+    'v-k-2': { label: 'air-conditioning / heat pump, above 290 kW · business', price: 595000 },
+    'l-f-1': { label: 'heating system, up to 50 flats · residential', price: 200000 },
+    'l-f-2': { label: 'heating system, above 50 flats · residential', price: 330000 },
+    'l-k-1': { label: 'air-conditioning / heat pump, up to 50 flats · residential', price: 330000 },
+    'l-k-2': { label: 'air-conditioning / heat pump, above 50 flats · residential', price: 465000 },
+  };
+  const PRICE_PER_KM = 480; // HUF/km, applied to the one-way distance from Budapest
 
   // Road distance from Budapest (km, one way) — postcode-prefix based estimate.
   // A 3-digit prefix overrides the 2-digit one, which overrides the 1-digit one.
@@ -577,7 +611,7 @@ const faq = [
   const fmt = (n: number) => 'HUF ' + n.toLocaleString('en-GB');
 
   const zipInput = document.getElementById('zipInput') as HTMLInputElement;
-  const devInput = document.getElementById('devInput') as HTMLInputElement;
+  const sysInput = document.getElementById('sysInput') as HTMLSelectElement;
   const calcBtn = document.getElementById('calcBtn')!;
   const calcError = document.getElementById('calcError')!;
   const calcResult = document.getElementById('calcResult')!;
@@ -585,38 +619,33 @@ const faq = [
 
   function runCalc() {
     const zip = zipInput.value.trim();
-    const devices = parseInt(devInput.value, 10);
+    const sys = SYSTEM_PRICES[sysInput.value];
     const km = distanceFromZip(zip);
-    if (km === null || !Number.isFinite(devices) || devices < 1 || devices > MAX_DEVICES) {
+    if (km === null || !sys) {
       calcError.classList.remove('hidden');
       calcResult.classList.add('hidden');
       return;
     }
     calcError.classList.add('hidden');
 
-    const extraDevices = devices - 1;
-    const devicesFee = extraDevices * PRICE_PER_DEVICE;
     const travel = km === 0 ? 0 : Math.round((km * PRICE_PER_KM) / 1000) * 1000;
-    const total = PRICE_BASE + devicesFee + travel;
+    const total = sys.price + travel;
 
-    document.getElementById('rBase')!.textContent = fmt(PRICE_BASE);
-    document.getElementById('rDevices')!.textContent = extraDevices === 0 ? '—' : fmt(devicesFee);
-    document.getElementById('rDevDetail')!.textContent =
-      extraDevices === 0 ? '' : `(${extraDevices} × ${fmt(PRICE_PER_DEVICE)})`;
+    document.getElementById('rSystem')!.textContent = fmt(sys.price);
+    document.getElementById('rSysDetail')!.textContent = `(${sys.label})`;
     document.getElementById('rTravel')!.textContent = km === 0 ? 'free of charge' : fmt(travel);
     document.getElementById('rKmDetail')!.textContent =
       km === 0 ? '(within Budapest)' : `(~${km} km)`;
     document.getElementById('rTotal')!.textContent = fmt(total);
     calcResult.classList.remove('hidden');
 
-    lastCalc = `Postcode: ${zip}, units: ${devices} — calculated indicative price: ${fmt(total)} + VAT (base fee ${fmt(PRICE_BASE)}, additional units ${extraDevices === 0 ? '—' : fmt(devicesFee)}, travel ${km === 0 ? 'free of charge' : fmt(travel)})`;
-    track('energetikai_calc', { zip, devices, total });
+    lastCalc = `Postcode: ${zip}, system: ${sys.label} — calculated indicative price: ${fmt(total)} + VAT (system fee ${fmt(sys.price)}, travel ${km === 0 ? 'free of charge' : fmt(travel)})`;
+    track('energetikai_calc', { zip, sys: sysInput.value, total });
   }
 
   calcBtn.addEventListener('click', runCalc);
-  [zipInput, devInput].forEach((el) =>
-    el.addEventListener('keydown', (e) => { if ((e as KeyboardEvent).key === 'Enter') { e.preventDefault(); runCalc(); } })
-  );
+  zipInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runCalc(); } });
+  sysInput.addEventListener('change', () => { if (!calcResult.classList.contains('hidden')) runCalc(); });
 
   // ---------------- Contact form (existing Apps Script endpoint) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
