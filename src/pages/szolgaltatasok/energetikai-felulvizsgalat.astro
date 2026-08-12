@@ -32,16 +32,16 @@ const targets = [
     desc: 'Irodaház, ipari csarnok, társasház, intézmény, kereskedelmi és egészségügyi épület — az épület funkciójától függetlenül.',
   },
   {
-    title: '4 vagy 8 évente esedékes',
-    desc: 'Nagyvállalati energetikai auditra kötelezett cégeknél a felülvizsgálat 4 évente, egyébként 8 évente esedékes.',
+    title: '8 évente esedékes',
+    desc: 'A felülvizsgálatot 8 évente kell megismételni; energetikai auditra kötelezett cégeknél a kötelező energetikai auditálás alkalmával, annak részeként kell elvégeztetni.',
   },
   {
     title: 'Új rendszernél 1 éven belül',
-    desc: 'Új rendszer esetén az üzembe helyezéstől számított 1 éven belül el kell végezni az első felülvizsgálatot.',
+    desc: 'A 2022. január 1. után üzembe helyezett rendszereknél az üzembe helyezéstől számított 1 éven belül el kell végezni az első felülvizsgálatot.',
   },
   {
-    title: 'Mentesülés épületautomatikával',
-    desc: 'Mentesülhet, aki megfelelő épületautomatikai és -felügyeleti rendszert üzemeltet — ezt is felmérjük és dokumentáljuk.',
+    title: 'Mentesülés — szigorú feltételekkel',
+    desc: 'Mentesülhet pl. az energiahatékonyság-alapú vagy távhőszolgáltatói rendszerüzemeltetési szerződés alá tartozó, illetve nem lakóépületben a 290 kW feletti, megfelelő épületautomatizálással ellátott rendszer. A mentességet igazolni kell — a feltételeket felmérjük és dokumentáljuk.',
   },
 ];
 
@@ -69,6 +69,14 @@ const legal = [
   {
     k: 'Ki végezheti?',
     v: 'Kizárólag a Magyar Mérnöki Kamara névjegyzékében szereplő, energetikai felülvizsgálói jogosultsággal rendelkező szakember.',
+  },
+  {
+    k: 'Mentesség',
+    v: 'Mentesülhetnek a lakóépületi rendszerek folyamatos elektronikus felügyeleti és hatékony ellenőrző funkciókkal, nem lakóépületben a 290 kW-nál nagyobb rendszerek megfelelő épületautomatizálási és -szabályozási rendszerrel, valamint az energiahatékonyság-alapú szerződés (122/2015. (V. 26.) Korm. rendelet 8. §) vagy a távhőszolgáltatóval kötött rendszerüzemeltetési szerződés hatálya alá tartozó rendszerek. A mentességet a rendszerüzemeltető köteles igazolni; a kérelmet energetikai felülvizsgáló nyújtja be a Magyar Mérnöki Kamarához, amely azt elbírálja.',
+  },
+  {
+    k: 'Ellenőrzés',
+    v: 'A kötelezettség teljesítését a Nemzeti Klímavédelmi Hatóság ellenőrzi: nemteljesítés esetén határidő tűzésével felszólít, a határidő eredménytelen elteltét követően bírságot szab ki — akár ismételten is. A felülvizsgálati jelentések szakmai ellenőrzését és a mentességi kérelmek elbírálását a Magyar Mérnöki Kamara végzi.',
   },
   {
     k: 'Lejelentés',
@@ -129,15 +137,23 @@ const faq = [
   },
   {
     q: 'Mikorra kellett volna elvégezni? Késésben vagyok?',
-    a: 'A 2022 előtt üzembe helyezett rendszerek első felülvizsgálatának határideje 2025. december 31-én lejárt. Aki most pótolja, még a hatósági ellenőrzés előtt rendezheti kötelezettségét — a mulasztás kategóriától függően 150 000 – 600 000 Ft bírsággal sújtható, ismételt mulasztás esetén a bírság 150%-os emelt összegben szabható ki.',
+    a: 'A 2022 előtt üzembe helyezett rendszerek első felülvizsgálatának határideje 2025. december 31-én lejárt, így aki még nem végeztette el, 2026. január 1. óta mulasztásban van. A Nemzeti Klímavédelmi Hatóság megkezdte a mulasztásban lévő üzemeltetők tájékoztatását és felszólítását; az eljárás lépcsői a felszólítás, a póthatáridő, majd a bírság (kategóriától függően 150 000 – 600 000 Ft, ismételt mulasztás esetén 150%-os emelt összeg). A Hatóság tájékoztatása szerint a soron kívüli elvégeztetés elkerülhetővé teszi a bírságot.',
   },
   {
     q: 'Milyen gyakran kell ismételni?',
-    a: 'Nagyvállalati energetikai auditra kötelezett cégeknél 4 évente, egyébként 8 évente. Új rendszernél az üzembe helyezéstől számított 1 éven belül kell az első felülvizsgálatot elvégezni. A következő esedékességet rendszerünk díjmentesen figyeli, és időben jelezzük.',
+    a: 'A felülvizsgálatot 8 évente kell megismételni. Energetikai auditra kötelezett vállalkozásnál a kötelező energetikai auditálás alkalmával, annak részeként kell elvégeztetni. Új rendszernél az üzembe helyezéstől számított 1 éven belül esedékes az első felülvizsgálat. A következő esedékességet rendszerünk díjmentesen figyeli, és időben jelezzük.',
   },
   {
     q: 'Mentesülhetek a kötelezettség alól?',
-    a: 'Igen: mentesülhet, aki megfelelő épületautomatikai és -felügyeleti rendszert üzemeltet. Hogy az Ön rendszere megfelel-e a mentesülés feltételeinek, azt a helyszínen felmérjük és dokumentáljuk.',
+    a: 'Igen, de a feltételek szigorúak. Lakóépületben mentesülhet a folyamatos elektronikus felügyeleti és hatékony ellenőrző funkciókkal rendelkező rendszer; nem lakóépületben a 290 kW-nál nagyobb, megfelelő épületautomatizálási és -szabályozási rendszerrel ellátott rendszer. Mindkét esetben mentességet adhat az energiahatékonyság-alapú szerződés, illetve a távhőszolgáltatóval kötött rendszerüzemeltetési szerződés is. A mentességet a rendszerüzemeltető köteles igazolni: a kérelmet energetikai felülvizsgáló nyújtja be a Magyar Mérnöki Kamarához, amely elbírálja azt. A feltételek fennállását a helyszínen felmérjük, és a mentességi kérelmet is elkészítjük.',
+  },
+  {
+    q: 'Távhővel ellátott az épületünk — ránk is vonatkozik?',
+    a: 'Ha a szekunder oldalt a távhőszolgáltató üzemelteti, és a rendszer a távhőszolgáltatóval kötött rendszerüzemeltetési szerződés hatálya alá tartozik, mentesség kérhető — a kérelmet energetikai felülvizsgáló nyújtja be a Magyar Mérnöki Kamarához. Ha azonban a felhasználási hely tulajdonosa nem kötött üzemeltetési szerződést a távhőszolgáltatóval, a felülvizsgálatot el kell végeztetni, mentesség nem kérhető.',
+  },
+  {
+    q: 'Társasház vagyunk — mi a teendőnk?',
+    a: 'Társasházak és lakásszövetkezetek esetén a felülvizsgálat megrendeléséről közgyűlési határozatot kell hozni, a felülvizsgálati jelentésben foglalt ajánlásokat pedig a kézhezvételt követő közgyűlésen ismertetni kell. Az üzemeltetéssel és karbantartással kapcsolatos dokumentumokat a felülvizsgáló rendelkezésére kell bocsátani — a folyamatban végig segítünk.',
   },
   {
     q: 'Mennyi ideig tart, és zavarja-e az üzemet?',
@@ -192,10 +208,12 @@ const faq = [
         </div>
         <p class="text-sm text-muted leading-relaxed">
           A 2022 előtt üzembe helyezett rendszerek első felülvizsgálatának határideje
-          <strong class="text-ink">2025. december 31-én lejárt</strong>. A mulasztás kategóriától függően
-          <strong class="text-ink">150 000 – 600 000 Ft bírsággal</strong> sújtható, ismételt mulasztás
-          esetén a bírság 150%-os emelt összegben szabható ki. Aki most pótolja, még a hatósági
-          ellenőrzés előtt rendezheti kötelezettségét.
+          <strong class="text-ink">2025. december 31-én lejárt</strong>, és a Nemzeti Klímavédelmi
+          Hatóság megkezdte a mulasztásban lévő üzemeltetők felszólítását. Az eljárás lépcsői:
+          felszólítás, póthatáridő, majd <strong class="text-ink">bírság</strong> — kategóriától függően
+          <strong class="text-ink">150 000 – 600 000 Ft</strong>, ismételt mulasztásnál 150%-os emelt
+          összegben, akár ismételten is kiszabva. A Hatóság tájékoztatása szerint a
+          <strong class="text-ink">soron kívüli elvégeztetés elkerülhetővé teszi a bírságot</strong>.
         </p>
       </div>
     </div>

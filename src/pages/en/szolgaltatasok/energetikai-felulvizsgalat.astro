@@ -32,16 +32,16 @@ const targets = [
     desc: 'Office buildings, industrial halls, residential blocks, institutions, commercial and healthcare buildings — regardless of the building’s function.',
   },
   {
-    title: 'Due every 4 or 8 years',
-    desc: 'For companies subject to the large-company energy audit obligation the inspection is due every 4 years; otherwise every 8 years.',
+    title: 'Due every 8 years',
+    desc: 'The inspection must be repeated every 8 years; for companies subject to the mandatory energy audit it must be carried out on the occasion of — as part of — the mandatory energy audit.',
   },
   {
     title: 'New systems: within 1 year',
-    desc: 'For new systems, the first inspection must be carried out within 1 year of commissioning.',
+    desc: 'For systems commissioned after 1 January 2022, the first inspection must be carried out within 1 year of commissioning.',
   },
   {
-    title: 'Exemption with building automation',
-    desc: 'Operators of a suitable building automation and control system may be exempt — we survey and document this as well.',
+    title: 'Exemption — under strict conditions',
+    desc: 'Exemption may apply e.g. to systems under an energy-performance contract or a district-heating system-operation contract, and in non-residential buildings to systems above 290 kW with suitable building automation. The exemption must be proven — we survey and document the conditions.',
   },
 ];
 
@@ -69,6 +69,14 @@ const legal = [
   {
     k: 'Who may carry it out?',
     v: 'Only a professional registered with the Hungarian Chamber of Engineers holding an energy-inspector qualification.',
+  },
+  {
+    k: 'Exemptions',
+    v: 'Exemption may apply to residential-building systems with continuous electronic monitoring and effective control functions; in non-residential buildings to systems above 290 kW with a suitable building automation and control system; and to systems under an energy-performance contract (Section 8 of Government Decree 122/2015 (V. 26.)) or a system-operation contract concluded with a district-heating provider. The system operator must prove the exemption; the application is submitted by an energy inspector to the Hungarian Chamber of Engineers, which adjudicates it.',
+  },
+  {
+    k: 'Enforcement',
+    v: 'Compliance is monitored by the National Climate Protection Authority: in the event of non-compliance it issues a formal notice with a deadline, and if the deadline passes without result it imposes a fine — repeatedly if necessary. The professional review of inspection reports and the adjudication of exemption applications are carried out by the Hungarian Chamber of Engineers.',
   },
   {
     k: 'Filing',
@@ -129,15 +137,23 @@ const faq = [
   },
   {
     q: 'When was it due? Are we late?',
-    a: 'For systems commissioned before 2022, the deadline for the first inspection expired on 31 December 2025. Those who catch up now can settle their obligation before an official inspection — non-compliance may be fined HUF 150,000–600,000 depending on category, and repeated non-compliance may be fined at a 150% increased rate.',
+    a: 'For systems commissioned before 2022, the deadline for the first inspection expired on 31 December 2025 — operators who have not yet complied have been in default since 1 January 2026. The National Climate Protection Authority has begun notifying and formally calling on defaulting operators; the procedure runs from formal notice through a grace deadline to a fine (HUF 150,000–600,000 depending on category, at a 150% increased rate for repeated non-compliance). According to the Authority, having the inspection carried out without delay makes the fine avoidable.',
   },
   {
     q: 'How often must it be repeated?',
-    a: 'Every 4 years for companies subject to the large-company energy audit obligation, otherwise every 8 years. For new systems the first inspection is due within 1 year of commissioning. Our system tracks the next due date free of charge, and we notify you in time.',
+    a: 'The inspection must be repeated every 8 years. For companies subject to the mandatory energy audit it must be carried out on the occasion of — as part of — the mandatory energy audit. For new systems the first inspection is due within 1 year of commissioning. Our system tracks the next due date free of charge, and we notify you in time.',
   },
   {
     q: 'Can we be exempt from the obligation?',
-    a: 'Yes: operators of a suitable building automation and control system may be exempt. Whether your system meets the conditions of exemption is something we survey and document on site.',
+    a: 'Yes, but the conditions are strict. In residential buildings, systems with continuous electronic monitoring and effective control functions may be exempt; in non-residential buildings, systems above 290 kW with a suitable building automation and control system. In both cases an energy-performance contract or a system-operation contract with a district-heating provider may also provide exemption. The system operator must prove the exemption: the application is submitted by an energy inspector to the Hungarian Chamber of Engineers, which adjudicates it. We survey the conditions on site and prepare the exemption application as well.',
+  },
+  {
+    q: 'Our building is supplied with district heating — does this apply to us?',
+    a: 'If the secondary side is operated by the district-heating provider and the system falls under a system-operation contract concluded with the provider, an exemption can be requested — the application is submitted by an energy inspector to the Hungarian Chamber of Engineers. If, however, the owner of the site has not concluded an operation contract with the district-heating provider, the inspection must be carried out and no exemption can be requested.',
+  },
+  {
+    q: 'We are a residential condominium — what do we need to do?',
+    a: 'For condominiums and housing cooperatives, ordering the inspection requires a resolution of the general assembly, and the recommendations of the inspection report must be presented at the general assembly following receipt. Documents related to the operation and maintenance of the system must be made available to the inspector — we assist throughout the process.',
   },
   {
     q: 'How long does it take, and does it disturb operations?',
@@ -193,10 +209,12 @@ const faq = [
         </div>
         <p class="text-sm text-muted leading-relaxed">
           For systems commissioned before 2022, the deadline for the first inspection expired on
-          <strong class="text-ink">31 December 2025</strong>. Non-compliance may be fined
-          <strong class="text-ink">HUF 150,000–600,000</strong> depending on category, and repeated
-          non-compliance may be fined at a 150% increased rate. Those who catch up now can still settle
-          their obligation before an official inspection.
+          <strong class="text-ink">31 December 2025</strong>, and the National Climate Protection
+          Authority has begun formally calling on defaulting operators. The procedure runs from formal
+          notice through a grace deadline to a <strong class="text-ink">fine</strong> —
+          <strong class="text-ink">HUF 150,000–600,000</strong> depending on category, at a 150%
+          increased rate for repeated non-compliance, imposed repeatedly if necessary. According to the
+          Authority, <strong class="text-ink">having the inspection carried out without delay makes the fine avoidable</strong>.
         </p>
       </div>
     </div>
