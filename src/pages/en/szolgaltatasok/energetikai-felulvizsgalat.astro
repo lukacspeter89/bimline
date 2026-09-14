@@ -358,7 +358,7 @@ const qualifier = [
               ))}
             </ul>
             <p class="text-sm mt-5 pt-5 border-t border-line/60">{p.note}</p>
-            <a href="#classification" data-cta={`pkg-${p.id}`} class={`mt-5 inline-block text-center px-6 py-3 rounded-xl font-semibold transition ${p.highlight ? 'bg-accent hover:bg-accent/90 glow-accent' : 'border border-line hover:border-accent/60 hover:bg-surface'}`}>
+            <a href="#contact" data-pkg={p.id} data-cta={`pkg-${p.id}`} class={`mt-5 inline-block text-center px-6 py-3 rounded-xl font-semibold transition ${p.highlight ? 'bg-accent hover:bg-accent/90 glow-accent' : 'border border-line hover:border-accent/60 hover:bg-surface'}`}>
               Request a quotation
             </a>
           </article>
@@ -710,6 +710,14 @@ const qualifier = [
   }
 
   groups.forEach((g) => g.querySelectorAll('input').forEach((i) => i.addEventListener('change', evaluate)));
+
+  // Package card button: pre-selects the package in the form, then jumps to the form.
+  document.querySelectorAll<HTMLElement>('[data-pkg]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const sel = form?.querySelector<HTMLSelectElement>('select[name="csomag"]');
+      if (sel && btn.dataset.pkg) sel.value = btn.dataset.pkg;
+    });
+  });
 
 
   // ---------------- Contact form (existing Apps Script endpoint) ----------------
