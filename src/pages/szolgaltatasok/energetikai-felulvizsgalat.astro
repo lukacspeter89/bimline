@@ -7,7 +7,7 @@ const base = import.meta.env.BASE_URL;
 // Mintadokumentumok (anonimizált PDF-ek a public/ mappában). Amíg üres a string,
 // az oldal "kérésre elküldjük" gombot mutat, ami az űrlapot tölti elő.
 const SAMPLE_REPORT_URL = ''; // pl. `${base}minta/mintajegyzokonyv.pdf`
-const SAMPLE_MAP_URL = ''; // pl. `${base}minta/megtakaritasi-terkep-minta.pdf`
+const SAMPLE_MAP_URL = ''; // pl. `${base}minta/energetikai-vesztesegfeltaras-minta.pdf`
 
 const serviceSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -25,7 +25,7 @@ const serviceSchema = JSON.stringify({
   areaServed: { '@type': 'Country', name: 'Magyarország' },
   url: new URL('/szolgaltatasok/energetikai-felulvizsgalat/', SITE.url).toString(),
   description:
-    'Jogszabály szerinti energetikai felülvizsgálat 70 kW feletti fűtési, hűtési és hőszivattyús rendszerekre, jegyzőkönyvvel és hatósági lejelentéssel — valamint Megtakarítási térkép: három szinten rangsorolt energiamegtakarítási és beruházási javaslatok megtérüléssel. Vállalkozásoknak és intézményeknek.',
+    'Jogszabály szerinti energetikai felülvizsgálat 70 kW feletti fűtési, hűtési és hőszivattyús rendszerekre, jegyzőkönyvvel és hatósági lejelentéssel — valamint Energetikai veszteségfeltárás: három szinten rangsorolt energiamegtakarítási és beruházási javaslatok megtérüléssel. Vállalkozásoknak és intézményeknek.',
 });
 
 const levels = [
@@ -67,7 +67,7 @@ const packages = [
   },
   {
     id: 'terkep',
-    tag: 'Megtakarítási térkép',
+    tag: 'Energetikai veszteségfeltárás',
     title: 'Felülvizsgálat + döntéstámogatás',
     subtitle: 'Ugyanabból a helyszíni szemléből: hol folyik el a pénz, és mit érdemes tenni.',
     items: [
@@ -147,7 +147,7 @@ const steps = [
   {
     n: '2',
     title: 'Rögzített ajánlat',
-    desc: 'A megadott adatok alapján 2 munkanapon belül előre rögzített díjú ajánlatot küldünk — kiszállással együtt, rejtett költség nélkül.',
+    desc: 'A megadott adatok alapján hamarosan előre rögzített díjú ajánlatot küldünk — kiszállással együtt, rejtett költség nélkül.',
   },
   {
     n: '3',
@@ -157,7 +157,7 @@ const steps = [
   {
     n: '4',
     title: 'Jegyzőkönyv és lejelentés',
-    desc: 'Jogszabálynak megfelelő jegyzőkönyv, hatósági lejelentés, emlékeztető a következő esedékességről. Megtakarítási térkép esetén átadó megbeszélés a javaslatokról.',
+    desc: 'Jogszabálynak megfelelő jegyzőkönyv, hatósági lejelentés, emlékeztető a következő esedékességről. Energetikai veszteségfeltárás esetén átadó megbeszélés a javaslatokról.',
   },
 ];
 
@@ -182,8 +182,8 @@ const why = [
 
 const faq = [
   {
-    q: 'Mi a különbség a Megfelelőségi felülvizsgálat és a Megtakarítási térkép között?',
-    a: 'A Megfelelőségi felülvizsgálat a jogszabályi kötelezettséget teljesíti: helyszíni szemle, mérések, pontozás, jegyzőkönyv, lejelentés és a kötelező javaslat. A Megtakarítási térkép ugyanabból a helyszíni szemléből egy döntéstámogató anyagot is készít: feltárt veszteségek, három szinten rangsorolt beavatkozások, várható megtakarítás és megtérülés, pályázati és elszámolási lehetőségek. Annak való, aki a következő 1–3 évben korszerűsíteni fog, pályázni szeretne, vagy több telephelyet üzemeltet.',
+    q: 'Mi a különbség a Megfelelőségi felülvizsgálat és az Energetikai veszteségfeltárás között?',
+    a: 'A Megfelelőségi felülvizsgálat a jogszabályi kötelezettséget teljesíti: helyszíni szemle, mérések, pontozás, jegyzőkönyv, lejelentés és a kötelező javaslat. Az Energetikai veszteségfeltárás ugyanabból a helyszíni szemléből egy döntéstámogató anyagot is készít: feltárt veszteségek, három szinten rangsorolt beavatkozások, várható megtakarítás és megtérülés, pályázati és elszámolási lehetőségek. Annak való, aki a következő 1–3 évben korszerűsíteni fog, pályázni szeretne, vagy több telephelyet üzemeltet.',
   },
   {
     q: 'Miért nincs ár az oldalon?',
@@ -215,7 +215,7 @@ const faq = [
   },
   {
     q: 'Több telephelyünk van — hogyan működik?',
-    a: 'Egy szerződés, egy kapcsolattartó, telephelyenként ütemezett helyszíni szemlék. A Megtakarítási térkép ilyenkor portfólió-szinten készül: a telephelyeket a megtakarítási potenciál és a megtérülés szerint rangsoroljuk, hogy látszódjon, hol érdemes először költeni. Több rendszer és több telephely esetén csomagajánlatot adunk.',
+    a: 'Egy szerződés, egy kapcsolattartó, telephelyenként ütemezett helyszíni szemlék. Az Energetikai veszteségfeltárás ilyenkor portfólió-szinten készül: a telephelyeket a megtakarítási potenciál és a megtérülés szerint rangsoroljuk, hogy látszódjon, hol érdemes először költeni. Több rendszer és több telephely esetén csomagajánlatot adunk.',
   },
   {
     q: 'Mennyi ideig tart, és zavarja-e az üzemet?',
@@ -280,8 +280,8 @@ const qualifier = [
 ---
 
 <BaseLayout
-  title="Energetikai felülvizsgálat 70 kW felett vállalkozásoknak és intézményeknek — jegyzőkönyv és Megtakarítási térkép"
-  description="70 kW feletti fűtési, hűtési és hőszivattyús rendszerek jogszabály szerinti energetikai felülvizsgálata jegyzőkönyvvel és hatósági lejelentéssel — és Megtakarítási térkép: hol folyik el az energia, mi térül meg 5 éven belül, mire lehet pályázni. Vállalkozásoknak, intézményeknek, több telephelyes létesítményeknek."
+  title="Energetikai felülvizsgálat 70 kW felett vállalkozásoknak és intézményeknek — jegyzőkönyv és Energetikai veszteségfeltárás"
+  description="70 kW feletti fűtési, hűtési és hőszivattyús rendszerek jogszabály szerinti energetikai felülvizsgálata jegyzőkönyvvel és hatósági lejelentéssel — és Energetikai veszteségfeltárás: hol folyik el az energia, mi térül meg 5 éven belül, mire lehet pályázni. Vállalkozásoknak, intézményeknek, több telephelyes létesítményeknek."
   path="/szolgaltatasok/energetikai-felulvizsgalat/"
 >
   <script type="application/ld+json" set:html={serviceSchema} slot="head" is:inline />
@@ -326,7 +326,7 @@ const qualifier = [
         </h2>
         <p class="mt-3 text-muted">
           A felülvizsgálat kimenete nem mindegy. A kötelező jegyzőkönyv megmondja, hol tart a
-          rendszer; a Megtakarítási térkép megmondja, mit tegyen — és mikor.
+          rendszer; az Energetikai veszteségfeltárás megmondja, mit tegyen — és mikor.
         </p>
       </div>
       <div class="grid sm:grid-cols-3 gap-5">
@@ -373,7 +373,7 @@ const qualifier = [
         ))}
       </div>
       <p class="text-sm text-muted mt-6 max-w-3xl" data-reveal>
-        <strong class="text-ink">Kinek való a Megtakarítási térkép?</strong> Aki a következő 1–3 évben
+        <strong class="text-ink">Kinek való az Energetikai veszteségfeltárás?</strong> Aki a következő 1–3 évben
         korszerűsíteni fog, pályázni szeretne, ISO 50001 szerint működik vagy nagyvállalati energetikai
         auditra kötelezett — és aki több telephelyet üzemeltet, és tudni akarja, hol érdemes először
         költeni.
@@ -432,7 +432,7 @@ const qualifier = [
         </h2>
         <p class="mt-3 text-muted">
           Saját tesztrendszerünkről készült, anonimizált mintadokumentumok. A jegyzőkönyv a
-          hatósági megfelelést mutatja; a Megtakarítási térkép azt, hogyan lesz belőle döntés.
+          hatósági megfelelést mutatja; az Energetikai veszteségfeltárás azt, hogyan lesz belőle döntés.
         </p>
       </div>
       <div class="grid sm:grid-cols-2 gap-5">
@@ -450,15 +450,15 @@ const qualifier = [
         </article>
         <article class="card rounded-xl p-6 flex flex-col border-accent/50" data-reveal>
           <p class="eyebrow mb-2">Minta</p>
-          <h3 class="font-display font-semibold text-lg leading-snug">Megtakarítási térkép</h3>
+          <h3 class="font-display font-semibold text-lg leading-snug">Energetikai veszteségfeltárás</h3>
           <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
             Feltárt veszteségek, a három szint javaslatai beruházási nagyságrenddel és
             megtérüléssel, éves megtakarítás kWh-ban, forintban és CO₂-ben, pályázati
             alkalmasság, ütemterv — üzleti döntéshozónak írva, nem gépésznek.
           </p>
           {SAMPLE_MAP_URL
-            ? <a href={SAMPLE_MAP_URL} target="_blank" rel="noopener" data-cta="sample-map" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Minta Megtakarítási térkép (PDF)</a>
-            : <button type="button" data-sample="terkep" data-cta="sample-map-request" class="mt-5 px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Kérem a minta Megtakarítási térképet e-mailben</button>}
+            ? <a href={SAMPLE_MAP_URL} target="_blank" rel="noopener" data-cta="sample-map" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Minta Energetikai veszteségfeltárás (PDF)</a>
+            : <button type="button" data-sample="terkep" data-cta="sample-map-request" class="mt-5 px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Kérem a minta Energetikai veszteségfeltárást e-mailben</button>}
         </article>
       </div>
     </div>
@@ -475,7 +475,7 @@ const qualifier = [
         <p class="mt-4 text-muted leading-relaxed">
           A díj a rendszerek számától, teljesítményétől és típusától (fűtés vagy hűtés), valamint a
           telephelyek számától és távolságától függ. A besorolás során megadott adatok alapján
-          2 munkanapon belül rögzített díjú ajánlatot adunk, a kiszállással együtt. Rejtett
+          rögzített díjú ajánlatot adunk, a kiszállással együtt. Rejtett
           költség nincs; ha a helyszínen az ajánlatban nem szereplő további rendszer kerül elő,
           azt előre egyeztetjük. Több rendszer és több telephely esetén csomagajánlatot adunk.
         </p>
@@ -596,7 +596,7 @@ const qualifier = [
       <div id="kapcsolat" class="mt-10">
         <div class="mb-6" data-reveal>
           <p class="eyebrow mb-3">Ajánlatkérés</p>
-          <h3 class="font-display font-bold text-xl leading-tight">Rögzített díjú ajánlat 2 munkanapon belül.</h3>
+          <h3 class="font-display font-bold text-xl leading-tight">Rögzített díjú ajánlat — hamarosan jelentkezünk.</h3>
           <p class="mt-2 text-sm text-muted">
             Elég a gépészeti lista, egy adattábla-fotó leírása vagy néhány sor arról, mi van a
             gépházban — a besorolás válaszait automatikusan csatoljuk.
@@ -639,7 +639,7 @@ const qualifier = [
               <select id="f-csomag" name="csomag" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
                 <option value="javasoljanak" selected>Nem tudom — javasoljanak</option>
                 <option value="megfelelosegi">Megfelelőségi felülvizsgálat</option>
-                <option value="terkep">Megtakarítási térkép</option>
+                <option value="terkep">Energetikai veszteségfeltárás</option>
               </select>
             </div>
           </div>
@@ -651,7 +651,7 @@ const qualifier = [
 
           <label class="flex items-start gap-3 text-sm text-muted">
             <input id="f-minta" type="checkbox" name="minta" class="accent-accent w-4 h-4 mt-0.5">
-            <span>Kérem a mintajegyzőkönyvet és a minta Megtakarítási térképet e-mailben.</span>
+            <span>Kérem a mintajegyzőkönyvet és a minta Energetikai veszteségfeltárást e-mailben.</span>
           </label>
 
           <label class="flex items-start gap-3 text-sm text-muted">
@@ -663,7 +663,7 @@ const qualifier = [
             Rögzített ajánlatot kérek
           </button>
           <p class="text-xs text-muted">
-            1 munkanapon belül jelentkezünk a pontosításokkal, 2 munkanapon belül küldjük az ajánlatot.
+            Hamarosan jelentkezünk a pontosításokkal, utána küldjük a rögzített díjú ajánlatot.
           </p>
         </form>
       </div>
@@ -768,7 +768,7 @@ const qualifier = [
       qfState = 'unsure';
       qfTitle.textContent = 'Díjmentesen besoroljuk.';
       qfText.textContent =
-        'Küldje el a gépészeti listát, egy adattábla-fotó leírását vagy a gázszámla nagyságrendjét, és 1 munkanapon belül megmondjuk, kötelezett-e, és hány rendszerről van szó. Csak utána kérjen ajánlatot.';
+        'Küldje el a gépészeti listát, egy adattábla-fotó leírását vagy a gázszámla nagyságrendjét, és hamarosan megmondjuk, kötelezett-e, és hány rendszerről van szó. Csak utána kérjen ajánlatot.';
       qfCta.textContent = 'Kérem a díjmentes besorolást';
       qfCta.classList.remove('hidden');
       qfCta.classList.add('inline-block');
@@ -776,7 +776,7 @@ const qualifier = [
       qfState = 'ok';
       qfTitle.textContent = 'Érintett — a felülvizsgálat kötelező.';
       qfText.textContent = wantsMap
-        ? 'A válaszai alapján a Megtakarítási térképet javasoljuk: a kötelező jegyzőkönyv mellé rangsorolt, megtérüléssel számolt javaslatokat kap — több rendszer vagy telephely esetén portfólió-szinten. Az ajánlatban külön szerepel a két csomag, Ön dönt.'
+        ? 'A válaszai alapján az Energetikai veszteségfeltárást javasoljuk: a kötelező jegyzőkönyv mellé rangsorolt, megtérüléssel számolt javaslatokat kap — több rendszer vagy telephely esetén portfólió-szinten. Az ajánlatban külön szerepel a két csomag, Ön dönt.'
         : 'A Megfelelőségi felülvizsgálat a helyzetéhez illő: hiánytalan jegyzőkönyv és lejelentés, a kötelező javaslattal. Ha a helyszínen látszik, hogy érdemi megtakarítás van a rendszerben, szólunk — döntés csak utána.';
       qfCta.textContent = 'Rögzített ajánlatot kérek';
       qfCta.classList.remove('hidden');
@@ -929,7 +929,7 @@ const qualifier = [
       try {
         const params = new URLSearchParams(fieldData() as Record<string, string>);
         await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
-        btn.textContent = 'Köszönjük! 1 munkanapon belül jelentkezünk.';
+        btn.textContent = 'Köszönjük! Hamarosan jelentkezünk.';
         btn.classList.add('bg-belimo');
         form.reset();
       } catch (err) {

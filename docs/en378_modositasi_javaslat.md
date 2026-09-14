@@ -24,7 +24,7 @@ A meglévő szekciók sorrendje és szövege lényegében marad, három ponton n
 
 A hero második CTA-ja („Díjkalkulátor") helyett „Nézze meg, érinti-e a gépházát — 2 perc" → `#besorolas`. Az alcímből kikerül a „Fix díjas felmérés" ígéret, helyette: „a felmérés díját a gépházak számától, a hűtőközegtől és a telephelyek számától függően előre rögzítjük".
 
-A Díjkalkulátor szekció helyére egy **„Kiszámítható díjazás"** kártya kerül (ugyanaz a séma, mint az energetikai oldalon): a díj a gépházak/rendszerek számától, a hűtőközeg típusától (CO₂ transzkritikus, VRF, ipari, éghető közeg), a telephelyek számától és távolságától függ; a besorolás adatai alapján 2 munkanapon belül rögzített díjú ajánlat; rejtett költség nincs; több telephelynél csomagajánlat. A GYIK „Mennyibe kerül?" válaszát ehhez kell igazítani (a „fenti kalkulátorral előre kiszámolható" mondat kikerül).
+A Díjkalkulátor szekció helyére egy **„Kiszámítható díjazás"** kártya kerül (ugyanaz a séma, mint az energetikai oldalon): a díj a gépházak/rendszerek számától, a hűtőközeg típusától (CO₂ transzkritikus, VRF, ipari, éghető közeg), a telephelyek számától és távolságától függ; a besorolás adatai alapján hamarosan rögzített díjú ajánlat; rejtett költség nincs; több telephelynél csomagajánlat. A GYIK „Mennyibe kerül?" válaszát ehhez kell igazítani (a „fenti kalkulátorral előre kiszámolható" mondat kikerül).
 
 Az űrlap elé egy **5 kérdéses besorolás** kerül, az energetikai oldal `qualifier`/pontozás mintájára (ugyanaz a JS-logika másolható, csak a kérdéssor és a küszöbök mások):
 
