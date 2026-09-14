@@ -76,7 +76,18 @@ npm run preview    # a kész build helyi kiszolgálása
 
 ## Ajánlatkérő űrlap bekötése
 
-Az űrlap a `hello@bimline.hu` címre küld e-mailt egy Google Apps Script webalkalmazáson keresztül (a script forrása szándékosan NEM része a publikus repónak — csak a helyi projekt mappában érhető el). A `FORM_ENDPOINT` konstans az `src/pages/index.astro` fájl alján, a kapcsolati form szkriptjében található.
+Az űrlap a `hello@bimline.hu` címre küld e-mailt egy Google Apps Script webalkalmazáson keresztül (a script forrása szándékosan NEM része a publikus repónak — csak a helyi projekt mappában érhető el). A `FORM_ENDPOINT` konstans az `src/pages/index.astro` fájl alján, a kapcsolati form szkriptjében található — ugyanez a végpont szerepel a felülvizsgálati landing (`src/pages/szolgaltatasok/energetikai-felulvizsgalat.astro` és az angol tükre) szkriptjében is.
+
+Az Apps Script mezőnevei (`nev, ceg, email, telefon, leiras, alapok, linkek`, `website` honeypot, `t` időzítés) **rögzítettek** — a főoldali és a felülvizsgálati űrlap is ezekre épül, ne változtasd meg őket.
+
+### Energetikai felülvizsgálat landing (besorolás + űrlap)
+
+- A landing 5 kérdéses **besorolást** tartalmaz (`#besorolas`; pontozás: A ≥ 12 / B 8–11 / C, kimenet: érintett · díjmentes besorolás · valószínűleg nem érintett) és egy rövid űrlapot (`#kapcsolat`: 6 mező + 2 pipa). Nincs árlista és kalkulátor — a díjazás szövegesen szerepel.
+- A plusz adatok (besorolás válaszai és pontszáma, állapot, választott csomag, irányítószám, minta-kérés, UTM-forrás) a **`leiras` mezőbe csomagolva** mennek, ezért az Apps Script mezőnevei változatlanok. Az e-mailben ezek az „Előminősítés:", „Érdeklődés:", „Irányítószám:", „Mintadokumentumot kér:" és „Forrás (UTM):" sorokként jelennek meg a leírás elején. Az angol oldal ugyanezt angol címkékkel küldi.
+- **Lead-táblázat (opcionális):** a helyi `google-apps-script.gs` a `LEAD_SHEET_ID` konstans kitöltése esetén egy Google Sheet „Leadek" munkalapjára is ír egy sort (dátum, név, cég, e-mail, telefon, a `leiras`-ból kinyert előminősítés/csomag/irányítószám/UTM/minta, üres „Státusz" oszlop legördülővel). Üres `LEAD_SHEET_ID` mellett csak e-mail megy. **A szkript módosítása után új üzembe helyezési verzió kell** (Telepítés → Üzembe helyezések kezelése → Szerkesztés → Verzió: Új verzió), és az első futásnál a Sheets-jogosultságot engedélyezni kell.
+- **Kampány-változat:** `?u=megtakaritas` (vagy `utm_campaign`, amiben szerepel a „megtakaritas") esetén a hero cím/alcím kliens oldalon a megtakarítás-üzenetre vált (`#heroTitle`, `#heroLead`), a szerkezet és a CTA változatlan. Angol oldalon `?u=savings`. Az `u` paraméter az UTM-forrással együtt bekerül a leírásba.
+- **GA4-események** (csak süti-hozzájárulás után): `energetikai_cta_click` (`cta`), `energetikai_qualified` (`state`, `score`, `category`), `energetikai_form_submit`, `energetikai_qualified_lead` (`score`, `category`, `csomag`). Minden esemény hordozza a `page_group: energetikai` és `variant` (default / megtakaritas) paramétert. **Google Ads-ben az `energetikai_qualified_lead` eseményt kell konverzióként importálni** (CPQL-optimalizálás); az `energetikai_qualified` `state` paramétere remarketing-közönség alapja lehet. Ellenőrzéshez: GA4 DebugView, vagy `ANALYTICS_DEBUG = true` az `src/lib/analytics-config.ts`-ben (teszt után vissza `false`-ra).
+- **Mintadokumentumok:** az anonimizált PDF-ek helye `public/minta/` (`mintajegyzokonyv.pdf`, `megtakaritasi-terkep-minta.pdf`; angol: `-en` végződéssel). Ha megvannak, a két oldalon a `SAMPLE_REPORT_URL` / `SAMPLE_MAP_URL` konstansokat kell kitölteni (`${base}minta/...`); amíg üresek, az oldal „kérem e-mailben" gombot mutat, ami az űrlap minta-pipáját jelöli be.
 
 ## Közösségi média linkek hozzáadása
 

@@ -4,12 +4,18 @@ import { SITE } from '../../../lib/site';
 
 const base = import.meta.env.BASE_URL;
 
+// Sample documents (anonymised PDFs in public/). While the string is empty the page shows a
+// "send it to me" button that pre-fills the form instead.
+const SAMPLE_REPORT_URL = ''; // e.g. `${base}minta/sample-inspection-report-en.pdf`
+const SAMPLE_MAP_URL = ''; // e.g. `${base}minta/savings-map-sample-en.pdf`
+
 const serviceSchema = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Service',
-  name: 'Mandatory energy inspection of heating systems above 70 kW',
+  name: 'Energy inspection of heating, cooling and heat-pump systems above 70 kW',
   serviceType:
-    'Mandatory periodic energy inspection of heating (and combined heating-and-ventilation) systems with an effective rated output above 70 kW — from on-site inspection to filing with the authority',
+    'Statutory energy inspection of heating, air-conditioning and heat-pump systems with an effective rated output above 70 kW, plus energy-saving decision support for businesses and institutions',
+  audience: { '@type': 'BusinessAudience', name: 'Operators of business, institutional, industrial and multi-site facilities' },
   provider: {
     '@type': 'Organization',
     name: SITE.name,
@@ -19,21 +25,81 @@ const serviceSchema = JSON.stringify({
   areaServed: { '@type': 'Country', name: 'Hungary' },
   url: new URL('/en/szolgaltatasok/energetikai-felulvizsgalat/', SITE.url).toString(),
   description:
-    'Mandatory energy inspection of heating systems above 70 kW under the Hungarian Energy Efficiency Act: on-site inspection, statutory report and filing with the authority — at transparent fixed prices, across Hungary.',
+    'Statutory energy inspection of heating, cooling and heat-pump systems above 70 kW in Hungary, with inspection report and filing with the authority — and the Savings Map: energy-saving and investment recommendations ranked on three levels with payback. For businesses and institutions.',
 });
+
+const levels = [
+  {
+    n: '1',
+    title: 'Adjustable tomorrow',
+    lead: 'No or minimal investment.',
+    desc: 'Heating curve, night and weekend setback, DHW temperature, pump speed, the state of hydraulic balancing, operating practice. Typically visible on the next bill.',
+  },
+  {
+    n: '2',
+    title: 'Pays back within 5 years',
+    lead: 'Medium-term energy-efficiency measures.',
+    desc: 'Pump replacement, missing insulation, control and motorised valves, weather-compensated control, cascade optimisation, emitter-side control — itemised, with investment magnitude and simple payback.',
+  },
+  {
+    n: '3',
+    title: 'Long-term investment',
+    lead: 'System conversion, possibly with grant funding.',
+    desc: 'Heat-generator replacement, switch to heat pumps, system-level modernisation. We show what you can apply for, what is missing, and how it fits the large-enterprise energy audit.',
+  },
+];
+
+const packages = [
+  {
+    id: 'compliance',
+    tag: 'Basic',
+    title: 'Compliance inspection',
+    subtitle: 'The statutory obligation — done completely.',
+    items: [
+      'On-site inspection, delimitation and documentation of the system',
+      'For heating systems, measurements with calibrated instruments (flue-gas, radiation and chimney losses); for air-conditioning and heat-pump systems, visual inspection',
+      '100-point energy rating of the system according to the Chamber of Engineers’ methodology',
+      'Photo documentation, inspection report and upload to the official register (F-gas database)',
+      'The modernisation recommendation required by law',
+      'Deadline monitoring for the next due date — free of charge',
+    ],
+    note: 'All you need to do is arrange the appointment and access.',
+  },
+  {
+    id: 'map',
+    tag: 'Savings Map',
+    title: 'Inspection + decision support',
+    subtitle: 'From the same site visit: where the money leaks out, and what is worth doing.',
+    items: [
+      'Everything in the Compliance inspection',
+      'Identified losses and problems — with measurement data and photos',
+      'Recommendations ranked on three levels: adjustable tomorrow · pays back within 5 years · long-term investment',
+      'Expected annual savings in kWh, HUF and CO₂, with investment magnitude and payback',
+      'Grant eligibility, EKR/TAO accounting options, timing of the large-enterprise energy audit',
+      'Schedule and the next step: concept or detailed design — we can design it if you wish',
+    ],
+    note: 'For multi-site operators: a portfolio version that ranks the sites — where to spend first.',
+    highlight: true,
+  },
+];
 
 const targets = [
   {
-    title: 'Operators of systems above 70 kW',
-    desc: 'The obligation applies to operators of heating systems with a combined effective rated output above 70 kW — or, in their absence, to the owners.',
+    title: 'Businesses and institutions',
+    desc: 'Office buildings, industrial halls and plants, logistics centres, hotels and wellness, retail, education and healthcare, municipal buildings. The obligation falls on the operator — or, in its absence, the owner.',
   },
   {
-    title: 'Every building type is affected',
-    desc: 'Office buildings, industrial halls, residential blocks, institutions, commercial and healthcare buildings — regardless of the building’s function.',
+    title: 'Heating AND cooling',
+    desc: 'Heating (or combined heating-and-ventilation) systems with an effective rated output above 70 kW, and air-conditioning, heat-pump (or combined air-conditioning-and-ventilation) systems above 70 kW alike.',
+  },
+  {
+    title: '70 kW refers to the system, not the unit',
+    desc: 'Eight 40 kW boilers serving a building together are one 320 kW system. Twenty split units in one building add up. If in doubt, we check the classification free of charge.',
+    accent: true,
   },
   {
     title: 'Due every 8 years',
-    desc: 'The inspection must be repeated every 8 years; for companies subject to the mandatory energy audit it must be carried out on the occasion of — as part of — the mandatory energy audit.',
+    desc: 'The inspection must be repeated every 8 years; for companies subject to the mandatory energy audit it is carried out on the occasion of — as part of — that audit.',
   },
   {
     title: 'New systems: within 1 year',
@@ -41,148 +107,181 @@ const targets = [
   },
   {
     title: 'Exemption — under strict conditions',
-    desc: 'Exemption may apply e.g. to systems under an energy-performance contract or a district-heating system-operation contract, and in non-residential buildings to systems above 290 kW with suitable building automation. The exemption must be proven — we survey and document the conditions.',
+    desc: 'Exemption may apply e.g. to systems under an energy-performance contract or a district-heating operation contract, and in non-residential buildings to systems above 290 kW with suitable building automation. The exemption must be proven — we survey the conditions and prepare the application.',
   },
-];
-
-const scope = [
-  'Efficiency and condition of the heat generators (boilers, heat pumps, heating centres)',
-  'Sizing check: comparison of the installed capacity with the building’s actual heating demand — recorded on the basis of the operator’s experience',
-  'Energy efficiency of the controls, heat distribution and pumping',
-  'Assessment of the operation and maintenance practice',
-  'Recommendations: cost-effective operational and investment measures to reduce consumption',
 ];
 
 const legal = [
   {
     k: 'EU basis',
-    v: 'The Energy Performance of Buildings Directive (EPBD, 2010/31/EU, as amended by (EU) 2018/844) — mandatory inspection of heating and air-conditioning systems above 70 kW.',
+    v: 'The Energy Performance of Buildings Directive (EPBD, 2010/31/EU, as amended by (EU) 2018/844) — regular inspection of heating and air-conditioning systems above 70 kW.',
   },
   {
     k: 'Hungarian rules',
-    v: 'Act LVII of 2015 on Energy Efficiency and its implementing decrees — including Government Decree 666/2020 (XII. 28.) and ITM Decree 19/2021 (IV. 14.) — content and frequency of the inspection, qualification requirements and sanctions.',
+    v: 'Act LVII of 2015 on Energy Efficiency and its implementing decrees — including Government Decree 666/2020 (XII. 28.) and ITM Decree 19/2021 (IV. 14.) — governing the content and frequency of the inspection, the qualification of the inspector and the legal consequences.',
   },
   {
-    k: 'What does it cover?',
-    v: 'The obligation is not limited to heating systems: periodic energy inspection is required for the accessible parts of a) heating systems or combined space-heating and ventilation systems with an effective rated output above 70 kW, and b) air-conditioning systems or combined air-conditioning and ventilation systems above 70 kW.',
+    k: 'Deadline',
+    v: 'For systems commissioned before 1 January 2022 the deadline for the first inspection was 31 December 2025. Operators who have not had it done are in default; the inspection can be carried out at any time.',
   },
   {
     k: 'Who may carry it out?',
-    v: 'Only a professional registered with the Hungarian Chamber of Engineers holding an energy-inspector qualification.',
-  },
-  {
-    k: 'Exemptions',
-    v: 'Exemption may apply to residential-building systems with continuous electronic monitoring and effective control functions; in non-residential buildings to systems above 290 kW with a suitable building automation and control system; and to systems under an energy-performance contract (Section 8 of Government Decree 122/2015 (V. 26.)) or a system-operation contract concluded with a district-heating provider. The system operator must prove the exemption; the application is submitted by an energy inspector to the Hungarian Chamber of Engineers, which adjudicates it.',
+    v: 'Only professionals listed in the register of the Hungarian Chamber of Engineers with an energy-inspector qualification.',
   },
   {
     k: 'Enforcement',
-    v: 'Compliance is monitored by the National Climate Protection Authority: in the event of non-compliance it issues a formal notice with a deadline, and if the deadline passes without result it imposes a fine — repeatedly if necessary. The professional review of inspection reports and the adjudication of exemption applications are carried out by the Hungarian Chamber of Engineers.',
+    v: 'Compliance is supervised by the National Climate Protection Authority: in case of non-compliance it issues a notice with a deadline, and after the deadline lapses it may impose a fine. Professional review of the inspection reports and decisions on exemption applications are handled by the Hungarian Chamber of Engineers.',
   },
   {
     k: 'Filing',
-    v: 'The result of the inspection must be recorded in a report and uploaded to the official register (the “climate gas” database) — we take care of this too.',
+    v: 'The result must be recorded in an inspection report and uploaded to the official register (F-gas database) — we handle this too.',
   },
 ];
 
 const steps = [
   {
     n: '1',
-    title: 'Data reconciliation',
-    desc: 'A short data request about the equipment (type, capacity, number of units), followed by scheduling a joint appointment.',
+    title: 'Classification — 2 minutes',
+    desc: 'A few clicks tell you whether you are affected and how many systems are involved. If unsure, we check it free of charge from your equipment list or a nameplate photo.',
   },
   {
     n: '2',
-    title: 'On-site inspection',
-    desc: 'Approx. 30–40 minutes per unit, without disturbing operation. Data is recorded in our in-house digital audit software.',
+    title: 'Fixed quotation',
+    desc: 'Based on the data provided we send a fixed-fee quotation within 2 working days — travel included, no hidden costs.',
   },
   {
     n: '3',
+    title: 'Site inspection',
+    desc: 'With the operator or maintenance contractor present, without shutting the system down. For heating systems with calibrated instrument measurements; typically 2–4 hours depending on system size.',
+  },
+  {
+    n: '4',
     title: 'Report and filing',
-    desc: 'A statutory report, filing with the authority, and an automatic reminder of the next due date.',
+    desc: 'Statutory inspection report, filing with the authority, reminder of the next due date. With the Savings Map: a hand-over meeting on the recommendations.',
   },
 ];
 
 const why = [
   {
-    title: 'In-house audit software',
-    desc: 'We carry out the inspection with our own digital system: the data recorded on site produces an error-free, uniform report — faster and more accurately than on paper.',
+    title: 'Done by a design engineer, not a data clerk',
+    desc: 'The same building-services engineer who surveys the system can also design its modernisation — so the recommendation is buildable, not generic.',
   },
   {
-    title: 'Full administration',
-    desc: 'We do not just survey: we prepare the statutory report and complete the filing with the authority as well. Your only task is providing the appointment and site access.',
+    title: 'Heating and cooling in one hand',
+    desc: 'Boiler rooms, heating centres, heat-pump and air-conditioning systems — one inspector, one set of reports, one contact.',
   },
   {
-    title: 'Qualified engineering expertise',
-    desc: 'The inspection is carried out by a building services engineer registered with the Hungarian Chamber of Engineers, with many years of design and energy audit experience.',
+    title: 'Our own digital inspection system',
+    desc: 'Data recorded on site becomes a uniform report with a built-in completeness check — so the Chamber’s professional review does not come back with deficiencies.',
   },
   {
-    title: 'Free deadline tracking',
-    desc: 'Our system keeps track of due dates and flags the next mandatory inspection in time — our clients never miss a deadline again and never risk a fine.',
-  },
-];
-
-// Banded system fees per the Hungarian Chamber of Engineers' October 2025 fee
-// recommendation (MMK_Á/483-3/2025.), indexed with the KSH annual CPI (+1.7%), rounded.
-const priceGroups = [
-  {
-    group: 'Residential buildings',
-    rows: [
-      { name: 'Heating systems', band: 'up to 50 flats', price: 'HUF 200,000' },
-      { name: '', band: 'above 50 flats', price: 'HUF 330,000' },
-      { name: 'Air-conditioning systems, heat pumps', band: 'up to 50 flats', price: 'HUF 330,000' },
-      { name: '', band: 'above 50 flats', price: 'HUF 465,000' },
-    ],
-  },
-  {
-    group: 'Businesses',
-    rows: [
-      { name: 'Heating systems', band: 'above 70 kW', price: 'HUF 200,000' },
-      { name: '', band: 'above 290 kW', price: 'HUF 330,000' },
-      { name: 'Air-conditioning systems, heat pumps', band: 'up to 290 kW', price: 'HUF 465,000' },
-      { name: '', band: 'above 290 kW', price: 'HUF 595,000' },
-    ],
+    title: 'Free deadline monitoring',
+    desc: 'We keep track of due dates and notify you in good time before the next mandatory inspection.',
   },
 ];
 
 const faq = [
   {
-    q: 'What counts as a system above 70 kW?',
-    a: 'Heating (and combined heating-and-ventilation) systems operating with heat generators whose combined effective rated output exceeds 70 kW. The obligation also extends to air-conditioning and combined air-conditioning and ventilation systems above 70 kW.',
+    q: 'What is the difference between the Compliance inspection and the Savings Map?',
+    a: 'The Compliance inspection fulfils the statutory obligation: site inspection, measurements, scoring, report, filing and the mandatory recommendation. The Savings Map turns the same site visit into a decision document as well: identified losses, measures ranked on three levels, expected savings and payback, grant and accounting options. It suits operators who will modernise within 1–3 years, plan to apply for grants, or run several sites.',
   },
   {
-    q: 'When was it due? Are we late?',
-    a: 'For systems commissioned before 2022, the deadline for the first inspection expired on 31 December 2025 — operators who have not yet complied have been in default since 1 January 2026. The National Climate Protection Authority has begun notifying and formally calling on defaulting operators; the procedure runs from formal notice through a grace deadline to a fine (HUF 150,000–600,000 depending on category, at a 150% increased rate for repeated non-compliance). According to the Authority, having the inspection carried out without delay makes the fine avoidable.',
+    q: 'Why are there no prices on the page?',
+    a: 'Because the fee depends on the number, output and type of the systems (heating or cooling) and on the number and distance of the sites — a one-size-for-all list would be misleading. Based on the data you give during classification, however, we quote a fixed fee in advance: nothing is “worked out on site”, and there are no hidden costs.',
+  },
+  {
+    q: 'What counts as a system above 70 kW?',
+    a: 'A heating (or combined heating-and-ventilation) system whose heat generators have a combined effective rated output above 70 kW, or an air-conditioning, heat-pump (or combined air-conditioning-and-ventilation) system above 70 kW. The output refers to the system, not to individual units: several smaller units add up if they serve the building together.',
+  },
+  {
+    q: 'We have a family house, a small office or a system below 70 kW — does it apply to us?',
+    a: 'The regular energy inspection obligation applies only to systems above 70 kW. We do not handle residential, single-family or sub-70 kW systems. If you are unsure of the system output, we check the classification free of charge.',
+  },
+  {
+    q: 'When should it have been done? Am I late?',
+    a: 'For systems commissioned before 2022 the deadline for the first inspection was 31 December 2025, so operators who have not had it done are in default. Compliance is supervised by the National Climate Protection Authority; the steps are a notice, a grace period and — if that is not met either — a fine. The inspection can be carried out at any time, and that is the simplest way to close the matter.',
   },
   {
     q: 'How often must it be repeated?',
-    a: 'The inspection must be repeated every 8 years. For companies subject to the mandatory energy audit it must be carried out on the occasion of — as part of — the mandatory energy audit. For new systems the first inspection is due within 1 year of commissioning. Our system tracks the next due date free of charge, and we notify you in time.',
+    a: 'Every 8 years. For companies subject to the mandatory energy audit it must be carried out on the occasion of — as part of — that audit. For new systems the first inspection is due within 1 year of commissioning. We monitor the next due date free of charge and notify you in time.',
   },
   {
-    q: 'Can we be exempt from the obligation?',
-    a: 'Yes, but the conditions are strict. In residential buildings, systems with continuous electronic monitoring and effective control functions may be exempt; in non-residential buildings, systems above 290 kW with a suitable building automation and control system. In both cases an energy-performance contract or a system-operation contract with a district-heating provider may also provide exemption. The system operator must prove the exemption: the application is submitted by an energy inspector to the Hungarian Chamber of Engineers, which adjudicates it. We survey the conditions on site and prepare the exemption application as well.',
+    q: 'Can we be exempted?',
+    a: 'Yes, but the conditions are strict. In residential buildings, systems with continuous electronic monitoring and effective control functions may be exempt; in non-residential buildings, systems above 290 kW with suitable building automation and control. In both cases an energy-performance contract or a district-heating operation contract may also grant exemption. The operator must prove the exemption: the application is submitted by an energy inspector to the Hungarian Chamber of Engineers. We survey the conditions on site and prepare the application.',
   },
   {
-    q: 'Our building is supplied with district heating — does this apply to us?',
-    a: 'If the secondary side is operated by the district-heating provider and the system falls under a system-operation contract concluded with the provider, an exemption can be requested — the application is submitted by an energy inspector to the Hungarian Chamber of Engineers. If, however, the owner of the site has not concluded an operation contract with the district-heating provider, the inspection must be carried out and no exemption can be requested.',
+    q: 'Our building is on district heating — does it apply to us?',
+    a: 'If the secondary side is operated by the district-heating company and the system falls under an operation contract concluded with it, exemption can be requested. If the owner of the premises has no operation contract with the district-heating company, the inspection must be carried out.',
   },
   {
-    q: 'We are a residential condominium — what do we need to do?',
-    a: 'For condominiums and housing cooperatives, ordering the inspection requires a resolution of the general assembly, and the recommendations of the inspection report must be presented at the general assembly following receipt. Documents related to the operation and maintenance of the system must be made available to the inspector — we assist throughout the process.',
+    q: 'We operate several sites — how does it work?',
+    a: 'One contract, one contact, site inspections scheduled per site. The Savings Map is then prepared at portfolio level: sites are ranked by savings potential and payback so you can see where to spend first. For several systems and sites we offer a package quotation.',
   },
   {
-    q: 'How long does it take, and does it disturb operations?',
-    a: 'The on-site inspection takes approx. 30–40 minutes per unit, without disturbing operation — the system does not need to be shut down.',
+    q: 'How long does it take, and does it disrupt operation?',
+    a: 'The system does not need to be shut down. The site inspection typically takes 2–4 hours depending on system size and type; for heating systems the boiler must run at full load for the calibrated measurements, so outside the heating season allow time for that. The operator or maintenance contractor must be present.',
+  },
+];
+
+// Pre-qualifier. The score serves internal lead qualification; the visitor only sees the
+// outcome (affected / probably not affected / unsure).
+const qualifier = [
+  {
+    key: 'organisation',
+    q: 'What kind of organisation operates the system?',
+    options: [
+      { v: 'industrial', label: 'Industrial, manufacturing or logistics company', score: 3 },
+      { v: 'business', label: 'Other business (office, retail, hotel, wellness)', score: 2 },
+      { v: 'institution', label: 'Institution, municipality, healthcare, education', score: 2 },
+      { v: 'residential', label: 'Residential block, housing association', score: -2 },
+      { v: 'private', label: 'Private individual, family house', score: 0, disqualify: true },
+    ],
   },
   {
-    q: 'What does the price include?',
-    a: 'Our fees follow the Hungarian Chamber of Engineers’ official fee recommendation, indexed with annual inflation. The system fee covers the full professional scope of the inspection: on-site survey, statutory report and filing with the authority. In line with the recommendation, travel is charged separately on a per-kilometre basis, but the calculator shows it in advance; it is free of charge within Budapest. There are no hidden costs. For multiple systems or sites we provide an individual, discounted quote.',
+    key: 'system',
+    q: 'What kind of system is it?',
+    options: [
+      { v: 'heating', label: 'Heating (boiler, heating centre)', score: 0 },
+      { v: 'cooling', label: 'Cooling, air-conditioning, heat pump', score: 1 },
+      { v: 'both', label: 'Both heating and cooling', score: 2 },
+      { v: 'unknown', label: 'Not sure', score: 0 },
+    ],
+  },
+  {
+    key: 'output',
+    q: 'What is the combined output of the system?',
+    hint: 'Per system — the output of several units adds up if they serve the building together.',
+    options: [
+      { v: 'below', label: 'Below 70 kW', score: 0, disqualify: true },
+      { v: 'mid', label: '70–290 kW', score: 3 },
+      { v: 'large', label: 'Above 290 kW', score: 4 },
+      { v: 'unknown', label: 'Not sure — please classify it for free', score: 1, unsure: true },
+    ],
+  },
+  {
+    key: 'systems',
+    q: 'How many systems and how many sites?',
+    options: [
+      { v: '1-1', label: '1 system, 1 site', score: 0 },
+      { v: 'many-1', label: 'Several systems, 1 site', score: 2 },
+      { v: 'many-many', label: 'Several sites', score: 4 },
+    ],
+  },
+  {
+    key: 'intent',
+    q: 'Are you planning modernisation or a grant application within 3 years?',
+    options: [
+      { v: 'yes', label: 'Yes', score: 4 },
+      { v: 'maybe', label: 'Maybe — depends on what pays back', score: 2 },
+      { v: 'no', label: 'No, only the mandatory inspection', score: 0 },
+    ],
   },
 ];
 ---
 
 <BaseLayout
-  title="Mandatory energy inspection of heating systems above 70 kW — report and official filing"
-  description="Mandatory energy inspection of heating systems above 70 kW in Hungary: on-site inspection, statutory report, filing with the authority. The 31 December 2025 deadline has passed — catch up now, at transparent fixed prices, across Hungary."
+  title="Energy inspection above 70 kW for businesses and institutions — statutory report and Savings Map"
+  description="Statutory energy inspection of heating, cooling and heat-pump systems above 70 kW in Hungary, with report and filing — and the Savings Map: where energy leaks out, what pays back within 5 years, what you can apply for. For businesses, institutions and multi-site facilities."
   path="/en/szolgaltatasok/energetikai-felulvizsgalat/"
   lang="en"
 >
@@ -195,42 +294,90 @@ const faq = [
 
     <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-12 lg:pt-20">
       <div class="max-w-3xl">
-        <p class="eyebrow mb-4">Energy inspection · Above 70 kW</p>
-        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
-          Mandatory energy inspection
-          <span class="block text-accent">of heating systems above 70 kW.</span>
+        <p class="eyebrow mb-4">Energy inspection · above 70 kW · for businesses and institutions</p>
+        <h1 id="heroTitle" class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Mandatory inspection?
+          <span class="block text-accent">Then make it worth something.</span>
         </h1>
-        <p class="mt-6 text-lg text-muted max-w-2xl">
-          Under the Hungarian Energy Efficiency Act, every heating (and combined heating-and-ventilation)
-          system operating with heat generators above 70 kW effective rated output must undergo a periodic
-          energy inspection. BIMLine Gépész Kft. handles the entire process for you — from the on-site
-          survey to the filing with the authority.
+        <p id="heroLead" class="mt-6 text-lg text-muted max-w-2xl">
+          The energy inspection of heating, cooling and heat-pump systems above 70 kW is a legal
+          obligation in Hungary. From the same site visit we also show you where the money leaks
+          out — and what to do about it: what you can adjust tomorrow, what pays back within five
+          years, and what is worth doing with grant funding.
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="#kapcsolat" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a quote</a>
-          <a href="#kalkulator" data-cta="hero-calc" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Fee calculator</a>
+          <a href="#classification" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Check whether it applies to you — 2 minutes</a>
+          <a href="#sample" data-cta="hero-sample" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">What do you get?</a>
         </div>
+        <p class="mt-5 text-xs text-muted">
+          For businesses, institutions, industrial and multi-site facilities.
+          We do not handle residential, single-family or sub-70 kW systems.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- ============ DEADLINE ============ -->
-  <section class="py-10 border-t border-line/60">
+  <!-- ============ THREE LEVELS ============ -->
+  <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
     <div class="max-w-8xl mx-auto px-5 lg:px-8">
-      <div class="card rounded-2xl p-6 lg:p-8 border-red-500/40 flex flex-col sm:flex-row gap-5 sm:items-center" data-reveal>
-        <div class="shrink-0 sm:w-44">
-          <p class="font-display font-bold text-xl text-red-400 leading-tight">The deadline has passed!</p>
-        </div>
-        <p class="text-sm text-muted leading-relaxed">
-          For systems commissioned before 2022, the deadline for the first inspection expired on
-          <strong class="text-ink">31 December 2025</strong>, and the National Climate Protection
-          Authority has begun formally calling on defaulting operators. The procedure runs from formal
-          notice through a grace deadline to a <strong class="text-ink">fine</strong> —
-          <strong class="text-ink">HUF 150,000–600,000</strong> depending on category, at a 150%
-          increased rate for repeated non-compliance, imposed repeatedly if necessary. According to the
-          Authority, <strong class="text-ink">having the inspection carried out without delay makes the fine avoidable</strong>.
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Not just a mandatory document</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Decision support on three levels — with numbers, not generalities.
+        </h2>
+        <p class="mt-3 text-muted">
+          The outcome of the inspection matters. The statutory report tells you where the system
+          stands; the Savings Map tells you what to do — and when.
         </p>
       </div>
+      <div class="grid sm:grid-cols-3 gap-5">
+        {levels.map((l) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <div class="font-display font-bold text-3xl text-accent leading-none">{l.n}</div>
+            <h3 class="font-display font-semibold text-lg leading-snug mt-3">{l.title}</h3>
+            <p class="text-sm font-medium mt-1">{l.lead}</p>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{l.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TWO PACKAGES ============ -->
+  <section id="packages" class="py-16 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">Two packages</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          The mandatory minimum — or the mandatory minimum that turns into a decision.
+        </h2>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-5">
+        {packages.map((p) => (
+          <article class={`card rounded-2xl p-6 lg:p-8 flex flex-col ${p.highlight ? 'border-accent/50' : ''}`} data-reveal>
+            <p class="eyebrow mb-2">{p.tag}</p>
+            <h3 class="font-display font-bold text-xl leading-snug">{p.title}</h3>
+            <p class="text-sm text-muted mt-2">{p.subtitle}</p>
+            <ul class="mt-5 space-y-2.5 flex-1">
+              {p.items.map((it) => (
+                <li class="flex items-start gap-3 text-sm text-muted">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  <span>{it}</span>
+                </li>
+              ))}
+            </ul>
+            <p class="text-sm mt-5 pt-5 border-t border-line/60">{p.note}</p>
+            <a href="#classification" data-cta={`pkg-${p.id}`} class={`mt-5 inline-block text-center px-6 py-3 rounded-xl font-semibold transition ${p.highlight ? 'bg-accent hover:bg-accent/90 glow-accent' : 'border border-line hover:border-accent/60 hover:bg-surface'}`}>
+              Request a quotation — classification first
+            </a>
+          </article>
+        ))}
+      </div>
+      <p class="text-sm text-muted mt-6 max-w-3xl" data-reveal>
+        <strong class="text-ink">Who is the Savings Map for?</strong> Operators who will modernise
+        within 1–3 years, plan to apply for grants, run an ISO 50001 system or are subject to the
+        large-enterprise energy audit — and multi-site operators who want to know where to spend first.
+      </p>
     </div>
   </section>
 
@@ -240,13 +387,13 @@ const faq = [
       <div class="max-w-2xl mb-10" data-reveal>
         <p class="eyebrow mb-3">Who is affected</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Operators and owners — regardless of building type.
+          Operators of heating and cooling systems above 70 kW.
         </h2>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {targets.map((t) => (
-          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
-            <h3 class="font-display font-semibold text-lg">{t.title}</h3>
+          <article class={`card rounded-xl p-6 flex flex-col ${t.accent ? 'border-accent/50' : ''}`} data-reveal>
+            <h3 class="font-display font-semibold text-lg leading-snug">{t.title}</h3>
             <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{t.desc}</p>
           </article>
         ))}
@@ -254,22 +401,85 @@ const faq = [
     </div>
   </section>
 
-  <!-- ============ WHAT WE INSPECT ============ -->
+  <!-- ============ HOW WE WORK ============ -->
   <section class="py-16 lg:py-20">
     <div class="max-w-8xl mx-auto px-5 lg:px-8">
-      <div class="max-w-2xl" data-reveal>
-        <p class="eyebrow mb-3">What we inspect</p>
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">How we work</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          From the heat generator to the operating practice.
+          No quotation in the dark — we first check what you actually need.
         </h2>
       </div>
-      <div class="mt-8 grid sm:grid-cols-2 gap-x-8 gap-y-3" data-reveal>
-        {scope.map((s) => (
-          <div class="flex items-start gap-3 text-sm text-muted">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="text-accent shrink-0 mt-0.5"><path d="M20 6L9 17l-5-5"/></svg>
-            {s}
-          </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {steps.map((s) => (
+          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+            <div class="w-9 h-9 rounded-full bg-accent/15 text-accent grid place-items-center font-display font-bold mb-4">{s.n}</div>
+            <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
+            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{s.desc}</p>
+          </article>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SAMPLE DOCUMENTS ============ -->
+  <section id="sample" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-10" data-reveal>
+        <p class="eyebrow mb-3">What you get</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          Exactly this — see it before you order.
+        </h2>
+        <p class="mt-3 text-muted">
+          Anonymised sample documents from our own test system. The report shows regulatory
+          compliance; the Savings Map shows how it becomes a decision.
+        </p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-5">
+        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
+          <p class="eyebrow mb-2">Sample</p>
+          <h3 class="font-display font-semibold text-lg leading-snug">Inspection report</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
+            System delimitation, measurement results, the 100-point energy rating item by item,
+            photo documentation, the mandatory recommendation — in the form that goes into the
+            official register.
+          </p>
+          {SAMPLE_REPORT_URL
+            ? <a href={SAMPLE_REPORT_URL} target="_blank" rel="noopener" data-cta="sample-report" class="mt-5 inline-block text-center px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Download the sample report (PDF)</a>
+            : <button type="button" data-sample="report" data-cta="sample-report-request" class="mt-5 px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Send me the sample report by e-mail</button>}
+        </article>
+        <article class="card rounded-xl p-6 flex flex-col border-accent/50" data-reveal>
+          <p class="eyebrow mb-2">Sample</p>
+          <h3 class="font-display font-semibold text-lg leading-snug">Savings Map</h3>
+          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
+            Identified losses, the three levels of recommendations with investment magnitude and
+            payback, annual savings in kWh, HUF and CO₂, grant eligibility, schedule — written for
+            a business decision-maker, not for an engineer.
+          </p>
+          {SAMPLE_MAP_URL
+            ? <a href={SAMPLE_MAP_URL} target="_blank" rel="noopener" data-cta="sample-map" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Sample Savings Map (PDF)</a>
+            : <button type="button" data-sample="map" data-cta="sample-map-request" class="mt-5 px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Send me the sample Savings Map by e-mail</button>}
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEES ============ -->
+  <section class="py-16 lg:py-20">
+    <div class="max-w-3xl mx-auto px-5 lg:px-8">
+      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
+        <p class="eyebrow mb-3">Predictable fees</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
+          A fixed quotation in advance — not worked out on site.
+        </h2>
+        <p class="mt-4 text-muted leading-relaxed">
+          The fee depends on the number, output and type of the systems (heating or cooling) and on
+          the number and distance of the sites. Based on the data you give during classification we
+          send a fixed-fee quotation within 2 working days, travel included. No hidden costs; if an
+          additional system not covered by the quotation turns up on site, we agree on it beforehand.
+          For several systems and sites we offer a package quotation.
+        </p>
+        <a href="#classification" data-cta="pricing" class="mt-6 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a free classification</a>
       </div>
     </div>
   </section>
@@ -280,7 +490,7 @@ const faq = [
       <div class="max-w-2xl mb-10" data-reveal>
         <p class="eyebrow mb-3">Legal background in brief</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          From the EU directive to the official filing.
+          From the EU directive to filing with the authority.
         </h2>
       </div>
       <div class="card rounded-2xl divide-y divide-line/60" data-reveal>
@@ -294,150 +504,13 @@ const faq = [
     </div>
   </section>
 
-  <!-- ============ HOW WE WORK ============ -->
-  <section class="py-16 lg:py-20">
-    <div class="max-w-8xl mx-auto px-5 lg:px-8">
-      <div class="max-w-2xl mb-10" data-reveal>
-        <p class="eyebrow mb-3">How we work</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Three simple steps — your only task is the appointment and site access.
-        </h2>
-      </div>
-      <div class="grid sm:grid-cols-3 gap-5">
-        {steps.map((s) => (
-          <article class="card rounded-xl p-6 flex flex-col" data-reveal>
-            <div class="w-9 h-9 rounded-full bg-accent/15 text-accent grid place-items-center font-display font-bold mb-4">{s.n}</div>
-            <h3 class="font-display font-semibold text-lg leading-snug">{s.title}</h3>
-            <p class="text-sm text-muted mt-2 leading-relaxed flex-1">{s.desc}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CALCULATOR + PRICING ============ -->
-  <section id="kalkulator" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
-    <div class="max-w-3xl mx-auto px-5 lg:px-8">
-      <div class="mb-8" data-reveal>
-        <p class="eyebrow mb-3">Transparent pricing</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Per the Hungarian Chamber of Engineers’ fee recommendation — calculate in advance.
-        </h2>
-        <p class="mt-3 text-muted">
-          We work with banded, system-type-based fees in line with the Hungarian Chamber of
-          Engineers’ official fee recommendation. The travel fee can be calculated in advance
-          from the site’s postcode — there are no hidden costs.
-        </p>
-      </div>
-
-      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-medium mb-2" for="zipInput">Postcode of the site</label>
-            <input
-              id="zipInput"
-              type="text"
-              inputmode="numeric"
-              maxlength="4"
-              placeholder="e.g. 6720"
-              class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2" for="sysInput">System type</label>
-            <select id="sysInput" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
-              <optgroup label="Businesses">
-                <option value="v-f-1" selected>Heating system · 70–290 kW</option>
-                <option value="v-f-2">Heating system · above 290 kW</option>
-                <option value="v-k-1">Air-conditioning / heat pump · up to 290 kW</option>
-                <option value="v-k-2">Air-conditioning / heat pump · above 290 kW</option>
-              </optgroup>
-              <optgroup label="Residential buildings">
-                <option value="l-f-1">Heating system · up to 50 flats</option>
-                <option value="l-f-2">Heating system · above 50 flats</option>
-                <option value="l-k-1">Air-conditioning / heat pump · up to 50 flats</option>
-                <option value="l-k-2">Air-conditioning / heat pump · above 50 flats</option>
-              </optgroup>
-            </select>
-          </div>
-        </div>
-        <button id="calcBtn" class="mt-5 px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Calculate</button>
-        <p id="calcError" class="hidden text-xs text-red-400 mt-2">Please enter a valid Hungarian postcode (4 digits).</p>
-
-        <div id="calcResult" class="hidden mt-6 border-t border-line/60 pt-6">
-          <dl class="space-y-2.5 text-sm">
-            <div class="flex justify-between gap-4">
-              <dt class="text-muted">System fee <span id="rSysDetail" class="text-xs"></span></dt>
-              <dd class="font-medium whitespace-nowrap" id="rSystem"></dd>
-            </div>
-            <div class="flex justify-between gap-4">
-              <dt class="text-muted">Travel <span id="rKmDetail" class="text-xs"></span></dt>
-              <dd class="font-medium whitespace-nowrap" id="rTravel"></dd>
-            </div>
-          </dl>
-          <div class="flex justify-between gap-4 mt-4 pt-4 border-t border-line/60">
-            <div class="font-display font-semibold">Indicative total</div>
-            <div class="font-display font-bold text-lg text-accent whitespace-nowrap" id="rTotal"></div>
-          </div>
-          <p class="text-xs text-muted mt-3 leading-relaxed">
-            Net, indicative total excluding VAT. The system fee follows the Hungarian Chamber of
-            Engineers’ fee recommendation and covers the full professional scope of the inspection
-            (on-site survey, statutory report, filing with the authority) — there are no hidden
-            costs. For multiple systems or sites we provide an individual, discounted quote.
-            A final, binding offer is sent by e-mail.
-          </p>
-          <a href="#kapcsolat" id="calcCta" data-cta="calc" class="mt-5 inline-block w-full text-center px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
-            Request a quote for this site
-          </a>
-        </div>
-      </div>
-
-      <!-- Price table -->
-      <div class="mt-8" data-reveal>
-        <h3 class="font-display font-semibold text-lg mb-4">System fees — based on the Hungarian Chamber of Engineers’ recommendation</h3>
-        <div class="card rounded-2xl overflow-hidden overflow-x-auto">
-          <table class="w-full text-sm min-w-[34rem]">
-            <thead>
-              <tr class="border-b border-line/60 text-left">
-                <th class="px-5 py-3.5 font-display font-semibold">System</th>
-                <th class="px-5 py-3.5 font-display font-semibold">Band</th>
-                <th class="px-5 py-3.5 font-display font-semibold text-right">System fee (net)</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-line/40">
-              {priceGroups.map((g) => (
-                <>
-                  <tr class="bg-surface2/50">
-                    <td colspan="3" class="px-5 py-2.5 font-display font-semibold text-accent text-xs tracking-wide uppercase">{g.group}</td>
-                  </tr>
-                  {g.rows.map((r) => (
-                    <tr>
-                      <td class="px-5 py-3.5 font-medium">{r.name}</td>
-                      <td class="px-5 py-3.5 text-muted">{r.band}</td>
-                      <td class="px-5 py-3.5 text-right text-muted">{r.price}</td>
-                    </tr>
-                  ))}
-                </>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p class="text-xs text-muted mt-3 leading-relaxed">
-          Net fees excluding VAT. Travel is free of charge within Budapest, and its fee is
-          shown in advance by the calculator above. For multiple systems or sites we provide
-          an individual, discounted package offer. The offer contains no hidden costs.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ WHY BIMLINE ============ -->
   <section class="py-16 lg:py-20">
     <div class="max-w-8xl mx-auto px-5 lg:px-8">
       <div class="max-w-2xl mb-10" data-reveal>
         <p class="eyebrow mb-3">Why BIMLine</p>
         <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Digital audit software, full administration.
+          The engineer who surveys it can also design it.
         </h2>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -452,8 +525,8 @@ const faq = [
       <div class="mt-6 card rounded-xl p-6 lg:p-8" data-reveal>
         <p class="eyebrow mb-3">References</p>
         <p class="text-sm text-muted leading-relaxed">
-          Among others: the energy inspection of a 15,000 m² shopping centre, heating modernisation
-          of university buildings, and mechanical design of industrial and healthcare facilities.
+          Among others: energy inspection of a 15,000 m² shopping centre, heating modernisation of
+          university buildings, building-services design for industrial and healthcare facilities.
         </p>
       </div>
     </div>
@@ -478,176 +551,266 @@ const faq = [
         ))}
       </div>
       <p class="text-xs text-muted mt-6" data-reveal>
-        This information does not constitute comprehensive legal advice. Prices are net prices valid in 2026.
+        This information does not constitute complete legal advice; the legislation in force prevails.
       </p>
     </div>
   </section>
 
-  <!-- ============ CONTACT ============ -->
-  <section id="kapcsolat" class="py-16 lg:py-24 border-t border-line/60">
+  <!-- ============ CLASSIFICATION + CONTACT ============ -->
+  <section id="classification" class="py-16 lg:py-24 border-t border-line/60">
     <div class="max-w-3xl mx-auto px-5 lg:px-8">
       <div class="mb-8" data-reveal>
-        <p class="eyebrow mb-3">Contact</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Request a quote today</h2>
+        <p class="eyebrow mb-3">Classification — 2 minutes</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Check whether it applies to you.</h2>
         <p class="mt-3 text-muted">
-          Send us the list of your equipment (type, capacity, location) and we will send an accurate,
-          no-obligation quote within 24 hours.
+          Five clicks. Based on the result we tell you whether you are affected and which package
+          fits your situation — then, if you wish, you request a fixed-fee quotation.
         </p>
       </div>
 
-      <form id="energetikaForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
-        <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
-          <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+      <!-- Pre-qualifier -->
+      <div id="qualifier" class="card rounded-2xl p-6 lg:p-8 space-y-7" data-reveal>
+        {qualifier.map((qq) => (
+          <fieldset class="qf-group" data-key={qq.key}>
+            <legend class="text-sm font-medium mb-1">{qq.q}</legend>
+            {qq.hint && <p class="text-xs text-muted mb-2">{qq.hint}</p>}
+            <div class="flex flex-wrap gap-2 mt-2">
+              {qq.options.map((o) => (
+                <label class="qf-opt cursor-pointer">
+                  <input type="radio" name={`qf-${qq.key}`} value={o.v} data-score={o.score} data-disqualify={o.disqualify ? '1' : ''} data-unsure={o.unsure ? '1' : ''} class="sr-only peer" />
+                  <span class="inline-block px-4 py-2 rounded-lg border border-line text-sm hover:border-accent/60 peer-checked:border-accent peer-checked:bg-accent/15 peer-checked:text-ink transition">{o.label}</span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <div id="qfResult" class="hidden border-t border-line/60 pt-6">
+          <p id="qfTitle" class="font-display font-semibold text-lg"></p>
+          <p id="qfText" class="text-sm text-muted mt-2 leading-relaxed"></p>
+          <a href="#contact" id="qfCta" data-cta="qualifier" class="mt-5 hidden text-center px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a fixed quotation</a>
         </div>
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-medium mb-2">Name</label>
-            <input type="text" name="nev" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">Company</label>
-            <input type="text" name="ceg" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
-        </div>
+      </div>
 
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-medium mb-2">E-mail address</label>
-            <input type="email" name="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">Phone number <span class="text-muted font-normal">(optional)</span></label>
-            <input type="tel" name="telefon" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
-        </div>
-
-        <div class="grid sm:grid-cols-2 gap-5">
-          <div>
-            <label class="block text-sm font-medium mb-2">Number of sites</label>
-            <input type="number" name="telephelyek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">Number of heat-generating units</label>
-            <input type="number" name="berendezesek" min="1" value="1" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
-          </div>
+      <!-- Contact -->
+      <div id="contact" class="mt-10">
+        <div class="mb-6" data-reveal>
+          <p class="eyebrow mb-3">Request a quotation</p>
+          <h3 class="font-display font-bold text-xl leading-tight">Fixed-fee quotation within 2 working days.</h3>
+          <p class="mt-2 text-sm text-muted">
+            An equipment list, a nameplate description or a few lines about what is in the plant
+            room is enough — your classification answers are attached automatically.
+          </p>
         </div>
 
-        <div>
-          <label class="block text-sm font-medium mb-2">Equipment list, short description <span class="text-muted font-normal">(type, capacity, location — whatever you know about the system)</span></label>
-          <textarea name="leiras" rows="4" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
-        </div>
+        <form id="energetikaForm" class="card rounded-2xl p-6 lg:p-8 space-y-5" novalidate data-reveal>
+          <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+            <label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-nev">Name</label>
+              <input id="f-nev" type="text" name="nev" autocomplete="name" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-ceg">Company / institution</label>
+              <input id="f-ceg" type="text" name="ceg" autocomplete="organization" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+            </div>
+          </div>
 
-        <label class="flex items-start gap-3 text-sm text-muted">
-          <input type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
-          <span>I consent to the processing of my data for the purpose of contacting me, as set out in the <a href={`${base}en/adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</span>
-        </label>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-email">E-mail address</label>
+              <input id="f-email" type="email" name="email" autocomplete="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-telefon">Phone <span class="text-muted font-normal">(optional)</span></label>
+              <input id="f-telefon" type="tel" name="telefon" autocomplete="tel" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+            </div>
+          </div>
 
-        <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
-          Send quote request
-        </button>
-      </form>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-irsz">Site postcode <span class="text-muted font-normal">(head office for multiple sites)</span></label>
+              <input id="f-irsz" type="text" name="irsz" inputmode="numeric" maxlength="4" placeholder="e.g. 8060" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2" for="f-csomag">Which package are you interested in?</label>
+              <select id="f-csomag" name="csomag" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent">
+                <option value="javasoljanak" selected>Not sure — please recommend</option>
+                <option value="megfelelosegi">Compliance inspection</option>
+                <option value="terkep">Savings Map</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2" for="f-leiras">What is in the plant room? <span class="text-muted font-normal">(type, output, number of units — whatever you know; we ask the rest)</span></label>
+            <textarea id="f-leiras" name="leiras" rows="3" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
+          </div>
+
+          <label class="flex items-start gap-3 text-sm text-muted">
+            <input id="f-minta" type="checkbox" name="minta" class="accent-accent w-4 h-4 mt-0.5">
+            <span>Please e-mail me the sample inspection report and the sample Savings Map.</span>
+          </label>
+
+          <label class="flex items-start gap-3 text-sm text-muted">
+            <input id="f-gdpr" type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+            <span>I consent to the processing of my data for the purpose of contacting me, as set out in the <a href={`${base}en/adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Privacy Notice</a>.</span>
+          </label>
+
+          <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
+            Request a fixed quotation
+          </button>
+          <p class="text-xs text-muted">
+            We get back to you within 1 working day with any clarifications and send the quotation within 2 working days.
+          </p>
+        </form>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
 <script>
-  // ---------------- Analytics: CTA events (GA4, gtag only exists after consent) ----------------
+  // ---------------- Analytics: CTA events (GA4, gtag exists only after consent) ----------------
   function track(action: string, params: Record<string, string | number> = {}) {
     const w = window as any;
     if (typeof w.gtag === 'function') {
-      w.gtag('event', action, { page_group: 'energetikai', ...params });
+      w.gtag('event', action, { page_group: 'energetikai', lang: 'en', variant: heroVariant, ...params });
     }
   }
   document.querySelectorAll<HTMLElement>('[data-cta]').forEach((el) => {
     el.addEventListener('click', () => track('energetikai_cta_click', { cta: el.dataset.cta || '' }));
   });
 
-  // ---------------- Fee calculator ----------------
-  // System fees (net HUF) — per the Hungarian Chamber of Engineers' October 2025 fee
-  // recommendation (MMK_Á/483-3/2025.), indexed with the KSH annual CPI (+1.7%), rounded.
-  const SYSTEM_PRICES: Record<string, { label: string; price: number }> = {
-    'v-f-1': { label: 'heating system, 70–290 kW · business', price: 200000 },
-    'v-f-2': { label: 'heating system, above 290 kW · business', price: 330000 },
-    'v-k-1': { label: 'air-conditioning / heat pump, up to 290 kW · business', price: 465000 },
-    'v-k-2': { label: 'air-conditioning / heat pump, above 290 kW · business', price: 595000 },
-    'l-f-1': { label: 'heating system, up to 50 flats · residential', price: 200000 },
-    'l-f-2': { label: 'heating system, above 50 flats · residential', price: 330000 },
-    'l-k-1': { label: 'air-conditioning / heat pump, up to 50 flats · residential', price: 330000 },
-    'l-k-2': { label: 'air-conditioning / heat pump, above 50 flats · residential', price: 465000 },
-  };
-  const PRICE_PER_KM = 480; // HUF/km, applied to the one-way distance from Budapest
-
-  // Road distance from Budapest (km, one way) — postcode-prefix based estimate.
-  // A 3-digit prefix overrides the 2-digit one, which overrides the 1-digit one.
-  const D3: Record<string, number> = {
-    '240': 75, '244': 30, '266': 80, '700': 85, '703': 110,
-    '823': 130, '830': 160, '836': 190,
-  };
-  const D2: Record<string, number> = {
-    '20': 20, '21': 28, '22': 30, '23': 35, '24': 60, '25': 55, '26': 45, '27': 80, '28': 62, '29': 95,
-    '30': 110, '31': 100, '32': 85, '33': 135, '34': 145, '35': 185, '36': 170, '37': 200, '38': 225, '39': 235,
-    '40': 230, '41': 230, '42': 215, '43': 280, '44': 235, '45': 280, '46': 260, '47': 290, '48': 305, '49': 320,
-    '50': 100, '51': 80, '52': 120, '53': 150, '54': 140, '55': 165, '56': 210, '57': 225,
-    '60': 85, '61': 110, '62': 115, '63': 120, '64': 130, '65': 150, '66': 150, '67': 175, '68': 190, '69': 200,
-    '70': 85, '71': 150, '72': 160, '73': 190, '74': 190, '75': 230, '76': 200, '77': 210, '78': 230, '79': 220,
-    '80': 65, '81': 70, '82': 115, '83': 160, '84': 145, '85': 160, '86': 120, '87': 170, '88': 210, '89': 220,
-    '90': 125, '91': 125, '92': 160, '93': 150, '94': 215, '95': 180, '96': 200, '97': 230, '98': 250, '99': 270,
-  };
-  const D1: Record<string, number> = { '1': 0, '2': 50, '3': 160, '4': 260, '5': 150, '6': 150, '7': 180, '8': 150, '9': 190 };
-
-  function distanceFromZip(zip: string): number | null {
-    if (!/^[1-9]\d{3}$/.test(zip)) return null;
-    const p3 = zip.slice(0, 3);
-    const p2 = zip.slice(0, 2);
-    const p1 = zip.slice(0, 1);
-    if (p3 in D3) return D3[p3];
-    if (p2 in D2) return D2[p2];
-    return D1[p1] ?? null;
-  }
-
-  const fmt = (n: number) => 'HUF ' + n.toLocaleString('en-GB');
-
-  const zipInput = document.getElementById('zipInput') as HTMLInputElement;
-  const sysInput = document.getElementById('sysInput') as HTMLSelectElement;
-  const calcBtn = document.getElementById('calcBtn')!;
-  const calcError = document.getElementById('calcError')!;
-  const calcResult = document.getElementById('calcResult')!;
-  let lastCalc = '';
-
-  function runCalc() {
-    const zip = zipInput.value.trim();
-    const sys = SYSTEM_PRICES[sysInput.value];
-    const km = distanceFromZip(zip);
-    if (km === null || !sys) {
-      calcError.classList.remove('hidden');
-      calcResult.classList.add('hidden');
-      return;
+  // ---------------- Campaign variant (C: savings campaign) ----------------
+  // ?u=savings or a utm_campaign containing "savings" (or "megtakaritas") → the hero title and
+  // lead switch to the savings message. Only the text changes; structure and CTA stay the same,
+  // so there is no layout shift. The variant name is also attached to the GA4 events.
+  const heroVariant = (() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const u = (q.get('u') || '').toLowerCase();
+      const camp = (q.get('utm_campaign') || '').toLowerCase();
+      return u === 'savings' || u === 'megtakaritas' || camp.includes('savings') || camp.includes('megtakaritas') ? 'savings' : 'default';
+    } catch { return 'default'; }
+  })();
+  if (heroVariant === 'savings') {
+    const t = document.getElementById('heroTitle');
+    const l = document.getElementById('heroLead');
+    if (t) {
+      t.textContent = '';
+      t.append('Where does your heating ');
+      const span = document.createElement('span');
+      span.className = 'block text-accent';
+      span.textContent = 'and cooling energy leak away?';
+      t.append(span);
     }
-    calcError.classList.add('hidden');
-
-    const travel = km === 0 ? 0 : Math.round((km * PRICE_PER_KM) / 1000) * 1000;
-    const total = sys.price + travel;
-
-    document.getElementById('rSystem')!.textContent = fmt(sys.price);
-    document.getElementById('rSysDetail')!.textContent = `(${sys.label})`;
-    document.getElementById('rTravel')!.textContent = km === 0 ? 'free of charge' : fmt(travel);
-    document.getElementById('rKmDetail')!.textContent =
-      km === 0 ? '(within Budapest)' : `(~${km} km)`;
-    document.getElementById('rTotal')!.textContent = fmt(total);
-    calcResult.classList.remove('hidden');
-
-    lastCalc = `Postcode: ${zip}, system: ${sys.label} — calculated indicative price: ${fmt(total)} + VAT (system fee ${fmt(sys.price)}, travel ${km === 0 ? 'free of charge' : fmt(travel)})`;
-    track('energetikai_calc', { zip, sys: sysInput.value, total });
+    if (l) {
+      l.textContent =
+        'We show you where you can cut your energy use — with numbers and payback. And we take care of the mandatory inspection at the same time.';
+    }
   }
 
-  calcBtn.addEventListener('click', runCalc);
-  zipInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); runCalc(); } });
-  sysInput.addEventListener('change', () => { if (!calcResult.classList.contains('hidden')) runCalc(); });
+  // ---------------- Pre-qualifier ----------------
+  // Lead score = sum of data-score values. Categories per the marketing strategy:
+  // A = 12+ (primary), B = 8–11 (secondary), C = below 8. A disqualifying answer
+  // (private individual / below 70 kW) means no quotation — a polite redirect instead.
+  const groups = Array.from(document.querySelectorAll<HTMLFieldSetElement>('.qf-group'));
+  const qfResult = document.getElementById('qfResult')!;
+  const qfTitle = document.getElementById('qfTitle')!;
+  const qfText = document.getElementById('qfText')!;
+  const qfCta = document.getElementById('qfCta')!;
+  const form = document.getElementById('energetikaForm') as HTMLFormElement;
+  let qfSummary = '';
+  let qfScore = 0;
+  let qfCategory = '';
+  let qfState: 'ok' | 'unsure' | 'out' | '' = '';
+
+  function readQualifier() {
+    const answers: { key: string; label: string; score: number; disqualify: boolean; unsure: boolean }[] = [];
+    let complete = true;
+    groups.forEach((g) => {
+      const checked = g.querySelector<HTMLInputElement>('input:checked');
+      if (!checked) { complete = false; return; }
+      answers.push({
+        key: g.dataset.key || '',
+        label: checked.nextElementSibling?.textContent?.trim() || checked.value,
+        score: Number(checked.dataset.score || 0),
+        disqualify: checked.dataset.disqualify === '1',
+        unsure: checked.dataset.unsure === '1',
+      });
+    });
+    return { answers, complete };
+  }
+
+  function evaluate() {
+    const { answers, complete } = readQualifier();
+    if (!complete) return;
+
+    qfScore = answers.reduce((s, a) => s + a.score, 0);
+    qfCategory = qfScore >= 12 ? 'A' : qfScore >= 8 ? 'B' : 'C';
+    const out = answers.some((a) => a.disqualify);
+    const unsure = answers.some((a) => a.unsure);
+    const wantsMap = answers.some((a) => a.key === 'intent' && a.score > 0) || answers.some((a) => a.key === 'systems' && a.score > 0);
+
+    qfSummary = answers.map((a) => `${a.key}: ${a.label}`).join(' | ') + ` | score: ${qfScore} (${qfCategory})`;
+    qfResult.classList.remove('hidden');
+
+    if (out) {
+      qfState = 'out';
+      qfTitle.textContent = 'Probably not applicable to you.';
+      qfText.textContent =
+        'The regular energy inspection obligation applies to systems above 70 kW operated by businesses and institutions. We do not handle residential, single-family or sub-70 kW systems. If you are unsure about the output — several units count together — choose “Not sure” and we check it free of charge.';
+      qfCta.classList.add('hidden');
+      qfCta.classList.remove('inline-block');
+    } else if (unsure) {
+      qfState = 'unsure';
+      qfTitle.textContent = 'We classify it for you, free of charge.';
+      qfText.textContent =
+        'Send us the equipment list, a nameplate description or the order of magnitude of the gas bill, and within 1 working day we tell you whether you are obliged and how many systems are involved. Request a quotation only after that.';
+      qfCta.textContent = 'Request a free classification';
+      qfCta.classList.remove('hidden');
+      qfCta.classList.add('inline-block');
+    } else {
+      qfState = 'ok';
+      qfTitle.textContent = 'Affected — the inspection is mandatory.';
+      qfText.textContent = wantsMap
+        ? 'Based on your answers we recommend the Savings Map: alongside the statutory report you get ranked recommendations with payback — at portfolio level for several systems or sites. The quotation shows both packages separately; you decide.'
+        : 'The Compliance inspection fits your situation: a complete report and filing, with the mandatory recommendation. If on site we see real savings potential in the system, we tell you — you decide only then.';
+      qfCta.textContent = 'Request a fixed quotation';
+      qfCta.classList.remove('hidden');
+      qfCta.classList.add('inline-block');
+      const sel = form?.querySelector<HTMLSelectElement>('select[name="csomag"]');
+      if (sel && sel.value === 'javasoljanak') sel.value = wantsMap ? 'terkep' : 'megfelelosegi';
+    }
+
+    track('energetikai_qualified', { state: qfState, score: qfScore, category: qfCategory });
+  }
+
+  groups.forEach((g) => g.querySelectorAll('input').forEach((i) => i.addEventListener('change', evaluate)));
+
+  // Sample request: tick the "sample" box in the form and scroll to it.
+  document.querySelectorAll<HTMLElement>('[data-sample]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const cb = form?.querySelector<HTMLInputElement>('input[name="minta"]');
+      if (cb) cb.checked = true;
+      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
 
   // ---------------- Contact form (existing Apps Script endpoint) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
-  const form = document.getElementById('energetikaForm') as HTMLFormElement;
   const formRenderedAt = Date.now();
+  // UTM-paraméterek megőrzése (kampány-szintű CPQL méréshez); csak az oldal betöltésekor olvassuk.
+  const utm = (() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'u'];
+      const found = keys.filter((k) => q.get(k)).map((k) => `${k}=${q.get(k)}`);
+      if (found.length) sessionStorage.setItem('bimline_utm', found.join('&'));
+      return found.length ? found.join('&') : (sessionStorage.getItem('bimline_utm') || '');
+    } catch { return ''; }
+  })();
 
   function setFieldError(el: HTMLElement, msg: string) {
     el.classList.add('border-red-500');
@@ -669,8 +832,8 @@ const faq = [
     let ok = true;
     const required: [HTMLInputElement | HTMLTextAreaElement, string][] = [
       [form.nev, 'Please enter your name.'],
+      [form.ceg, 'Please enter the company or institution.'],
       [form.email, 'Please enter your e-mail address.'],
-      [form.leiras, 'Please briefly describe the equipment (type, capacity, location).'],
     ];
     required.forEach(([el, msg]) => {
       if (!el.value.trim()) { setFieldError(el, msg); ok = false; }
@@ -684,12 +847,17 @@ const faq = [
     } else {
       clearFieldError(form.telefon);
     }
+    if (form.irsz.value.trim() && !/^[1-9]\d{3}$/.test(form.irsz.value.trim())) {
+      setFieldError(form.irsz, 'Please enter a four-digit Hungarian postcode.'); ok = false;
+    } else {
+      clearFieldError(form.irsz);
+    }
     if (!form.gdpr.checked) {
       const box = form.gdpr.closest('label')!;
       if (!box.querySelector('.field-error')) {
         const err = document.createElement('p');
         err.className = 'field-error text-xs text-red-400 mt-1';
-        err.textContent = 'Consent is required for us to contact you.';
+        err.textContent = 'Consent is required so that we can contact you.';
         box.appendChild(err);
       }
       ok = false;
@@ -700,16 +868,20 @@ const faq = [
     return ok;
   }
 
-  // Extra fields (sites, units, calculated price) are packed into the description,
-  // so the existing Apps Script works without modification.
+  // Extra fields (classification, score, package, postcode, sample request) are packed into
+  // the description so the existing Apps Script works unchanged.
   function composedLeiras() {
+    const csomagLabel = (form.csomag as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() || '';
     const parts = [
-      '[Energy inspection — heating system above 70 kW] (EN)',
-      'Number of sites: ' + (form.telephelyek.value || '1'),
-      'Number of heat-generating units: ' + (form.berendezesek.value || '1'),
+      '[Energy inspection — above 70 kW — EN page]',
+      'Pre-qualification: ' + (qfSummary || 'not completed') + (qfState ? ` — state: ${qfState}` : ''),
+      'Interested in: ' + csomagLabel,
+      'Postcode: ' + (form.irsz.value.trim() || '—'),
+      'Sample documents requested: ' + (form.minta.checked ? 'yes' : 'no'),
+      'Source (UTM): ' + (utm || '—'),
+      '',
+      form.leiras.value.trim() || '(no description given)',
     ];
-    if (lastCalc) parts.push(lastCalc);
-    parts.push('', form.leiras.value.trim());
     return parts.join('\n');
   }
 
@@ -728,7 +900,7 @@ const faq = [
   }
 
   function sendMailto() {
-    const subject = encodeURIComponent('Energy inspection quote request – ' + (form.ceg.value.trim() || form.nev.value.trim()));
+    const subject = encodeURIComponent('Energy inspection quotation request – ' + (form.ceg.value.trim() || form.nev.value.trim()));
     const body = encodeURIComponent(
       ['Name: ' + form.nev.value.trim(), 'Company: ' + (form.ceg.value.trim() || '—'),
        'E-mail: ' + form.email.value.trim(), 'Phone: ' + (form.telefon.value.trim() || '—'),
@@ -740,7 +912,12 @@ const faq = [
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    track('energetikai_form_submit');
+    // Conversion events: qualified (not disqualified) leads get a separate event that can be
+    // imported into Google Ads as a conversion, so bidding optimises for CPQL instead of CPL.
+    track('energetikai_form_submit', { state: qfState || 'unknown', score: qfScore, category: qfCategory || 'n/a' });
+    if (qfState === 'ok' || qfState === 'unsure') {
+      track('energetikai_qualified_lead', { score: qfScore, category: qfCategory, csomag: form.csomag.value });
+    }
 
     const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
     const orig = btn.textContent;
@@ -751,7 +928,7 @@ const faq = [
       try {
         const params = new URLSearchParams(fieldData() as Record<string, string>);
         await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: params });
-        btn.textContent = 'Thank you! We will be in touch shortly.';
+        btn.textContent = 'Thank you! We get back to you within 1 working day.';
         btn.classList.add('bg-belimo');
         form.reset();
       } catch (err) {
