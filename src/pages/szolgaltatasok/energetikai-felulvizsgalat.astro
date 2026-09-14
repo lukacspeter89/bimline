@@ -4,10 +4,6 @@ import { SITE } from '../../lib/site';
 
 const base = import.meta.env.BASE_URL;
 
-// Mintadokumentumok (anonimizált PDF-ek a public/ mappában). Amíg üres a string,
-// az oldal "kérésre elküldjük" gombot mutat, ami az űrlapot tölti elő.
-const SAMPLE_REPORT_URL = ''; // pl. `${base}minta/mintajegyzokonyv.pdf`
-const SAMPLE_MAP_URL = ''; // pl. `${base}minta/energetikai-vesztesegfeltaras-minta.pdf`
 
 const serviceSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -171,10 +167,6 @@ const why = [
     desc: 'Kazánházak, hőközpontok, hőszivattyús és légkondicionáló rendszerek — egy felülvizsgáló, egy jegyzőkönyv-sorozat, egy kapcsolattartó.',
   },
   {
-    title: 'Saját digitális felülvizsgálati rendszer',
-    desc: 'A helyszínen rögzített adatokból egységes jegyzőkönyv készül, beépített teljességi ellenőrzéssel — hogy a kamarai szakmai ellenőrzésen ne legyen hiánypótlás.',
-  },
-  {
     title: 'Határidő-figyelés díjmentesen',
     desc: 'Nyilvántartjuk az esedékességeket, és időben jelezzük a következő kötelező felülvizsgálatot.',
   },
@@ -306,7 +298,6 @@ const qualifier = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#besorolas" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Nézze meg, Önre vonatkozik-e — 2 perc</a>
-          <a href="#mintajelentes" data-cta="hero-sample" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Mit kap a végén?</a>
         </div>
         <p class="mt-5 text-xs text-muted">
           Vállalkozások, intézmények, ipari és több telephelyes létesítmények részére.
@@ -367,7 +358,7 @@ const qualifier = [
             </ul>
             <p class="text-sm mt-5 pt-5 border-t border-line/60">{p.note}</p>
             <a href="#besorolas" data-cta={`pkg-${p.id}`} class={`mt-5 inline-block text-center px-6 py-3 rounded-xl font-semibold transition ${p.highlight ? 'bg-accent hover:bg-accent/90 glow-accent' : 'border border-line hover:border-accent/60 hover:bg-surface'}`}>
-              Ajánlatot kérek — előbb a besorolás
+              Ajánlatot kérek
             </a>
           </article>
         ))}
@@ -422,68 +413,6 @@ const qualifier = [
     </div>
   </section>
 
-  <!-- ============ MINTAJELENTÉS ============ -->
-  <section id="mintajelentes" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
-    <div class="max-w-8xl mx-auto px-5 lg:px-8">
-      <div class="max-w-2xl mb-10" data-reveal>
-        <p class="eyebrow mb-3">Mit kap a végén</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Pontosan ezt kapja — nézze meg, mielőtt megrendeli.
-        </h2>
-        <p class="mt-3 text-muted">
-          Saját tesztrendszerünkről készült, anonimizált mintadokumentumok. A jegyzőkönyv a
-          hatósági megfelelést mutatja; az Energetikai veszteségfeltárás azt, hogyan lesz belőle döntés.
-        </p>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-5">
-        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
-          <p class="eyebrow mb-2">Minta</p>
-          <h3 class="font-display font-semibold text-lg leading-snug">Felülvizsgálati jegyzőkönyv</h3>
-          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
-            Rendszer-lehatárolás, mérési eredmények, a 100 pontos energetikai értékelés tételesen,
-            fotódokumentáció, a kötelező javaslat — abban a formában, ahogy a hatósági
-            nyilvántartásba kerül.
-          </p>
-          {SAMPLE_REPORT_URL
-            ? <a href={SAMPLE_REPORT_URL} target="_blank" rel="noopener" data-cta="sample-report" class="mt-5 inline-block text-center px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Mintajegyzőkönyv letöltése (PDF)</a>
-            : <button type="button" data-sample="jegyzokonyv" data-cta="sample-report-request" class="mt-5 px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Kérem a mintajegyzőkönyvet e-mailben</button>}
-        </article>
-        <article class="card rounded-xl p-6 flex flex-col border-accent/50" data-reveal>
-          <p class="eyebrow mb-2">Minta</p>
-          <h3 class="font-display font-semibold text-lg leading-snug">Energetikai veszteségfeltárás</h3>
-          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
-            Feltárt veszteségek, a három szint javaslatai beruházási nagyságrenddel és
-            megtérüléssel, éves megtakarítás kWh-ban, forintban és CO₂-ben, pályázati
-            alkalmasság, ütemterv — üzleti döntéshozónak írva, nem gépésznek.
-          </p>
-          {SAMPLE_MAP_URL
-            ? <a href={SAMPLE_MAP_URL} target="_blank" rel="noopener" data-cta="sample-map" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Minta Energetikai veszteségfeltárás (PDF)</a>
-            : <button type="button" data-sample="terkep" data-cta="sample-map-request" class="mt-5 px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Kérem a minta Energetikai veszteségfeltárást e-mailben</button>}
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ DÍJAZÁS ============ -->
-  <section class="py-16 lg:py-20">
-    <div class="max-w-3xl mx-auto px-5 lg:px-8">
-      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
-        <p class="eyebrow mb-3">Kiszámítható díjazás</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Előre rögzített ajánlat — nem a helyszínen derül ki, mennyibe kerül.
-        </h2>
-        <p class="mt-4 text-muted leading-relaxed">
-          A díj a rendszerek számától, teljesítményétől és típusától (fűtés vagy hűtés), valamint a
-          telephelyek számától és távolságától függ. A besorolás során megadott adatok alapján
-          rögzített díjú ajánlatot adunk, a kiszállással együtt. Rejtett
-          költség nincs; ha a helyszínen az ajánlatban nem szereplő további rendszer kerül elő,
-          azt előre egyeztetjük. Több rendszer és több telephely esetén csomagajánlatot adunk.
-        </p>
-        <a href="#besorolas" data-cta="pricing" class="mt-6 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Kérjen díjmentes besorolást</a>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ JOGSZABÁLYI HÁTTÉR ============ -->
   <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
     <div class="max-w-8xl mx-auto px-5 lg:px-8">
@@ -513,7 +442,7 @@ const qualifier = [
           Aki felméri, az meg is tudja tervezni.
         </h2>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {why.map((w) => (
           <article class="card rounded-xl p-6 flex flex-col" data-reveal>
             <h3 class="font-display font-semibold text-lg leading-snug">{w.title}</h3>
@@ -596,7 +525,7 @@ const qualifier = [
       <div id="kapcsolat" class="mt-10">
         <div class="mb-6" data-reveal>
           <p class="eyebrow mb-3">Ajánlatkérés</p>
-          <h3 class="font-display font-bold text-xl leading-tight">Rögzített díjú ajánlat — hamarosan jelentkezünk.</h3>
+          <h3 class="font-display font-bold text-xl leading-tight">Rögzített díjú ajánlat.</h3>
           <p class="mt-2 text-sm text-muted">
             Elég a gépészeti lista, egy adattábla-fotó leírása vagy néhány sor arról, mi van a
             gépházban — a besorolás válaszait automatikusan csatoljuk.
@@ -649,10 +578,6 @@ const qualifier = [
             <textarea id="f-leiras" name="leiras" rows="3" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
           </div>
 
-          <label class="flex items-start gap-3 text-sm text-muted">
-            <input id="f-minta" type="checkbox" name="minta" class="accent-accent w-4 h-4 mt-0.5">
-            <span>Kérem a mintajegyzőkönyvet és a minta Energetikai veszteségfeltárást e-mailben.</span>
-          </label>
 
           <label class="flex items-start gap-3 text-sm text-muted">
             <input id="f-gdpr" type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
@@ -662,9 +587,6 @@ const qualifier = [
           <button type="submit" data-cta="form" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">
             Rögzített ajánlatot kérek
           </button>
-          <p class="text-xs text-muted">
-            Hamarosan jelentkezünk a pontosításokkal, utána küldjük a rögzített díjú ajánlatot.
-          </p>
         </form>
       </div>
     </div>
@@ -790,14 +712,6 @@ const qualifier = [
 
   groups.forEach((g) => g.querySelectorAll('input').forEach((i) => i.addEventListener('change', evaluate)));
 
-  // Mintadokumentum kérése: az űrlap "minta" pipáját bejelöli és odagörget.
-  document.querySelectorAll<HTMLElement>('[data-sample]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const cb = form?.querySelector<HTMLInputElement>('input[name="minta"]');
-      if (cb) cb.checked = true;
-      document.getElementById('kapcsolat')?.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
 
   // ---------------- Kapcsolatfelvételi űrlap (meglévő Apps Script végponttal) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
@@ -869,7 +783,7 @@ const qualifier = [
     return ok;
   }
 
-  // Az extra mezőket (besorolás, pontszám, csomag, irányítószám, minta-kérés) a leírásba
+  // Az extra mezőket (besorolás, pontszám, csomag, irányítószám) a leírásba
   // csomagoljuk, így a meglévő Apps Script módosítás nélkül működik.
   function composedLeiras() {
     const csomagLabel = (form.csomag as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() || '';
@@ -878,7 +792,6 @@ const qualifier = [
       'Előminősítés: ' + (qfSummary || 'nem töltötte ki') + (qfState ? ` — állapot: ${qfState}` : ''),
       'Érdeklődés: ' + csomagLabel,
       'Irányítószám: ' + (form.irsz.value.trim() || '—'),
-      'Mintadokumentumot kér: ' + (form.minta.checked ? 'igen' : 'nem'),
       'Forrás (UTM): ' + (utm || '—'),
       '',
       form.leiras.value.trim() || '(nem írt leírást)',

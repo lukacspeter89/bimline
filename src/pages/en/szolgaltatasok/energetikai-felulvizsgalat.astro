@@ -4,10 +4,6 @@ import { SITE } from '../../../lib/site';
 
 const base = import.meta.env.BASE_URL;
 
-// Sample documents (anonymised PDFs in public/). While the string is empty the page shows a
-// "send it to me" button that pre-fills the form instead.
-const SAMPLE_REPORT_URL = ''; // e.g. `${base}minta/sample-inspection-report-en.pdf`
-const SAMPLE_MAP_URL = ''; // e.g. `${base}minta/energy-loss-assessment-sample-en.pdf`
 
 const serviceSchema = JSON.stringify({
   '@context': 'https://schema.org',
@@ -171,10 +167,6 @@ const why = [
     desc: 'Boiler rooms, heating centres, heat-pump and air-conditioning systems — one inspector, one set of reports, one contact.',
   },
   {
-    title: 'Our own digital inspection system',
-    desc: 'Data recorded on site becomes a uniform report with a built-in completeness check — so the Chamber’s professional review does not come back with deficiencies.',
-  },
-  {
     title: 'Free deadline monitoring',
     desc: 'We keep track of due dates and notify you in good time before the next mandatory inspection.',
   },
@@ -307,7 +299,6 @@ const qualifier = [
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="#classification" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Check whether it applies to you — 2 minutes</a>
-          <a href="#sample" data-cta="hero-sample" class="px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">What do you get?</a>
         </div>
         <p class="mt-5 text-xs text-muted">
           For businesses, institutions, industrial and multi-site facilities.
@@ -422,68 +413,6 @@ const qualifier = [
     </div>
   </section>
 
-  <!-- ============ SAMPLE DOCUMENTS ============ -->
-  <section id="sample" class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
-    <div class="max-w-8xl mx-auto px-5 lg:px-8">
-      <div class="max-w-2xl mb-10" data-reveal>
-        <p class="eyebrow mb-3">What you get</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          Exactly this — see it before you order.
-        </h2>
-        <p class="mt-3 text-muted">
-          Anonymised sample documents from our own test system. The report shows regulatory
-          compliance; the Energy Loss Assessment shows how it becomes a decision.
-        </p>
-      </div>
-      <div class="grid sm:grid-cols-2 gap-5">
-        <article class="card rounded-xl p-6 flex flex-col" data-reveal>
-          <p class="eyebrow mb-2">Sample</p>
-          <h3 class="font-display font-semibold text-lg leading-snug">Inspection report</h3>
-          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
-            System delimitation, measurement results, the 100-point energy rating item by item,
-            photo documentation, the mandatory recommendation — in the form that goes into the
-            official register.
-          </p>
-          {SAMPLE_REPORT_URL
-            ? <a href={SAMPLE_REPORT_URL} target="_blank" rel="noopener" data-cta="sample-report" class="mt-5 inline-block text-center px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Download the sample report (PDF)</a>
-            : <button type="button" data-sample="report" data-cta="sample-report-request" class="mt-5 px-6 py-3 rounded-xl border border-line hover:border-accent/60 hover:bg-surface transition font-medium">Send me the sample report by e-mail</button>}
-        </article>
-        <article class="card rounded-xl p-6 flex flex-col border-accent/50" data-reveal>
-          <p class="eyebrow mb-2">Sample</p>
-          <h3 class="font-display font-semibold text-lg leading-snug">Energy Loss Assessment</h3>
-          <p class="text-sm text-muted mt-2 leading-relaxed flex-1">
-            Identified losses, the three levels of recommendations with investment magnitude and
-            payback, annual savings in kWh, HUF and CO₂, grant eligibility, schedule — written for
-            a business decision-maker, not for an engineer.
-          </p>
-          {SAMPLE_MAP_URL
-            ? <a href={SAMPLE_MAP_URL} target="_blank" rel="noopener" data-cta="sample-map" class="mt-5 inline-block text-center px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Sample Energy Loss Assessment (PDF)</a>
-            : <button type="button" data-sample="map" data-cta="sample-map-request" class="mt-5 px-6 py-3 rounded-xl bg-accent hover:bg-accent/90 transition font-semibold glow-accent">Send me the sample Energy Loss Assessment by e-mail</button>}
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ FEES ============ -->
-  <section class="py-16 lg:py-20">
-    <div class="max-w-3xl mx-auto px-5 lg:px-8">
-      <div class="card rounded-2xl p-6 lg:p-8" data-reveal>
-        <p class="eyebrow mb-3">Predictable fees</p>
-        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">
-          A fixed quotation in advance — not worked out on site.
-        </h2>
-        <p class="mt-4 text-muted leading-relaxed">
-          The fee depends on the number, output and type of the systems (heating or cooling) and on
-          the number and distance of the sites. Based on the data you give during classification we
-          send a fixed-fee quotation, travel included. No hidden costs; if an
-          additional system not covered by the quotation turns up on site, we agree on it beforehand.
-          For several systems and sites we offer a package quotation.
-        </p>
-        <a href="#classification" data-cta="pricing" class="mt-6 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Request a free classification</a>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ LEGAL BACKGROUND ============ -->
   <section class="py-16 lg:py-20 border-t border-line/60 bg-surface/40">
     <div class="max-w-8xl mx-auto px-5 lg:px-8">
@@ -513,7 +442,7 @@ const qualifier = [
           The engineer who surveys it can also design it.
         </h2>
       </div>
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {why.map((w) => (
           <article class="card rounded-xl p-6 flex flex-col" data-reveal>
             <h3 class="font-display font-semibold text-lg leading-snug">{w.title}</h3>
@@ -648,10 +577,6 @@ const qualifier = [
             <textarea id="f-leiras" name="leiras" rows="3" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent resize-y"></textarea>
           </div>
 
-          <label class="flex items-start gap-3 text-sm text-muted">
-            <input id="f-minta" type="checkbox" name="minta" class="accent-accent w-4 h-4 mt-0.5">
-            <span>Please e-mail me the sample inspection report and the sample Energy Loss Assessment.</span>
-          </label>
 
           <label class="flex items-start gap-3 text-sm text-muted">
             <input id="f-gdpr" type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
@@ -786,14 +711,6 @@ const qualifier = [
 
   groups.forEach((g) => g.querySelectorAll('input').forEach((i) => i.addEventListener('change', evaluate)));
 
-  // Sample request: tick the "sample" box in the form and scroll to it.
-  document.querySelectorAll<HTMLElement>('[data-sample]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const cb = form?.querySelector<HTMLInputElement>('input[name="minta"]');
-      if (cb) cb.checked = true;
-      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
 
   // ---------------- Contact form (existing Apps Script endpoint) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
@@ -865,7 +782,7 @@ const qualifier = [
     return ok;
   }
 
-  // Extra fields (classification, score, package, postcode, sample request) are packed into
+  // Extra fields (classification, score, package, postcode) are packed into
   // the description so the existing Apps Script works unchanged.
   function composedLeiras() {
     const csomagLabel = (form.csomag as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() || '';
@@ -874,7 +791,6 @@ const qualifier = [
       'Pre-qualification: ' + (qfSummary || 'not completed') + (qfState ? ` — state: ${qfState}` : ''),
       'Interested in: ' + csomagLabel,
       'Postcode: ' + (form.irsz.value.trim() || '—'),
-      'Sample documents requested: ' + (form.minta.checked ? 'yes' : 'no'),
       'Source (UTM): ' + (utm || '—'),
       '',
       form.leiras.value.trim() || '(no description given)',
