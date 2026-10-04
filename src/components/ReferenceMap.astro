@@ -55,9 +55,10 @@ const t = lang === 'en'
       minZoom: 6,
     }).setView([47.1625, 19.5033], 7);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd', maxZoom: 19
+    // CARTO basemaps már API-kulcsot kér ("API KEY REQUIRED" csempék) – Esri sötétszürke alaptérkép, kulcs nélkül
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors',
+      maxZoom: 16
     }).addTo(map);
 
     const sharedRenderer = L.svg({ padding: 0.5 });
