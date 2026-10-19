@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://www.bimline.hu',
   base: '/',
-  integrations: [mdx(), sitemap()],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/en/wekerle-plusz') })],
   vite: {
     plugins: [tailwindcss()],
   },

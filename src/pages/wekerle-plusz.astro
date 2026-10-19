@@ -1,0 +1,859 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/site';
+
+const base = import.meta.env.BASE_URL;
+
+// ---------------------------------------------------------------------------
+// Statisztika: a BIMLine által 2024–2025-ben az RRF-REP-10.13.1-24 / KEHOP Plusz
+// lakossági Otthonfelújítási Programban általunk készített energetikai tanúsítványok és számítások
+// (BL24-0069), házanként a legutolsó energetikai nyilatkozat alapján.
+// ---------------------------------------------------------------------------
+const STATS = {
+  houses: 137,
+  medianYear: 1971,
+  medianArea: 100,
+  ghiShare: 87,         // % — G, H vagy I besorolásból indult
+  iShare: 48,           // % — I besorolásból indult
+  medianSaving: 47,     // % — a tervezett felújítás medián primerenergia-megtakarítása
+  over30: 136,          // ennyi terv érte el a 30 %-ot
+  medianClassJump: 2,
+  wallUninsulated: 79,  // % — szigeteletlen homlokzat
+  measures: [
+    { label: 'Hőszigetelés (homlokzat és/vagy padlásfödém)', pct: 87 },
+    { label: 'Nyílászárócsere', pct: 62 },
+    { label: 'Melegvíz-korszerűsítés', pct: 28 },
+    { label: 'Hőszivattyú', pct: 27 },
+    { label: 'Kondenzációs gázkazán (2024-ben még támogatható volt)', pct: 27 },
+  ],
+};
+// Kiinduló besorolás eloszlása (db)
+const startDist: [string, number][] = [
+  ['A–C', 7], ['D', 1], ['E', 5], ['F', 5], ['G', 23], ['H', 30], ['I', 66],
+];
+const startMax = Math.max(...startDist.map(([, v]) => v));
+
+const program = [
+  { k: '15 millió Ft hitel', v: 'fix 3 %-os kamattal' },
+  { k: '30–50 % támogatás', v: 'vissza nem térítendő, legfeljebb 7,5 millió Ft' },
+  { k: 'Minden településen', v: 'gyermek vagy házasság nem feltétel' },
+  { k: 'Legalább 30 % megtakarítás', v: 'minél rosszabb a ház besorolása, annál nagyobb a támogatás' },
+];
+
+// A kérdőív. Minden kérdésnél van „nem tudom” — a modell ilyenkor az építési
+// év szerinti jellemző értékkel számol.
+const questions = [
+  {
+    key: 'year', q: 'Mikor épült a ház?', hint: 'Elég nagyjából — ha bővítették, az eredeti rész évét add meg.',
+    options: [
+      { v: 'y1945', label: '1945 előtt', sub: 'parasztház, polgári ház' },
+      { v: 'y1969', label: '1945 és 1969 között', sub: 'sátortetős kockaház, tömör tégla' },
+      { v: 'y1989', label: '1970 és 1989 között', sub: 'Kádár-kocka, B30 blokktégla' },
+      { v: 'y2006', label: '1990 és 2006 között', sub: '' },
+      { v: 'y2007', label: '2007 után', sub: '' },
+    ],
+  },
+  { key: 'area', q: 'Mekkora a fűtött alapterület?', hint: 'A fűtött helyiségek együtt, m²-ben. A pince, a garázs és a fűtetlen padlás nem számít bele.', type: 'number' },
+  {
+    key: 'storeys', q: 'Hány szintes a fűtött rész?',
+    options: [
+      { v: 'fszt', label: 'Földszintes', sub: 'felette hideg padlás' },
+      { v: 'tetoter', label: 'Földszint + beépített tetőtér', sub: 'a tető alatt is laknak' },
+      { v: 'emeletes', label: 'Kétszintes (emeletes)', sub: 'felette hideg padlás' },
+    ],
+  },
+  {
+    key: 'wall', q: 'Miből vannak a külső falak?', hint: 'Ha nem tudod, válaszd a „nem tudom”-ot — az építési év alapján becsülünk.',
+    options: [
+      { v: 'valyog', label: 'Vályog', sub: 'vastag, régi falusi ház' },
+      { v: 'tegla_regi', label: 'Tömör tégla', sub: 'régi, kisméretű vagy nagyméretű tégla' },
+      { v: 'b30', label: 'Blokktégla (B30)', sub: 'a hetvenes-nyolcvanas évek tipikus fala' },
+      { v: 'gazszilikat', label: 'Gázszilikát (Ytong)', sub: 'fehér, könnyű falazóblokk' },
+      { v: 'porotherm', label: 'Porotherm vagy hasonló', sub: 'üreges kerámia falazóblokk, 1990 után' },
+      { v: 'vegyes', label: 'Kő vagy vegyes falazat', sub: '' },
+      { v: 'nemtudom', label: 'Nem tudom', sub: '' },
+    ],
+  },
+  {
+    key: 'wallIns', q: 'Van hőszigetelés a homlokzaton?', hint: 'A vakolat alatti „hungarocell” vagy kőzetgyapot. Az ablakok kávájánál vagy a lábazatnál szokott látszani a vastagsága.',
+    options: [
+      { v: 'nincs', label: 'Nincs', sub: '' },
+      { v: 'vekony', label: 'Van, de vékony', sub: 'kb. 5–8 cm' },
+      { v: 'vastag', label: 'Van, vastag', sub: '10 cm vagy több' },
+      { v: 'nemtudom', label: 'Nem tudom', sub: '' },
+    ],
+  },
+  {
+    key: 'atticIns', q: 'Szigetelt a padlásfödém vagy a tető?', qAlt: 'Szigetelt a tetőtér (a ferde tető)?', hint: 'Padlásnál a födém tetején fekvő üveggyapot vagy kőzetgyapot számít.',
+    options: [
+      { v: 'nincs', label: 'Nincs', sub: '' },
+      { v: 'vekony', label: 'Van, de vékony', sub: '10 cm alatt' },
+      { v: 'vastag', label: 'Van, vastag', sub: '15 cm vagy több' },
+      { v: 'nemtudom', label: 'Nem tudom', sub: '' },
+    ],
+  },
+  {
+    key: 'windows', q: 'Milyenek az ablakok?', hint: 'A ház nagyobb részére jellemzőt válaszd.',
+    options: [
+      { v: 'regi_fa', label: 'Régi fa ablakok', sub: 'kétszárnyú, gerébtokos vagy kapcsolt' },
+      { v: 'ketretegu', label: 'Műanyag vagy fa, kétrétegű üveggel', sub: 'a legtöbb, 10–25 éve cserélt ablak' },
+      { v: 'haromretegu', label: 'Háromrétegű üvegezés', sub: 'jellemzően az elmúlt 10 évben beépítve' },
+      { v: 'nemtudom', label: 'Nem tudom', sub: '' },
+    ],
+  },
+  {
+    key: 'heating', q: 'Mivel fűtesz?', hint: 'A fő fűtést válaszd — amivel a ház nagyobb részét fűtöd.',
+    options: [
+      { v: 'gaz_regi', label: 'Régi gázkazán', sub: 'cirkó vagy állókazán, 10 évnél régebbi' },
+      { v: 'gaz_kond', label: 'Kondenzációs gázkazán', sub: 'újabb, műanyag füstcsővel' },
+      { v: 'konvektor', label: 'Gázkonvektorok', sub: 'szobánként, falon át kivezetve' },
+      { v: 'vegyes', label: 'Vegyes tüzelésű kazán', sub: 'fa, szén, pellet — radiátorokkal' },
+      { v: 'kalyha', label: 'Kályha, cserépkályha, kandalló', sub: '' },
+      { v: 'villany', label: 'Villanyfűtés', sub: 'hősugárzó, fűtőpanel, villanykazán' },
+      { v: 'klima', label: 'Klíma (split)', sub: 'a fő fűtés is klímával megy' },
+      { v: 'hoszivattyu', label: 'Hőszivattyú', sub: 'levegő-víz, radiátorokkal vagy padlófűtéssel' },
+    ],
+  },
+  {
+    key: 'hmv', q: 'Mivel készül a melegvíz?',
+    options: [
+      { v: 'futessel', label: 'A fűtéssel együtt', sub: 'kombi kazán, kazán bojlerrel' },
+      { v: 'villany', label: 'Villanybojler', sub: '' },
+      { v: 'gaz', label: 'Gázbojler vagy átfolyós gázos vízmelegítő', sub: '' },
+      { v: 'fa', label: 'Fatüzelésű fürdőhenger', sub: '' },
+      { v: 'hoszivattyu', label: 'Hőszivattyú', sub: '' },
+    ],
+  },
+];
+
+// Az eredeti RRF-REP-10.13.1-24 felhívás főbb szabályai (kölcsönkérelmi nyomtatvány és kitöltési útmutató,
+// hatályos 2024. 11. 08-tól; kivitelezői regisztrációs felhívás; EU forrású lakossági hitelprogramok
+// eljárási rendje, hatályos 2025. 10. 15-től).
+const rules = [
+  {
+    t: 'Melyik ház',
+    items: [
+      'Lakóház besorolású, szabadon álló vagy sorházi családi ház, illetve ikerház, amelyben életvitelszerűen laknak.',
+      'A ház 2007 előtt épült. A program indulásakor még 1990 volt a határ, később emelték 2007-re — hogy a Wekerle Plusznál mennyi lesz, a felhívásból derül ki.',
+      'Az ingatlanban kizárólag lakhatási célú energiafelhasználás lehet.',
+    ],
+  },
+  {
+    t: 'Mire lehetett költeni',
+    items: [
+      'A fűtött teret határoló szerkezetek teljes körű hőszigetelése, födémszigetelés.',
+      'Nyílászárók cseréje.',
+      'Fűtéskorszerűsítés: levegő-víz hőszivattyú, hőleadók cseréje, padló- és mennyezetfűtés, szabályozás.',
+      'Melegvíz-rendszer korszerűsítése — önállóan nem, csak más beavatkozással együtt.',
+      '2025-től tisztán fosszilis tüzelőberendezés (gázkazán) nem volt támogatható.',
+    ],
+  },
+  {
+    t: 'A 30 % igazolása',
+    items: [
+      'Legalább 30 % primerenergia-megtakarítás a kiinduló állapothoz képest; a kérelemben a 30–40 % és a 40 % feletti sáv közül kellett választani.',
+      'A kérelemhez hiteles energetikai tanúsítvány a meglévő állapotról és energetikai számítás a tervezett állapotról, a 9/2023. (V. 25.) ÉKM rendelet szerint.',
+      'A munkák végén záró hiteles tanúsítvány. Ha a megtakarítás nem érte el a 30 %-ot, a teljes finanszírozási összeget kamattal visszakövetelhették.',
+      'A tanúsítványt nem készítheti az igénylő, a közeli hozzátartozója vagy az ő vállalkozásuk.',
+    ],
+  },
+  {
+    t: 'Pénzügyi keretek',
+    items: [
+      'Futamidő legfeljebb 12 év; a pénz legfeljebb 24 hónapig hívható le, utána 3 hónap türelmi idő, amely alatt az eredményt ellenőrzik.',
+      'Önerő legalább 14,3 %; a vissza nem térítendő rész aránya a járástól és az egy főre jutó jövedelemtől függött.',
+      'A kivitelezés legfeljebb 24 hónap (indokolt esetben +6 hónap); a kivitelezőnek legalább 2 év jótállást kellett vállalnia.',
+      'Az árak nem haladhatták meg a szokásos piaci árat, illetve a felhívás fajlagos egységárait; a tanúsítvány költsége elszámolható volt.',
+    ],
+  },
+];
+
+const faq = [
+  {
+    q: 'Mennyire pontos ez a becslés?',
+    a: `A kalkulátor egy egyszerűsített épületenergetikai modell, amelyet ${STATS.houses} családi ház általunk készített energetikai tanúsítványára és számítására hangoltunk. A kiinduló besorolást a házak 80 %-ánál egy energetikai osztályon belül adta vissza, a felújítás utáni megtakarítást pedig átlagosan inkább óvatosan becsli. Ez irányt ad, de nem helyettesíti a hiteles energetikai tanúsítványt — a támogatáshoz azt kell majd benyújtani.`,
+  },
+  {
+    q: 'Mikor lehet beadni a kérelmet?',
+    a: 'A részletes felhívás még nem jelent meg. A kormány 2026. október 19-én jelentette be a programot; a pontos feltételek (futamidő, elszámolható költségek, a támogatási sávok határai) a felhívásban lesznek. Amint megjelenik, az oldalt frissítjük.',
+  },
+  {
+    q: 'Miért kell energetikai tanúsítvány?',
+    a: 'A 30 %-os megtakarítást számítással kell igazolni: egy hiteles tanúsítvány rögzíti a felújítás előtti állapotot, egy tervezett állapotra készült számítás mutatja a megtakarítást, a munkák végén pedig záró tanúsítvány igazolja, hogy a vállalt eredmény megvalósult. A kiinduló besorolás dönti el azt is, hogy a 30–50 %-os sávban mekkora támogatás jár.',
+  },
+  {
+    q: 'Mi az a 30 %? Ennyivel lesz kisebb a gázszámlám?',
+    a: 'Nem pontosan. A 30 % az épület számított, úgynevezett primer energiaigényére vonatkozik, szabványos használati feltételekkel — nem a személyes fogyasztási szokásaidra. A számlád ennél többel vagy kevesebbel is csökkenhet, attól függően, hogyan fűtöttél eddig.',
+  },
+  {
+    q: 'A napelem beleszámít?',
+    a: 'A korábbi lakossági programban a megtakarítási arányt a megújuló villamosenergia-termelés nélkül kellett kimutatni, ezért a kalkulátor sem számol vele. Hogy a Wekerle Plusz ezt hogyan kezeli, a felhívásból derül ki.',
+  },
+  {
+    q: 'Gázkazán cseréjére jár támogatás?',
+    a: 'Az eredeti felhívásban fosszilis alapú korszerűsítést csak a 2024. december 31-ig megkötött kölcsönszerződések finanszírozhattak; 2025-től tisztán fosszilis tüzelőberendezés (így a kondenzációs gázkazán) nem volt támogatható. Ezért a kalkulátor javaslataiban nem szerepel — a „Rakd össze magad” részben kipróbálhatod, de a Wekerle Plusz szabályait a felhívás dönti el.',
+  },
+  {
+    q: 'Mi történik, ha a felújítás után nincs meg a 30 %?',
+    a: 'Az eredeti felhívásban a munkák végén záró hiteles tanúsítvánnyal kellett igazolni a megtakarítást. Ha ez nem érte el a 30 %-ot, a projekt szabálytalanná vált, és a teljes finanszírozási összeget kamattal együtt visszakövetelhették. Ezért fontos, hogy a terv ne a határon táncoljon — a kalkulátor is csak olyan csomagot javasol minimumként, amelynek a becslés alsó határa is 30 % felett van.',
+  },
+  {
+    q: 'A hőszivattyú önmagában elég?',
+    a: 'Sok háznál számszakilag igen, de szigeteletlen házban a hőszivattyút nagyobbra kell méretezni, a régi radiátorok pedig magas előremenő hőmérsékletet igényelnek, ami rontja a hatékonyságot. Ezért a legtöbb esetben a hőszigeteléssel együtt javasoljuk — a kalkulátor jelzi, ha ez a helyzet.',
+  },
+];
+---
+
+<BaseLayout
+  title="Wekerle Plusz kalkulátor — mivel éred el a 30 %-os energiamegtakarítást?"
+  description="Válaszolj néhány egyszerű kérdésre a házadról, és megmutatjuk a becsült energetikai besorolást, hogy milyen felújítással érhető el a Wekerle Plusz támogatáshoz szükséges 30 %-os megtakarítás, nagyjából mennyibe kerül, és mekkora támogatás járhat rá."
+  path="/wekerle-plusz/"
+>
+  <!-- ============ HERO ============ -->
+  <section class="relative pt-16 pb-14 lg:pb-20 overflow-hidden">
+    <div class="absolute inset-0 blueprint-grid pointer-events-none"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[60rem] h-[60rem] bg-accent/10 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="relative max-w-8xl mx-auto px-5 lg:px-8 pt-12 lg:pt-20">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-4">Wekerle Plusz · energetikai felújítás · kalkulátor</p>
+        <h1 class="font-display font-bold leading-[1.15] tracking-tight text-[clamp(1.75rem,4vw,2.75rem)]">
+          Mivel éred el a 30 %-ot?
+          <span class="block text-accent">És nagyjából mennyibe kerül?</span>
+        </h1>
+        <p class="mt-6 text-lg text-muted max-w-2xl">
+          Válaszolj kilenc egyszerű kérdésre a házadról. Megmutatjuk, nagyjából milyen energetikai
+          besorolásból indulsz, milyen felújítással érhető el a támogatáshoz szükséges 30 %-os
+          megtakarítás, mennyibe kerülhet, és mekkora támogatás járhat rá.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#kalkulator" data-cta="hero" class="px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Kezdjük — kb. 2 perc</a>
+        </div>
+        <p class="mt-5 text-xs text-muted max-w-2xl">
+          Nem kell értened az energetikához: ahol nem tudod a választ, jelöld, hogy „nem tudom”.
+          A becslés {STATS.houses} családi ház energetikai számítására épül, amelyeket mi készítettünk.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ A PROGRAM ============ -->
+  <section class="py-14 lg:py-16 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">Amit eddig tudni lehet</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Wekerle Plusz Energetikai Felújítási Támogatás és Hitel</h2>
+        <p class="mt-3 text-muted">
+          A kormány 2026. október 19-én jelentette be. A részletes felhívás még nem jelent meg —
+          a pontos feltételek abban lesznek, az alábbiak a bejelentés főbb pontjai.
+        </p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {program.map((p) => (
+          <div class="card rounded-xl p-5" data-reveal>
+            <p class="font-display font-semibold text-lg leading-snug">{p.k}</p>
+            <p class="text-sm text-muted mt-1">{p.v}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-sm text-muted max-w-3xl" data-reveal>
+        Egy dolog már biztos: a megtakarítást igazolni kell, ehhez hiteles energetikai tanúsítvány kell
+        a felújítás előtt és után. A kiinduló besorolás dönti el azt is, hogy a 30–50 %-os sávban hol
+        lesz a támogatásod.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ AZ EREDETI FELHÍVÁS ============ -->
+  <section class="py-14 lg:py-16">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-3xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">Ahogy eddig működött</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Az előző Otthonfelújítási Program szabályai</h2>
+        <p class="mt-3 text-muted">
+          Az alábbiak az eredeti felhívás (RRF-REP-10.13.1-24, MFB Otthonfelújítási Program) és a hozzá tartozó
+          Lakossági Eljárási Rend szerint voltak így. Vélhetően ezt fogják folytatni, de lássuk meg, mit hoznak ki pontosan
+          a Wekerle Plusz felhívásában.
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        {rules.map((r) => (
+          <div class="card rounded-xl p-6" style="transform:none" data-reveal>
+            <h3 class="font-display font-semibold text-lg">{r.t}</h3>
+            <ul class="mt-3 space-y-2 text-sm text-muted">
+              {r.items.map((i) => <li class="flex gap-2"><span class="text-accent shrink-0">–</span><span>{i}</span></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KALKULÁTOR ============ -->
+  <section id="kalkulator" class="py-14 lg:py-20 scroll-mt-16">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-5xl mx-auto">
+        <div class="mb-6 max-w-3xl mx-auto">
+          <p class="eyebrow mb-3">Kalkulátor</p>
+          <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">A házad, kilenc kérdésben</h2>
+        </div>
+
+        <div id="wizard" class="card rounded-2xl p-6 lg:p-8 max-w-3xl mx-auto" style="transform:none">
+          <div class="flex items-center justify-between text-xs text-muted mb-2">
+            <span id="wzStep">1 / {questions.length}</span>
+            <button type="button" id="wzBack" class="hover:text-ink transition disabled:opacity-0" disabled>← Vissza</button>
+          </div>
+          <div class="h-1.5 rounded-full bg-line/60 overflow-hidden mb-6">
+            <div id="wzBar" class="h-full bg-accent rounded-full transition-all duration-300" style="width:0%"></div>
+          </div>
+
+          {questions.map((qq, i) => (
+            <fieldset class="wz-q" data-key={qq.key} data-idx={i} hidden={i !== 0}>
+              <legend class="font-display font-semibold text-xl leading-snug" data-q={qq.q} data-qalt={(qq as any).qAlt || ''}>{qq.q}</legend>
+              {qq.hint && <p class="text-sm text-muted mt-2">{qq.hint}</p>}
+              {qq.type === 'number' ? (
+                <div class="mt-5">
+                  <div class="flex items-center gap-3">
+                    <input id="wzArea" type="number" inputmode="numeric" min="30" max="600" step="1" value="100" class="w-32 bg-base border border-line rounded-lg px-4 py-3 text-lg font-display focus:border-accent" aria-label="Fűtött alapterület négyzetméterben" />
+                    <span class="text-muted">m²</span>
+                  </div>
+                  <div class="flex flex-wrap gap-2 mt-4">
+                    {[70, 90, 110, 130, 160, 200].map((v) => (
+                      <button type="button" class="wz-chip px-3 py-1.5 rounded-lg border border-line text-sm text-muted hover:border-accent hover:text-ink transition" data-v={v}>{v} m²</button>
+                    ))}
+                  </div>
+                  <button type="button" id="wzAreaNext" class="mt-6 px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition">Tovább</button>
+                </div>
+              ) : (
+                <div class="mt-5 grid sm:grid-cols-2 gap-3">
+                  {qq.options!.map((o) => (
+                    <button type="button" class="wz-opt text-left rounded-xl border border-line bg-base/60 px-4 py-3 hover:border-accent transition" data-v={o.v}>
+                      <span class="block text-sm font-semibold text-ink">{o.label}</span>
+                      {o.sub && <span class="block text-xs text-muted mt-0.5">{o.sub}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </fieldset>
+          ))}
+        </div>
+
+        <!-- ============ EREDMÉNY ============ -->
+        <div id="result" class="mt-8 space-y-6" hidden>
+          <!-- Kiinduló állapot -->
+          <div class="card rounded-2xl p-6 lg:p-8" style="transform:none">
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="eyebrow mb-2">Becsült kiinduló állapot</p>
+                <p class="text-sm text-muted">Energetikai besorolás (9/2023. ÉKM rendelet szerinti skála)</p>
+              </div>
+              <button type="button" id="restart" class="text-xs text-muted hover:text-ink underline underline-offset-2">Újrakezdem</button>
+            </div>
+            <div class="mt-4 flex items-center gap-5">
+              <div id="cls0Badge" class="w-20 h-20 shrink-0 rounded-2xl grid place-items-center font-display font-bold text-4xl text-base">I</div>
+              <div>
+                <p class="text-sm"><span id="ep0Text" class="font-semibold text-ink"></span></p>
+                <p id="cls0Text" class="text-sm text-muted mt-1"></p>
+              </div>
+            </div>
+            <div id="scale" class="mt-5 grid grid-cols-12 gap-[2px]" aria-hidden="true"></div>
+            <p id="supportHint" class="mt-5 text-sm text-muted"></p>
+            <p id="warnings" class="mt-3 text-sm text-amber-300/90 space-y-2"></p>
+          </div>
+
+          <!-- Javaslatok -->
+          <div>
+            <h3 class="font-display font-bold text-xl leading-tight">Felújítási csomagok, amelyekkel elérhető a 30 %</h3>
+            <p class="text-sm text-muted mt-2">
+              A megtakarításnál a sáv a becslés bizonytalanságát mutatja. Csak olyan csomagot javaslunk
+              minimumként, amelyiknél a sáv alja is eléri a 30 %-ot.
+            </p>
+            <div id="packages" class="mt-5 grid lg:grid-cols-3 gap-4"></div>
+          </div>
+
+          <!-- Egyenkénti hatás -->
+          <div class="card rounded-2xl p-6 lg:p-8" style="transform:none">
+            <h3 class="font-display font-bold text-xl leading-tight">Mi mennyit számít a te házadnál?</h3>
+            <p class="text-sm text-muted mt-2">Az egyes beavatkozások önmagukban, a becsült megtakarítás szerint sorba rendezve. A szaggatott vonal a 30 %.</p>
+            <div id="singles" class="mt-5 space-y-3"></div>
+          </div>
+
+          <!-- Saját összeállítás -->
+          <div class="card rounded-2xl p-6 lg:p-8" style="transform:none">
+            <h3 class="font-display font-bold text-xl leading-tight">Rakd össze magad</h3>
+            <p class="text-sm text-muted mt-2">Pipáld be, amit tervezel — azonnal látod, megvan-e a 30 %.</p>
+            <div id="builder" class="mt-5 grid sm:grid-cols-2 gap-3"></div>
+            <div id="builderOut" class="mt-5 rounded-xl border border-line bg-base/60 p-5"></div>
+          </div>
+
+          <!-- Űrlap -->
+          <div id="kuldes" class="card rounded-2xl p-6 lg:p-8 scroll-mt-20" style="transform:none">
+            <p class="eyebrow mb-2">Eredmény elküldése</p>
+            <h3 class="font-display font-bold text-xl leading-tight">Küldd el nekünk az eredményt</h3>
+            <p class="text-sm text-muted mt-2">
+              A válaszaidat és a kalkuláció eredményét a ház címével együtt átnézzük. Az összefoglalót
+              e-mailben te is megkapod.
+            </p>
+            <form id="wekerleForm" class="mt-5 space-y-5" novalidate>
+              <div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; height:0; overflow:hidden;">
+                <label>Weboldal <input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+              </div>
+              <div class="grid sm:grid-cols-2 gap-5">
+                <div>
+                  <label class="block text-sm font-medium mb-2" for="w-nev">Név</label>
+                  <input id="w-nev" type="text" name="nev" autocomplete="name" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-2" for="w-email">E-mail cím</label>
+                  <input id="w-email" type="email" name="email" autocomplete="email" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium mb-2" for="w-cim">A ház címe</label>
+                <input id="w-cim" type="text" name="cim" autocomplete="street-address" placeholder="irányítószám, település, utca, házszám" class="w-full bg-base border border-line rounded-lg px-4 py-3 text-sm focus:border-accent" />
+              </div>
+              <fieldset>
+                <legend class="block text-sm font-medium mb-2">Van a házról építészeti terved? Jelöld, ami megvan:</legend>
+                <div class="grid sm:grid-cols-3 gap-3">
+                  <label class="flex items-center gap-3 rounded-xl border border-line bg-base/60 px-4 py-3 text-sm cursor-pointer hover:border-accent transition">
+                    <input id="w-doc-alaprajz" type="checkbox" name="doc_alaprajz" class="accent-accent w-4 h-4"> Alaprajzok
+                  </label>
+                  <label class="flex items-center gap-3 rounded-xl border border-line bg-base/60 px-4 py-3 text-sm cursor-pointer hover:border-accent transition">
+                    <input id="w-doc-metszet" type="checkbox" name="doc_metszet" class="accent-accent w-4 h-4"> Metszetek
+                  </label>
+                  <label class="flex items-center gap-3 rounded-xl border border-line bg-base/60 px-4 py-3 text-sm cursor-pointer hover:border-accent transition">
+                    <input id="w-doc-retegrend" type="checkbox" name="doc_retegrend" class="accent-accent w-4 h-4"> Rétegrendek
+                  </label>
+                </div>
+              </fieldset>
+              <label class="flex items-start gap-3 text-sm text-muted">
+                <input id="w-gdpr" type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
+                <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez, az <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Adatkezelési tájékoztatóban</a> foglaltak szerint.</span>
+              </label>
+              <button type="submit" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Eredmény elküldése</button>
+            </form>
+          </div>
+
+          <p class="text-xs text-muted leading-relaxed">
+            Tájékoztató becslés, nem energetikai tanúsítvány és nem ajánlat. A költségek bruttó, 2026-os piaci
+            nagyságrendek (a 2024-es lakossági program elszámolható egységárai alapján), a tényleges ár a ház
+            adottságaitól és a kivitelezőtől függ; az előkészítés (tanúsítványok, tervek) költségét nem tartalmazzák.
+            A támogatás számítása a 2026. október 19-i bejelentésen alapul (a beruházás 30–50 %-a, legfeljebb
+            7,5 millió Ft); a végleges szabályokat a felhívás rögzíti.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ AMIRE ÉPÜL ============ -->
+  <section class="py-14 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">Mire épül a becslés?</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">{STATS.houses} ház, amelynek az energetikáját mi készítettük</h2>
+        <p class="mt-3 text-muted">
+          2024–2025-ben az előző lakossági Otthonfelújítási Programban {STATS.houses} családi ház energetikai
+          tanúsítványát és a felújítás utáni állapotra vonatkozó számítását készítettük el, az ország minden részéből.
+          A kalkulátor modelljét ezeknek a tanúsítványoknak a tényleges eredményeire hangoltuk. A tipikus ház {STATS.medianYear} körül épült, {STATS.medianArea} m²-es.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="card rounded-xl p-5" data-reveal>
+          <p class="font-display font-bold text-3xl">{STATS.ghiShare} %</p>
+          <p class="text-sm text-muted mt-1">G, H vagy I besorolásból indult — fele (48 %) a leggyengébb, I kategóriából</p>
+        </div>
+        <div class="card rounded-xl p-5" data-reveal>
+          <p class="font-display font-bold text-3xl">{STATS.wallUninsulated} %</p>
+          <p class="text-sm text-muted mt-1">házban nem volt hőszigetelés a homlokzaton</p>
+        </div>
+        <div class="card rounded-xl p-5" data-reveal>
+          <p class="font-display font-bold text-3xl">{STATS.medianSaving} %</p>
+          <p class="text-sm text-muted mt-1">volt a megtervezett felújítások tipikus (medián) megtakarítása</p>
+        </div>
+        <div class="card rounded-xl p-5" data-reveal>
+          <p class="font-display font-bold text-3xl">{STATS.medianClassJump} osztály</p>
+          <p class="text-sm text-muted mt-1">a jellemző javulás a besorolásban (pl. H-ból F-be)</p>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-5">
+        <figure class="card rounded-xl p-6" style="transform:none" data-reveal>
+          <figcaption class="font-display font-semibold">Kiinduló besorolás — házak száma</figcaption>
+          <div class="mt-5 flex items-end gap-2 h-44" role="img" aria-label={`Kiinduló besorolás eloszlása: ${startDist.map(([k, v]) => `${k}: ${v}`).join(', ')}`}>
+            {startDist.map(([k, v]) => (
+              <div class="flex-1 h-full flex flex-col justify-end items-center group" title={`${k}: ${v} ház`}>
+                <span class="text-xs text-muted mb-1">{v}</span>
+                <div class="w-full max-w-10 bg-accent rounded-t-[4px] group-hover:bg-belimo transition" style={`height:${Math.max(2, (v / startMax) * 100)}%`}></div>
+                <span class="text-xs text-muted mt-2">{k}</span>
+              </div>
+            ))}
+          </div>
+        </figure>
+        <figure class="card rounded-xl p-6" style="transform:none" data-reveal>
+          <figcaption class="font-display font-semibold">Mit terveztek be a 30 %-hoz? — a házak arányában</figcaption>
+          <div class="mt-5 space-y-3">
+            {STATS.measures.map((m) => (
+              <div title={`${m.label}: ${m.pct} %`}>
+                <div class="flex justify-between text-sm"><span class="text-muted">{m.label}</span><span class="text-ink">{m.pct} %</span></div>
+                <div class="mt-1 h-2 rounded-full bg-line/50"><div class="h-2 rounded-[4px] bg-accent" style={`width:${m.pct}%`}></div></div>
+              </div>
+            ))}
+          </div>
+          <p class="text-xs text-muted mt-4">Egy házban több beavatkozás is szerepelhet. A {STATS.houses} tervből {STATS.over30} érte el a 30 %-ot.</p>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MIBEN SEGÍTÜNK ============ -->
+  <section class="py-14 lg:py-20">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-2xl mb-8" data-reveal>
+        <p class="eyebrow mb-3">Miben segítünk</p>
+        <h2 class="font-display font-bold text-[clamp(1.4rem,2.6vw,1.85rem)] leading-tight">Hogy ne vaktában költs.</h2>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Kiinduló tanúsítvány</h3>
+          <p class="text-sm text-muted mt-2">Helyszíni felmérés és hiteles energetikai tanúsítvány: ebből tudod, honnan indulsz, és milyen támogatási sávba esel.</p>
+        </div>
+        <div class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Mivel lesz meg a 30 %?</h3>
+          <p class="text-sm text-muted mt-2">Kiszámoljuk a te házadra, melyik beavatkozás mennyit számít a besorolásnál — hőszigetelés, nyílászárócsere, fűtéskorszerűsítés, hőszivattyú vagy ezek kombinációja.</p>
+        </div>
+        <div class="card rounded-xl p-6" data-reveal>
+          <h3 class="font-display font-semibold text-lg">Záró tanúsítvány</h3>
+          <p class="text-sm text-muted mt-2">A munkák végén elkészítjük a záró tanúsítványt, amely igazolja, hogy a vállalt megtakarítás megvalósult.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GYIK ============ -->
+  <section class="py-14 lg:py-20 border-t border-line/60 bg-surface/40">
+    <div class="max-w-8xl mx-auto px-5 lg:px-8">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-3">Gyakori kérdések</p>
+        <div class="mt-4 divide-y divide-line/70 border-y border-line/70">
+          {faq.map((f) => (
+            <details class="group py-4">
+              <summary class="cursor-pointer list-none flex justify-between gap-4 font-medium">
+                <span>{f.q}</span><span class="text-accent group-open:rotate-45 transition">+</span>
+              </summary>
+              <p class="mt-3 text-sm text-muted leading-relaxed">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  import {
+    houseFromAnswers, energy, classOf, CLASSES, suggestions, singleEffects, evaluate, applicable,
+    support, UNCERTAINTY_PP, EP_UNCERTAINTY, MEASURES,
+  } from '../lib/wekerle-model.js';
+
+  // ---------------- Analitika (GA4, csak hozzájárulás után létező gtag-gel) ----------------
+  function track(action: string, params: Record<string, string | number> = {}) {
+    const w = window as any;
+    if (typeof w.gtag === 'function') w.gtag('event', action, { page_group: 'wekerle', ...params });
+  }
+
+  // Energiacímke-színek A+++ → I (a megszokott zöld → piros skála; a betű mindig ki van írva)
+  const CLASS_COLORS: Record<string, string> = {
+    'A+++': '#0E7A3A', 'A++': '#1B8E3F', 'A+': '#33A33F', 'A': '#56B947', 'B': '#8CC63F', 'C': '#C6D92B',
+    'D': '#F2E21B', 'E': '#F7B718', 'F': '#F18E1C', 'G': '#E8641E', 'H': '#DB3B22', 'I': '#C21F25',
+  };
+  const ANSWER_LABELS: Record<string, Record<string, string>> = {};
+  document.querySelectorAll<HTMLFieldSetElement>('.wz-q').forEach((fs) => {
+    const key = fs.dataset.key!;
+    ANSWER_LABELS[key] = {};
+    fs.querySelectorAll<HTMLButtonElement>('.wz-opt').forEach((b) => {
+      ANSWER_LABELS[key][b.dataset.v!] = b.querySelector('span')!.textContent!.trim();
+    });
+  });
+  const QUESTION_LABELS: Record<string, string> = {
+    year: 'Építés', area: 'Alapterület', storeys: 'Szintek', wall: 'Fal', wallIns: 'Homlokzati szigetelés',
+    atticIns: 'Padlás/tető szigetelés', windows: 'Ablakok', heating: 'Fűtés', hmv: 'Melegvíz',
+  };
+  const M_LABEL: Record<string, string> = Object.fromEntries(MEASURES.map((m) => [m.id, m.label]));
+
+  const fmtM = (ft: number) => (ft / 1e6).toLocaleString('hu-HU', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const pct = (x: number) => Math.round(x * 100);
+
+  // ---------------- Varázsló ----------------
+  const steps = Array.from(document.querySelectorAll<HTMLFieldSetElement>('.wz-q'));
+  const answers: Record<string, string> = {};
+  let cur = 0;
+  const elStep = document.getElementById('wzStep')!;
+  const elBar = document.getElementById('wzBar') as HTMLDivElement;
+  const elBack = document.getElementById('wzBack') as HTMLButtonElement;
+  const wizard = document.getElementById('wizard')!;
+  const result = document.getElementById('result')!;
+  let started = false;
+
+  function show(i: number) {
+    cur = i;
+    steps.forEach((s, j) => (s.hidden = j !== i));
+    elStep.textContent = `${i + 1} / ${steps.length}`;
+    elBar.style.width = `${(i / steps.length) * 100}%`;
+    elBack.disabled = i === 0;
+    // a tetőtér-kérdés szövege a szintek válaszától függ
+    const lg = steps[i].querySelector('legend') as HTMLElement;
+    if (lg?.dataset.qalt) lg.textContent = answers.storeys === 'tetoter' ? lg.dataset.qalt : lg.dataset.q!;
+    steps[i].querySelectorAll<HTMLButtonElement>('.wz-opt').forEach((b) => {
+      const sel = answers[steps[i].dataset.key!] === b.dataset.v;
+      b.classList.toggle('border-accent', sel);
+      b.classList.toggle('bg-accent/10', sel);
+    });
+  }
+
+  function next() {
+    if (cur < steps.length - 1) { show(cur + 1); return; }
+    elBar.style.width = '100%';
+    renderResult();
+  }
+
+  steps.forEach((fs) => {
+    fs.querySelectorAll<HTMLButtonElement>('.wz-opt').forEach((b) => {
+      b.addEventListener('click', () => {
+        if (!started) { started = true; track('wekerle_calc_start'); }
+        answers[fs.dataset.key!] = b.dataset.v!;
+        next();
+      });
+    });
+  });
+  const areaIn = document.getElementById('wzArea') as HTMLInputElement;
+  document.querySelectorAll<HTMLButtonElement>('.wz-chip').forEach((c) => c.addEventListener('click', () => { areaIn.value = c.dataset.v!; }));
+  function areaNext() {
+    const v = Number(areaIn.value);
+    if (!(v >= 30 && v <= 600)) { areaIn.classList.add('border-red-500'); return; }
+    areaIn.classList.remove('border-red-500');
+    answers.area = String(Math.round(v));
+    next();
+  }
+  document.getElementById('wzAreaNext')!.addEventListener('click', areaNext);
+  areaIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); areaNext(); } });
+  elBack.addEventListener('click', () => { if (cur > 0) show(cur - 1); });
+  document.getElementById('restart')!.addEventListener('click', () => {
+    result.hidden = true; wizard.hidden = false; show(0);
+    wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ---------------- Eredmény ----------------
+  let lastSummary = '';
+
+  function badge(el: HTMLElement, cls: string) {
+    el.textContent = cls;
+    el.style.background = CLASS_COLORS[cls];
+    el.style.color = ['C', 'D', 'E', 'B'].includes(cls) ? '#1A1A26' : '#FFFFFF';
+  }
+  function pill(cls: string) {
+    const dark = ['C', 'D', 'E', 'B'].includes(cls);
+    return `<span class="inline-grid place-items-center min-w-9 h-7 px-1.5 rounded-md font-display font-bold text-sm" style="background:${CLASS_COLORS[cls]};color:${dark ? '#1A1A26' : '#fff'}">${cls}</span>`;
+  }
+  function savingRange(s: number) {
+    return `${Math.max(0, pct(s - UNCERTAINTY_PP))}–${pct(s + UNCERTAINTY_PP)} %`;
+  }
+  function verdict(s: number) {
+    if (s - UNCERTAINTY_PP >= 0.30) return { t: 'Biztosan 30 % felett', c: 'text-belimo border-belimo/50' };
+    if (s >= 0.30) return { t: 'Határeset — számítással ellenőrizendő', c: 'text-amber-300 border-amber-300/50' };
+    return { t: 'Nem éri el a 30 %-ot', c: 'text-red-400 border-red-400/50' };
+  }
+  function costRange(c: number) { return `${fmtM(c * 0.85)}–${fmtM(c * 1.2)} M Ft`; }
+  function supportRange(c: number) { const s = support(c); return `${fmtM(s.min)}–${fmtM(s.max)} M Ft`; }
+
+  function renderResult() {
+    const h = houseFromAnswers(answers);
+    const ep0 = energy(h);
+    const cls0 = classOf(ep0);
+    const ci = CLASSES.indexOf(cls0);
+    wizard.hidden = true;
+    result.hidden = false;
+
+    badge(document.getElementById('cls0Badge')!, cls0);
+    document.getElementById('ep0Text')!.textContent =
+      `kb. ${Math.round(ep0 * (1 - EP_UNCERTAINTY) / 10) * 10}–${Math.round(ep0 * (1 + EP_UNCERTAINTY) / 10) * 10} kWh/m²·év összesített energetikai jellemző`;
+    document.getElementById('cls0Text')!.textContent =
+      ci >= CLASSES.indexOf('G') ? `Az általunk tanúsított házak 87 %-a is G, H vagy I besorolásból indult.`
+        : ci >= CLASSES.indexOf('D') ? 'Átlagosnál jobb állapot — a 30 % eléréséhez célzott beavatkozás kell.'
+          : 'Már most jó állapot — itt a 30 % nehezebben érhető el.';
+    const scale = document.getElementById('scale')!;
+    scale.innerHTML = CLASSES.map((c) =>
+      `<div class="h-7 grid place-items-center text-[11px] font-display font-bold rounded-[3px] ${c === cls0 ? 'ring-2 ring-ink' : 'opacity-70'}" style="background:${CLASS_COLORS[c]};color:${['C', 'D', 'E', 'B'].includes(c) ? '#1A1A26' : '#fff'}">${c}</div>`).join('');
+
+    const hint = document.getElementById('supportHint')!;
+    hint.textContent = ci >= CLASSES.indexOf('H')
+      ? 'A bejelentés szerint a legrosszabb besorolású házak kaphatják a legmagasabb, akár 50 %-os támogatást — a te házad valószínűleg ebbe a körbe tartozik. A sávhatárokat a felhívás rögzíti.'
+      : ci >= CLASSES.indexOf('F')
+        ? 'A támogatás 30 és 50 % között lesz; a te házad besorolása alapján a sáv középső része valószínű. A pontos határokat a felhívás rögzíti.'
+        : 'A bejelentés szerint a közepes besorolású házak 30 %-os támogatást kaphatnak; a pontos határokat a felhívás rögzíti.';
+
+    const warns: string[] = [];
+    if (answers.year === 'y2007') warns.push('Az előző programban csak 2007 előtt épült házak pályázhattak (induláskor még 1990 volt a határ). Hogy a Wekerle Plusznál mi lesz a határ, a felhívásból derül ki.');
+    if (answers.wall === 'valyog') warns.push('Az eredeti felhívásban vályog-, szalma-, fa- vagy könnyűszerkezetes falnál statikai szakvéleményt is be kellett nyújtani.');
+    if (ci <= CLASSES.indexOf('C')) warns.push('A házad már most jó állapotú, ezért a 30 % csak nagyobb beavatkozással érhető el. Érdemes hiteles tanúsítvánnyal ellenőrizni a kiindulást.');
+    document.getElementById('warnings')!.innerHTML = warns.map((w) => `<span class="block">${w}</span>`).join('');
+
+    // Csomagok
+    const sug = suggestions(h);
+    const titles: Record<string, [string, string]> = {
+      minimum: ['A legolcsóbb út a 30 %-hoz', 'A legkisebb becsült költségű csomag, amelynél a becslés alsó határa is eléri a 30 %-ot.'],
+      ajanlott: ['Ajánlott', 'Legalább 50 % megtakarítás a legkisebb költségből — a támogatást is jobban kihasználja.'],
+      teljes: ['Teljes felújítás', 'Minden beavatkozás, aminek a házadnál értelme van.'],
+    };
+    const pk = document.getElementById('packages')!;
+    if (!sug.length) {
+      pk.innerHTML = `<div class="lg:col-span-3 rounded-xl border border-line p-5 text-sm text-muted">A megadott adatok alapján nem találtunk olyan csomagot, amely biztosan elérné a 30 %-ot. Ilyenkor a hiteles tanúsítvány és egy részletes számítás mutatja meg, mi a lehetséges út.</div>`;
+    } else {
+      pk.innerHTML = sug.map((p: any) => {
+        const v = verdict(p.saving);
+        const hpNoIns = p.set.includes('hoszivattyu') && !p.set.includes('homlokzat') && !p.set.includes('padlas') && h.wallIns < 0.08;
+        return `<article class="rounded-2xl border ${p.kind === 'ajanlott' ? 'border-accent glow-soft' : 'border-line'} bg-surface p-5 flex flex-col">
+          <p class="eyebrow">${titles[p.kind][0]}</p>
+          <p class="text-xs text-muted mt-1">${titles[p.kind][1]}</p>
+          <ul class="mt-4 space-y-1.5 text-sm">${p.set.map((m: string) => `<li class="flex gap-2"><span class="text-accent">✓</span><span>${M_LABEL[m]}</span></li>`).join('')}</ul>
+          <dl class="mt-5 space-y-2 text-sm flex-1">
+            <div class="flex justify-between gap-3"><dt class="text-muted">Megtakarítás</dt><dd class="text-right"><span class="font-semibold">kb. ${pct(p.saving)} %</span> <span class="text-muted text-xs">(${savingRange(p.saving)})</span></dd></div>
+            <div class="flex justify-between gap-3 items-center"><dt class="text-muted">Besorolás</dt><dd>${pill(p.cls0)} → ${pill(p.cls1)}</dd></div>
+            <div class="flex justify-between gap-3"><dt class="text-muted">Becsült költség</dt><dd class="font-semibold text-right">${costRange(p.cost)}</dd></div>
+            <div class="flex justify-between gap-3"><dt class="text-muted">Támogatás (30–50 %)</dt><dd class="font-semibold text-right text-belimo">${supportRange(p.cost)}</dd></div>
+          </dl>
+          <p class="mt-4 inline-block self-start text-xs border rounded-full px-2.5 py-1 ${v.c}">${v.t}</p>
+          ${hpNoIns ? '<p class="mt-3 text-xs text-amber-300/90">Szigeteletlen házban a hőszivattyút nagyobbra kell méretezni, és a radiátorok cseréje is szükséges lehet — mi ilyenkor a hőszigeteléssel együtt javasoljuk.</p>' : ''}
+        </article>`;
+      }).join('');
+    }
+
+    // Egyenkénti hatás
+    const singles = singleEffects(h);
+    const maxS = Math.max(0.35, ...singles.map((s: any) => s.saving));
+    document.getElementById('singles')!.innerHTML = singles.map((s: any) => `
+      <div title="${M_LABEL[s.set[0]]}: kb. ${pct(s.saving)} %, ${costRange(s.cost)}">
+        <div class="flex justify-between gap-3 text-sm"><span>${M_LABEL[s.set[0]]}${s.set[0] === 'kondenz' ? ' <span class="text-xs text-muted">(támogathatósága a felhívástól függ)</span>' : ''}</span><span class="text-muted whitespace-nowrap">kb. ${pct(s.saving)} % · ${costRange(s.cost)}</span></div>
+        <div class="relative mt-1 h-2.5 rounded-full bg-line/50">
+          <div class="h-2.5 rounded-[4px] bg-accent" style="width:${Math.max(1, (s.saving / maxS) * 100)}%"></div>
+          <div class="absolute -top-1 -bottom-1 border-l-2 border-dashed border-ink/60" style="left:${(0.30 / maxS) * 100}%"></div>
+        </div>
+      </div>`).join('');
+
+    // Saját összeállítás
+    const app = applicable(h);
+    const builder = document.getElementById('builder')!;
+    const preset = new Set<string>(sug[0]?.set || []);
+    builder.innerHTML = MEASURES.filter((m) => app.includes(m.id)).map((m) => `
+      <label class="flex items-start gap-3 rounded-xl border border-line bg-base/60 px-4 py-3 cursor-pointer hover:border-accent transition">
+        <input type="checkbox" value="${m.id}" class="accent-accent w-4 h-4 mt-0.5" ${preset.has(m.id) ? 'checked' : ''}>
+        <span><span class="block text-sm font-semibold">${m.label}</span>${m.note ? `<span class="block text-xs text-muted mt-0.5">${m.note}</span>` : ''}</span>
+      </label>`).join('');
+    const boxes = Array.from(builder.querySelectorAll<HTMLInputElement>('input'));
+    boxes.forEach((b) => b.addEventListener('change', () => {
+      // hőszivattyú és kondenzációs kazán / hőszivattyús melegvíz egymást kizárja
+      if (b.checked && b.value === 'hoszivattyu') boxes.forEach((x) => { if (x.value === 'kondenz' || x.value === 'hmv') x.checked = false; });
+      if (b.checked && (b.value === 'kondenz' || b.value === 'hmv')) boxes.forEach((x) => { if (x.value === 'hoszivattyu') x.checked = false; });
+      renderBuilder();
+    }));
+    function renderBuilder() {
+      const set = new Set(boxes.filter((x) => x.checked).map((x) => x.value));
+      const out = document.getElementById('builderOut')!;
+      if (!set.size) { out.innerHTML = '<p class="text-sm text-muted">Válassz legalább egy beavatkozást.</p>'; builderSummary = ''; return; }
+      const p: any = evaluate(h, set);
+      const v = verdict(p.saving);
+      out.innerHTML = `<div class="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+        <span><span class="text-muted">Megtakarítás:</span> <strong>kb. ${pct(p.saving)} %</strong> <span class="text-muted text-xs">(${savingRange(p.saving)})</span></span>
+        <span class="flex items-center gap-2"><span class="text-muted">Besorolás:</span> ${pill(p.cls0)} → ${pill(p.cls1)}</span>
+        <span><span class="text-muted">Költség:</span> <strong>${costRange(p.cost)}</strong></span>
+        <span><span class="text-muted">Támogatás:</span> <strong class="text-belimo">${supportRange(p.cost)}</strong></span>
+        <span class="text-xs border rounded-full px-2.5 py-1 ${v.c}">${v.t}</span></div>`;
+      builderSummary = `Saját összeállítás: ${[...set].map((m) => M_LABEL[m]).join(' + ')} — kb. ${pct(p.saving)} % (${savingRange(p.saving)}), ${p.cls0} → ${p.cls1}, ${costRange(p.cost)}, támogatás ${supportRange(p.cost)}`;
+    }
+    renderBuilder();
+
+    // Összefoglaló az e-mailhez
+    const ans = Object.keys(QUESTION_LABELS).map((k) => `${QUESTION_LABELS[k]}: ${k === 'area' ? answers.area + ' m²' : (ANSWER_LABELS[k]?.[answers[k]] || answers[k] || '—')}`).join(' | ');
+    lastSummary = [
+      `Válaszok: ${ans}`,
+      `Becsült kiinduló állapot: ${cls0} (kb. ${Math.round(ep0)} kWh/m²év)`,
+      'Javasolt csomagok:',
+      ...sug.map((p: any) => `- ${titles[p.kind][0]}: ${p.set.map((m: string) => M_LABEL[m]).join(' + ')} — kb. ${pct(p.saving)} % (${savingRange(p.saving)}), ${p.cls0} → ${p.cls1}, ${costRange(p.cost)}, támogatás ${supportRange(p.cost)}`),
+    ].join('\n');
+
+    track('wekerle_calc_complete', { cls0, min_saving: sug[0] ? pct(sug[0].saving) : 0, min_cost_m: sug[0] ? Math.round(sug[0].cost / 1e5) / 10 : 0 });
+    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  let builderSummary = '';
+
+  // ---------------- Űrlap (meglévő Apps Script végpont) ----------------
+  const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
+  const renderedAt = Date.now();
+  const form = document.getElementById('wekerleForm') as HTMLFormElement;
+  const utm = (() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+      const found = keys.filter((k) => q.get(k)).map((k) => `${k}=${q.get(k)}`);
+      if (found.length) sessionStorage.setItem('bimline_utm', found.join('&'));
+      return found.length ? found.join('&') : (sessionStorage.getItem('bimline_utm') || '');
+    } catch { return ''; }
+  })();
+
+  function fieldErr(el: HTMLElement, msg: string | null) {
+    const wrap = el.closest('label') && el.getAttribute('type') === 'checkbox' ? el.closest('label')! : el.parentElement!;
+    let err = wrap.querySelector('.field-error');
+    if (!msg) { el.classList.remove('border-red-500'); err?.remove(); return true; }
+    el.classList.add('border-red-500');
+    if (!err) { err = document.createElement('p'); err.className = 'field-error text-xs text-red-400 mt-1'; wrap.appendChild(err); }
+    err.textContent = msg;
+    return false;
+  }
+  function composed() {
+    return [
+      '[Wekerle Plusz kalkulátor]',
+      'A ház címe: ' + form.cim.value.trim(),
+      'Forrás (UTM): ' + (utm || '—'),
+      'Építészeti dokumentáció: alaprajzok: ' + (form.doc_alaprajz.checked ? 'van' : 'nincs') + ' | metszetek: ' + (form.doc_metszet.checked ? 'van' : 'nincs') + ' | rétegrendek: ' + (form.doc_retegrend.checked ? 'van' : 'nincs'),
+      '',
+      lastSummary,
+      builderSummary,
+    ].filter((x) => x !== undefined).join('\n');
+  }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const em = form.email.value.trim();
+    let ok = true;
+    ok = fieldErr(form.nev, form.nev.value.trim() ? null : 'Add meg a neved.') && ok;
+    ok = fieldErr(form.email, !em ? 'Add meg az e-mail címed.' : (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) ? null : 'Az e-mail cím formátuma nem megfelelő.')) && ok;
+    ok = fieldErr(form.cim, form.cim.value.trim().length >= 6 ? null : 'Add meg a ház címét.') && ok;
+    ok = fieldErr(form.gdpr, form.gdpr.checked ? null : 'Az elküldéshez a hozzájárulás szükséges.') && ok;
+    if (!ok) return;
+
+    track('wekerle_form_submit');
+    const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    const orig = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Küldés…';
+    const data: Record<string, string> = {
+      nev: form.nev.value.trim(), ceg: '', email: em, telefon: '', leiras: composed(), alapok: '', linkek: '',
+      website: (form.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
+      t: String(Math.round((Date.now() - renderedAt) / 1000)),
+    };
+    try {
+      await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) });
+      btn.textContent = 'Köszönjük! Megkaptuk, hamarosan jelentkezünk.';
+      btn.classList.add('bg-belimo');
+      form.reset();
+    } catch {
+      btn.disabled = false;
+      btn.textContent = orig;
+      const subject = encodeURIComponent('Wekerle Plusz kalkulátor – ' + data.nev);
+      const body = encodeURIComponent(`Név: ${data.nev}\nE-mail: ${em}\n\n${data.leiras}`);
+      window.location.href = `mailto:hello@bimline.hu?subject=${subject}&body=${body}`;
+    }
+  });
+  form.querySelectorAll('input').forEach((el) => el.addEventListener('input', () => fieldErr(el as HTMLElement, null)));
+
+  show(0);
+</script>
