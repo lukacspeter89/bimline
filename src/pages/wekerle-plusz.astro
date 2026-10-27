@@ -738,7 +738,8 @@ const faq = [
     if (s >= 0.30) return { t: 'Határeset — számítással ellenőrizendő', c: 'text-amber-300 border-amber-300/50' };
     return { t: 'Nem éri el a 30 %-ot', c: 'text-red-400 border-red-400/50' };
   }
-  function costRange(c: number) { return `${fmtM(c * 0.85)}–${fmtM(c * 1.2)} M Ft`; }
+  // a finanszírozás (hitel, támogatás, önerő) a középértékből számol, ezért azt is kiírjuk
+  function costRange(c: number) { return `kb. ${fmtM(c)} M Ft (${fmtM(c * 0.85)}–${fmtM(c * 1.2)})`; }
   let curCls = 'I';
   function finText(c: number) {
     const f = financing(c, curCls);
