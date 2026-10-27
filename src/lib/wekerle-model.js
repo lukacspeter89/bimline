@@ -42,8 +42,11 @@ const HEAT = {
   hoszivattyu: [2.6, EL, 1.5],
   // felújítás utáni állapotok
   hoszivattyu_uj: [2.7, EL, 1.5],
-  gaz_kond_uj: [0.90, GAS, 1.5],
+  klima_uj: [2.7, EL, 0],          // hatékony (A+++ fűtési szezonális) split klímák, fő fűtésként
 };
+// Termosztatikus radiátorszelep + időjárásfüggő szabályozás + beszabályozás:
+// a vízfűtéses rendszer szabályozási/elosztási hatásfokát javítja.
+const SZABALYOZAS_GAIN = 1.07;
 // Melegvíz: [hatásfok vagy SCOP, primerenergia-tényező]; nettó igény 30 kWh/m²a
 const HMV = {
   gaz: [0.75, GAS], villany: [0.88, EL], fa: [0.55, WOOD], hoszivattyu: [2.4, EL], gaz_kond: [0.85, GAS],
@@ -98,7 +101,8 @@ export function energy(h) {
   const loss = 72 * (HT + HV);
   const gains = 0.85 * (5 * 4.4 * h.A + 0.5 * 0.6 * 250 * Awin);
   const q = Math.max(loss - gains, 0) / h.A;
-  const [eff, f, aux] = HEAT[h.heat];
+  let [eff, f, aux] = HEAT[h.heat];
+  if (h.szab) eff *= SZABALYOZAS_GAIN;
   const [he, hf] = HMV[h.hmv];
   return q / eff * f + aux * EL + 30 / he * hf;
 }
@@ -113,7 +117,8 @@ export const PRICES = {
   tetosik: 46000,        // Ft / m² tetősík belső oldali szigetelés + burkolat
   ablak: 175000,         // Ft / m² háromrétegű műanyag nyílászáró, beépítve
   hoszivattyu_alap: 2900000, hoszivattyu_m2: 16000, // levegő-víz hőszivattyú fűtés + melegvíz
-  kondenz: 1600000,      // kondenzációs gázkazán + kéménybélelés
+  klima_alap: 400000, klima_egyseg: 480000, // split klímák: alap + beltéri egységenként (kb. 30 m²-enként egy)
+  szab_alap: 250000, szab_m2: 2000,          // termosztatikus szelepek, időjárásfüggő szabályozás, beszabályozás
   hmv_hsz: 800000,       // hőszivattyús melegvíztároló
 };
 
@@ -122,7 +127,8 @@ export const MEASURES = [
   { id: 'padlas', label: 'Padlásfödém / tető hőszigetelése', short: 'Padlás-/tetőszigetelés' },
   { id: 'ablak', label: 'Nyílászárócsere (háromrétegű üvegezés)', short: 'Nyílászárócsere' },
   { id: 'hoszivattyu', label: 'Levegő-víz hőszivattyú fűtésre és melegvízre', short: 'Hőszivattyú' },
-  { id: 'kondenz', label: 'Kondenzációs gázkazán', short: 'Kondenzációs kazán', note: 'Az előző programban 2025-től nem volt támogatható; a Wekerle Pluszról a felhívás dönt.' },
+  { id: 'klima', label: 'Hatékony split klímák fűtésre', short: 'Split klíma', note: 'Ott jó megoldás, ahol nincs radiátoros vízfűtés (konvektor, kályha, villanyfűtés).' },
+  { id: 'szabalyozas', label: 'Termosztatikus radiátorszelepek és szabályozás', short: 'Szabályozás' },
   { id: 'hmv', label: 'Hőszivattyús melegvíztároló', short: 'Hőszivattyús melegvíz' },
 ];
 
@@ -133,7 +139,8 @@ export function applicable(h) {
   if (h.atticIns < 0.15) out.push('padlas');
   if (h.win !== 'haromretegu') out.push('ablak');
   if (h.heat !== 'hoszivattyu') out.push('hoszivattyu');
-  if (['gaz_regi', 'konvektor', 'vegyes', 'kalyha', 'villany'].includes(h.heat)) out.push('kondenz');
+  if (['konvektor', 'kalyha', 'villany'].includes(h.heat)) out.push('klima');   // csak vízfűtés nélküli házban
+  if (['gaz_regi', 'gaz_kond', 'vegyes'].includes(h.heat)) out.push('szabalyozas');
   if (h.hmv !== 'hoszivattyu') out.push('hmv');
   return out;
 }
@@ -145,7 +152,8 @@ export function applyMeasures(h, set) {
   if (set.has('padlas')) n.atticIns = Math.max(h.atticIns, 0.25);
   if (set.has('ablak')) n.win = 'haromretegu';
   if (set.has('hoszivattyu')) { n.heat = 'hoszivattyu_uj'; n.hmv = 'hoszivattyu'; }
-  else if (set.has('kondenz')) { n.heat = 'gaz_kond_uj'; if (['gaz', 'fa', 'villany'].includes(h.hmv) && !set.has('hmv')) n.hmv = 'gaz_kond'; }
+  else if (set.has('klima')) n.heat = 'klima_uj';
+  if (set.has('szabalyozas') && !set.has('hoszivattyu') && !set.has('klima')) n.szab = true;
   if (set.has('hmv') && !set.has('hoszivattyu')) n.hmv = 'hoszivattyu';
   return n;
 }
@@ -158,7 +166,8 @@ export function cost(h, set) {
   if (set.has('padlas')) items.padlas = h.roofType === 'tetosik' ? Af * 1.25 * PRICES.tetosik : Af * PRICES.padlas;
   if (set.has('ablak')) items.ablak = Awin * PRICES.ablak;
   if (set.has('hoszivattyu')) items.hoszivattyu = Math.max(PRICES.hoszivattyu_alap + PRICES.hoszivattyu_m2 * h.A, 3800000);
-  else if (set.has('kondenz')) items.kondenz = PRICES.kondenz;
+  else if (set.has('klima')) items.klima = PRICES.klima_alap + PRICES.klima_egyseg * Math.max(2, Math.ceil(h.A / 30));
+  if (set.has('szabalyozas') && !set.has('hoszivattyu') && !set.has('klima')) items.szabalyozas = PRICES.szab_alap + PRICES.szab_m2 * h.A;
   if (set.has('hmv') && !set.has('hoszivattyu')) items.hmv = PRICES.hmv_hsz;
   for (const v of Object.values(items)) c += v;
   return { total: c, items };
@@ -185,19 +194,18 @@ export function evaluate(h, set) {
   return { set: [...set], ep0, ep1, saving, cls0: classOf(ep0), cls1: classOf(ep1), cost: c.total, items: c.items };
 }
 
-/** Az összes értelmes kombináció kiértékelése (hőszivattyú és kondenzációs kazán nem együtt) */
+// Egymást kizáró párok: a hőszivattyú tartalmazza a melegvizet és a szabályozást; klíma és hőszivattyú nem együtt.
+export const EXCLUSIVE = { hoszivattyu: ['klima', 'hmv', 'szabalyozas'], klima: ['hoszivattyu', 'szabalyozas'], hmv: ['hoszivattyu'], szabalyozas: ['hoszivattyu', 'klima'] };
+function consistent(s) { return !s.some((m) => (EXCLUSIVE[m] || []).some((x) => s.includes(x))); }
+
+/** Az összes értelmes kombináció kiértékelése */
 export function allPackages(h) {
-  const app = applicable(h);
-  return subsets(app)
-    .filter((s) => s.length && !(s.includes('hoszivattyu') && (s.includes('kondenz') || s.includes('hmv'))))
-    .map((s) => evaluate(h, new Set(s)));
+  return subsets(applicable(h)).filter((s) => s.length && consistent(s)).map((s) => evaluate(h, new Set(s)));
 }
 
 /** A kijelzett javaslatok: minimum, ajánlott, teljes */
 export function suggestions(h) {
-  // A javaslatok nem építenek a kondenzációs gázkazánra (támogathatósága bizonytalan) —
-  // az csak a „Rakd össze magad” részben választható.
-  const all = allPackages(h).filter((p) => !p.set.includes('kondenz'));
+  const all = allPackages(h);
   const safe = all.filter((p) => p.saving - UNCERTAINTY_PP >= 0.30).sort((a, b) => a.cost - b.cost);
   const key = (p) => p.set.slice().sort().join('+');
   const out = [];
@@ -206,7 +214,8 @@ export function suggestions(h) {
   const rec = safe.filter((p) => p.saving >= 0.5 && (!minimum || key(p) !== key(minimum))).sort((a, b) => a.cost - b.cost)[0];
   if (rec && (!minimum || rec.saving > minimum.saving + 0.05)) out.push({ kind: 'ajanlott', ...rec });
   const app = applicable(h);
-  const fullSet = app.filter((m) => m !== 'kondenz' && !(m === 'hmv' && app.includes('hoszivattyu')));
+  // teljes felújítás: burok + hőszivattyú (ha van értelme), különben a többi gépészeti elem
+  const fullSet = app.includes('hoszivattyu') ? app.filter((m) => !(EXCLUSIVE.hoszivattyu.includes(m))) : app.filter((m) => m !== 'klima' || !app.includes('szabalyozas'));
   if (fullSet.length) {
     const full = evaluate(h, new Set(fullSet));
     if (!out.some((p) => key(p) === key(full))) out.push({ kind: 'teljes', ...full });
@@ -219,7 +228,20 @@ export function singleEffects(h) {
   return applicable(h).map((m) => evaluate(h, new Set([m]))).sort((a, b) => b.saving - a.saving);
 }
 
-/** Támogatás: 30–50 %, legfeljebb 7,5 M Ft (a 2026. 10. 19-i bejelentés szerint) */
-export function support(costFt) {
-  return { min: Math.min(costFt * 0.30, 7500000), max: Math.min(costFt * 0.50, 7500000) };
+/**
+ * Finanszírozás családi háznál a 2026. 10. 27-i kormányzati bejelentés szerint:
+ * hitel legfeljebb 15 M Ft, fix 3 %, legfeljebb 15 év; önerő a hitelösszeg 5 %-a, legfeljebb 500 e Ft;
+ * vissza nem térítendő rész a HITELÖSSZEG 30 %-a D–G, 50 %-a H–I besorolásnál, A–C besorolásnál nincs.
+ * A támogatást a záró tanúsítvány után a hiteltartozásból írják jóvá.
+ */
+export function supportRate(cls) {
+  if (['H', 'I'].includes(cls)) return 0.5;
+  if (['D', 'E', 'F', 'G'].includes(cls)) return 0.3;
+  return 0;
+}
+export function financing(costFt, cls) {
+  let hitel = costFt <= 10500000 ? costFt / 1.05 : Math.min(15000000, costFt - 500000);
+  const onero = costFt - hitel;              // a 15,5 M Ft feletti rész is önerő
+  const rate = supportRate(cls);
+  return { hitel, onero, rate, support: hitel * rate, sajatAtTotal: onero };
 }
