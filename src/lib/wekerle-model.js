@@ -41,7 +41,12 @@ const HEAT = {
   klima: [2.6, EL, 0],
   hoszivattyu: [2.6, EL, 1.5],
   // felújítás utáni állapotok
+  // Új levegő-víz hőszivattyú. A fűtési SCOP a szükséges előremenő hőmérséklettől függ:
+  // ha a burok szigetelt (vagy most szigetelik), a meglévő radiátorok túlméretezetté válnak, 55/45 °C vagy kevesebb
+  // elég → 2,7 (a 137 tanúsítványra kalibrált érték); szigeteletlen házban régi radiátoron ~70/55 °C kell,
+  // időjáráskövetéssel is ~2,3. Bivalens (meglévő gázkazán csúcsra) üzemet a modell nem kezel.
   hoszivattyu_uj: [2.7, EL, 1.5],
+  hoszivattyu_uj_mt: [2.3, EL, 1.5],
   klima_uj: [2.7, EL, 0],          // hatékony (A+++ fűtési szezonális) split klímák, fő fűtésként
 };
 // Termosztatikus radiátorszelep + időjárásfüggő szabályozás + beszabályozás:
@@ -151,7 +156,11 @@ export function applyMeasures(h, set) {
   if (set.has('homlokzat')) n.wallIns = h.wallIns < 0.08 ? h.wallIns + 0.18 : h.wallIns + 0.12;
   if (set.has('padlas')) n.atticIns = Math.max(h.atticIns, 0.25);
   if (set.has('ablak')) n.win = 'haromretegu';
-  if (set.has('hoszivattyu')) { n.heat = 'hoszivattyu_uj'; n.hmv = 'hoszivattyu'; }
+  if (set.has('hoszivattyu')) {
+    const burokSzigetelt = set.has('homlokzat') || set.has('padlas') || h.wallIns >= 0.08 || h.atticIns >= 0.15;
+    n.heat = burokSzigetelt ? 'hoszivattyu_uj' : 'hoszivattyu_uj_mt';
+    n.hmv = 'hoszivattyu';
+  }
   else if (set.has('klima')) n.heat = 'klima_uj';
   if (set.has('szabalyozas') && !set.has('hoszivattyu') && !set.has('klima')) n.szab = true;
   if (set.has('hmv') && !set.has('hoszivattyu')) n.hmv = 'hoszivattyu';
