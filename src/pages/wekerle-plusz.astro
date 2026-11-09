@@ -429,6 +429,19 @@ const faq = [
             <p id="warnings" class="mt-3 text-sm text-amber-300/90 space-y-2"></p>
           </div>
 
+          <!-- Zárolt részletek: e-mail cím megadása után -->
+          <div id="lockCard" class="rounded-2xl border border-accent glow-soft bg-surface p-6 lg:p-8">
+            <p class="eyebrow mb-2">A teljes eredmény</p>
+            <h3 id="lockTitle" class="font-display font-bold text-xl leading-tight">Találtunk felújítási csomagot, amellyel a házad eléri a 30 %-ot</h3>
+            <ul class="mt-4 space-y-1.5 text-sm text-muted">
+              <li class="flex gap-2"><span class="text-accent">✓</span><span>a csomagok tartalma és becsült költsége</span></li>
+              <li class="flex gap-2"><span class="text-accent">✓</span><span>hitel, vissza nem térítendő rész és önerő csomagonként</span></li>
+            </ul>
+            <p class="text-sm mt-4">Add meg a neved és az e-mail címed, és elküldjük a teljes eredményt.</p>
+            <a href="#kuldes" data-cta="wekerle-unlock" class="mt-5 inline-block px-6 py-3 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Kérem az eredményt e-mailben</a>
+          </div>
+
+          <div id="fullResult" class="space-y-6" hidden>
           <!-- Javaslatok -->
           <div>
             <h3 class="font-display font-bold text-xl leading-tight">Felújítási csomagok, amelyekkel elérhető a 30 %</h3>
@@ -452,6 +465,7 @@ const faq = [
             <p class="text-sm text-muted mt-2">Pipáld be, amit tervezel — azonnal látod, megvan-e a 30 %.</p>
             <div id="builder" class="mt-5 grid sm:grid-cols-2 gap-3"></div>
             <div id="builderOut" class="mt-5 rounded-xl border border-line bg-base/60 p-5"></div>
+          </div>
           </div>
 
           <p class="text-xs text-muted leading-relaxed">
@@ -505,12 +519,12 @@ const faq = [
                 </div>
               </fieldset>
               <label class="flex items-start gap-3 text-sm">
-                <input id="w-ertesites" type="checkbox" name="ertesites" class="accent-accent w-4 h-4 mt-0.5" checked>
-                <span>Szóljatok, amikor indul az igénylés</span>
+                <input id="w-ertesites" type="checkbox" name="ertesites" class="accent-accent w-4 h-4 mt-0.5">
+                <span>Szóljatok, amikor indul az igénylés, és küldjetek hírt a program változásairól. <span class="text-muted">Bármikor leiratkozhatsz.</span></span>
               </label>
               <label class="flex items-start gap-3 text-sm text-muted">
                 <input id="w-gdpr" type="checkbox" name="gdpr" class="accent-accent w-4 h-4 mt-0.5">
-                <span>Hozzájárulok adataim kapcsolatfelvétel céljából történő kezeléséhez, az <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Adatkezelési tájékoztatóban</a> foglaltak szerint.</span>
+                <span>Elolvastam az <a href={`${base}adatkezeles/`} class="text-accent hover:text-belimo underline underline-offset-2" target="_blank" rel="noopener noreferrer">Adatkezelési tájékoztatót</a>, és kérem, hogy a megadott adataimat a kérésem teljesítéséhez kezeljétek.</span>
               </label>
               <button type="submit" class="w-full px-6 py-3.5 rounded-xl bg-accent text-base font-semibold hover:bg-accent/90 transition glow-accent">Értesítést kérek</button>
             </form>
@@ -870,15 +884,37 @@ const faq = [
       ...sug.map((p: any) => `- ${titles[p.kind][0]}: ${p.set.map((m: string) => M_LABEL[m]).join(' + ')} — kb. ${pct(p.saving)} % (${savingRange(p.saving)}), ${p.cls0} → ${p.cls1}, ${costRange(p.cost)}, vissza nem térítendő ${finText(p.cost)}`),
     ].join('\n');
 
-    document.getElementById('kEyebrow')!.textContent = 'Eredmény elküldése';
-    document.getElementById('kTitle')!.textContent = 'Küldd el nekünk az eredményt';
-    document.getElementById('kLead')!.textContent = 'A válaszaidat és a kalkuláció eredményét a ház címével együtt átnézzük. Az összefoglalót e-mailben te is megkapod.';
-    document.getElementById('kCimOpt')!.hidden = true;
-    (document.querySelector('#wekerleForm button[type="submit"]') as HTMLButtonElement).textContent = 'Eredmény elküldése';
+    // A teljes eredmény (a levélhez): csak számok és ismert kulcsok — a levelet a szerver sablonból állítja össze
+    lastResult = {
+      cls0, epLo: Math.round(ep0 * (1 - EP_UNCERTAINTY) / 10) * 10, epHi: Math.round(ep0 * (1 + EP_UNCERTAINTY) / 10) * 10,
+      rate: rate0, edge: rLo !== rHi,
+      packages: sug.map((p: any) => {
+        const f = financing(p.cost, cls0);
+        return {
+          kind: p.kind, set: p.set, s: pct(p.saving), sLo: Math.max(0, pct(p.saving - UNCERTAINTY_PP)), sHi: pct(p.saving + UNCERTAINTY_PP),
+          cls1: p.cls1, cost: Math.round(p.cost), hitel: Math.round(f.hitel), vnt: Math.round(f.support), onero: Math.round(f.onero),
+        };
+      }),
+    };
+    document.getElementById('lockTitle')!.textContent = sug.length
+      ? (sug.length === 1 ? 'Találtunk felújítási csomagot, amellyel a házad eléri a 30 %-ot' : `${sug.length} felújítási csomagot találtunk, amellyel a házad eléri a 30 %-ot`)
+      : 'Nem találtunk biztos csomagot — a részleteket e-mailben elküldjük';
+    setLocked(!unlocked);
+
+    document.getElementById('kEyebrow')!.textContent = 'A teljes eredmény';
+    document.getElementById('kTitle')!.textContent = 'Kérd el a teljes eredményt';
+    document.getElementById('kLead')!.textContent = 'Elküldjük e-mailben a csomagokat költséggel, hitellel és vissza nem térítendő támogatással. A ház címét nem kötelező megadni, de ha megadod, pontosabban tudunk segíteni.';
+    (document.querySelector('#wekerleForm button[type="submit"]') as HTMLButtonElement).textContent = 'Kérem az eredményt';
     track('wekerle_calc_complete', { cls0, min_saving: sug[0] ? pct(sug[0].saving) : 0, min_cost_m: sug[0] ? Math.round(sug[0].cost / 1e5) / 10 : 0 });
     result.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   let builderSummary = '';
+  let lastResult: any = null;
+  let unlocked = false;
+  function setLocked(locked: boolean) {
+    document.getElementById('lockCard')!.hidden = !locked;
+    document.getElementById('fullResult')!.hidden = locked;
+  }
 
   // ---------------- Űrlap (meglévő Apps Script végpont) ----------------
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyRR1x9JmTD7yf3RKcwfWKbBexQSKoKqVDUoEERff8SMd9PQEHomNGXFPYfe42yvCsS/exec';
@@ -926,8 +962,7 @@ const faq = [
     let ok = true;
     ok = fieldErr(form.nev, form.nev.value.trim() ? null : 'Add meg a neved.') && ok;
     ok = fieldErr(form.email, !em ? 'Add meg az e-mail címed.' : (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) ? null : 'Az e-mail cím formátuma nem megfelelő.')) && ok;
-    ok = fieldErr(form.cim, (!lastSummary || form.cim.value.trim().length >= 6) ? null : 'Add meg a ház címét.') && ok;
-    ok = fieldErr(form.gdpr, form.gdpr.checked ? null : 'Az elküldéshez a hozzájárulás szükséges.') && ok;
+    ok = fieldErr(form.gdpr, form.gdpr.checked ? null : 'Az elküldéshez ezt be kell jelölnöd.') && ok;
     if (!ok) return;
 
     track('wekerle_form_submit', { with_result: lastSummary ? 1 : 0, notify: form.ertesites.checked ? 1 : 0 });
@@ -939,12 +974,25 @@ const faq = [
       nev: form.nev.value.trim(), ceg: '', email: em, telefon: '', leiras: composed(), alapok: '', linkek: '',
       website: (form.querySelector('input[name="website"]') as HTMLInputElement)?.value || '',
       t: String(Math.round((Date.now() - renderedAt) / 1000)),
+      forma: 'wekerle',
+      cim: form.cim.value.trim(),
+      hirlevel: form.ertesites.checked ? '1' : '0',
+      docs: ['alaprajz', 'metszet', 'retegrend'].filter((k) => (form as any)['doc_' + k].checked).join(', '),
+      utm,
+      eredmeny: lastResult ? JSON.stringify(lastResult) : '',
     };
     try {
       await fetch(FORM_ENDPOINT, { method: 'POST', mode: 'no-cors', body: new URLSearchParams(data) });
-      btn.textContent = 'Köszönjük! Megkaptuk, hamarosan jelentkezünk.';
+      btn.textContent = lastResult
+        ? `Elküldtük a(z) ${em} címre (ha nem látod, nézd meg a spam mappát is). Fent is megnézheted.`
+        : 'Köszönjük! Megkaptuk, hamarosan jelentkezünk.';
       btn.classList.add('bg-belimo');
       form.reset();
+      if (lastResult && !unlocked) {
+        unlocked = true;
+        setLocked(false);
+        track('wekerle_unlock');
+      }
     } catch {
       btn.disabled = false;
       btn.textContent = orig;
